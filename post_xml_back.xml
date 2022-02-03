@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flow xmlns="urn:opendaylight:flow:inventory">
+ <strict>false</strict>
+ <instructions>
+ <instruction>
+ <order>0</order>
+ <apply-actions>
+ <action>
+ <order>0</order>
+ <output-action>
+ <output-node-connector>76</output-node-connector>
+ <max-length>60</max-length>
+ </output-action>
+ </action>
+ </apply-actions>
+ </instruction>
+ </instructions>
+ <table_id>0</table_id>
+ <id>1</id>
+ <cookie_mask>255</cookie_mask>
+ <installHw>false</installHw>
+ <match>
+ <in-port>77</in-port>
+ </match>
+ <hard-timeout>12</hard-timeout>
+ <cookie>4</cookie>
+ <idle-timeout>34</idle-timeout>
+ <flow-name>P0_TO_P1</flow-name>
+ <priority>666</priority>
+ <barrier>false</barrier>
+</flow>

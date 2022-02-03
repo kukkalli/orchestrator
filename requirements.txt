@@ -1,0 +1,16 @@
+openstacksdk
+keystoneauth1
+matplotlib
+networkx
+pandas
+python-neutronclient
+requests
+python-keystoneclient
+python-glanceclient
+warlock
+argparse
+numpy
+httplib2
+gurobipy
+chronicler
+python-novaclient>=17.6.0

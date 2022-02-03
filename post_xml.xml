@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flow xmlns="urn:opendaylight:flow:inventory">
+    <hard-timeout>0</hard-timeout>
+    <idle-timeout>0</idle-timeout>
+    <cookie>1</cookie>
+    <priority>101</priority>
+    <match>
+      <in-port>76</in-port>
+    </match>
+    <id>1</id>
+    <table_id>0</table_id>
+    <instructions>
+        <instruction>
+            <order>0</order>
+            <apply-actions>
+                <action>
+                    <output-action>
+                        <output-node-connector>10</output-node-connector>
+                    </output-action>
+                    <order>0</order>
+                </action>
+            </apply-actions>
+        </instruction>
+    </instructions>
+</flow>

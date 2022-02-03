@@ -24,11 +24,6 @@ sudo apt install python3-pip
 sudo apt install git subversion
 ```
 
-### Set virtual environment
-```
-python3 -m venv venv
-```
-
 ### Upgrade pip
 ```
 venv/bin/python -m pip install --upgrade pip

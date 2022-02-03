@@ -3,6 +3,11 @@ from flask import Flask, request, abort, jsonify
 app = Flask(__name__)
 
 
+@app.route('/', methods=['GET'])
+def get_home():
+    return jsonify({'name': 'Hanif Kukkalli', 'dob': "1984-11-01"})
+
+
 @app.route('/getSquare', methods=['POST'])
 def get_square():
     if not request.json or 'number' not in request.json:

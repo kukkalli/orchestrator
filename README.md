@@ -14,3 +14,9 @@ git clone git@github.com:kukkalli/orchestrator.git
 
 [Service setup with apache reverse proxy](readme/flask_service.md#service-setup)
 
+sudo usermod -aG docker ```<username>```
+
+sudo systemctl daemon-reload
+
+sudo systemctl restart docker
+

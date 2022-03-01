@@ -1,3 +1,5 @@
+import sys
+
 from flask import Flask, request, abort, jsonify
 
 app = Flask(__name__)
@@ -6,6 +8,13 @@ app = Flask(__name__)
 @app.route('/', methods=['GET'])
 def get_home():
     return jsonify({'name': 'Hanif Kukkalli', 'dob': "1984-11-01"})
+
+
+@app.route("/hello", methods=['GET'])
+def hello():
+    version = "{}.{}".format(sys.version_info.major, sys.version_info.minor)
+    message = "Hello World from Flask in a uWSGI Nginx Docker container with Python {} (default)".format(version)
+    return message
 
 
 @app.route('/getSquare', methods=['POST'])
@@ -28,4 +37,4 @@ def create_vm():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)

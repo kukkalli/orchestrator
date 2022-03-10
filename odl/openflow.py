@@ -6,6 +6,7 @@ from xml.etree import ElementTree
 from configuration_constants import ConfigurationConstants
 from odl.odl_constants import ODLConstants
 import time
+import pprint
 
 
 class OpenFlow:
@@ -18,6 +19,12 @@ class OpenFlow:
 
     def http_post_request_json(self, query):
         return dict(json.loads(requests.post(query, headers=ODLConstants.HEADER, auth=self.auth).text))
+
+    def http_put_request_json(self, url, body):
+
+        response = requests.put(url, data=json.dumps(body), headers=ODLConstants.HEADER, auth=self.auth,
+                                allow_redirects=True)
+        return response
 
     def http_put_request_xml(self, url, body):
         response = requests.put(url, data=str(body), headers=ODLConstants.PUT_XML_HEADER, auth=self.auth,
@@ -85,17 +92,46 @@ class OpenFlow:
         ipv4_destination = ElementTree.SubElement(match, "ipv4-destination")
         ipv4_destination.text = dst_ip  # dst ip with subnet 10.0.1.1/24
         xml_body = ElementTree.tostring(root).decode()
-        xml_body = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' + xml_body
+        xml_body = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>' + xml_body
         # create url for ip
         ip_url = ODLConstants.PUT_FLOW_URL.format(node_id=node_id, table=table, flow_id=flow_id)
         print(f"body:\n{xml_body}\nip_url: {ip_url}")
         print(f"Response: {self.http_put_request_xml(ip_url, xml_body)}")
+
+    def json_forwarding_flow_install(self, node_id, output, src_ip, dst_ip, table=0, hard_timeout=0, idle_timeout=0,
+                                     cookie=1, priority=666):
+
+        print("Create Data flow from switch {} on port {} with dst ip {}".format(node_id, output, dst_ip))
+        flow_id = self.flow_id_generator()
+        flow_json_body = json.loads(ODLConstants.FLOW_JSON)
+        # flow_json_body['flow-node-inventory:flow'][0]['flow-name']='json_test'
+        flow_json_body['flow-node-inventory:flow'][0]['id'] = 10
+        flow_json_body['flow-node-inventory:flow'][0]['hard-timeout'] = hard_timeout
+        flow_json_body['flow-node-inventory:flow'][0]['idle-timeout'] = idle_timeout
+        flow_json_body['flow-node-inventory:flow'][0]['cookie'] = cookie
+        flow_json_body['flow-node-inventory:flow'][0]['priority'] = priority
+        flow_json_body['flow-node-inventory:flow'][0]['table_id'] = table
+        flow_json_body['flow-node-inventory:flow'][0]['match']['ipv4-source'] = src_ip
+        flow_json_body['flow-node-inventory:flow'][0]['match']['ipv4-destination'] = dst_ip
+        flow_json_body['flow-node-inventory:flow'][0]['match']['ethernet-match']['ethernet-type'][
+            'type'] = ODLConstants.ETHER_TYPE_IP_MATCHER
+        flow_json_body['flow-node-inventory:flow'][0]['instructions']['instruction'][0]['apply-actions']['action'][0][
+            'output-action']['output-node-connector'] = output
+        # print(flow_json_body['flow-node-inventory:flow'][0]['instructions']['instruction'][0]['apply-actions'][
+        # 'action'][0]['output-action']['output-node-connector'] ) pprint.pprint((flow_json_body))
+        print(json.dumps(flow_json_body))
+        # print((ODLConstants.HEADER))
+        # create url for ip
+        ip_url = ODLConstants.PUT_FLOW_URL.format(node_id=node_id, table=table, flow_id=10)
+        print(f"ip_url: {ip_url}")
+        print(f"Response: {self.http_put_request_json(ip_url, flow_json_body)}")
 
 
 # ------test
 a = OpenFlow()
 # url, body = a.create_arp_flow('openflow:3', 77, 1)
 # print(url, '\n', body)
+a.json_forwarding_flow_install('openflow:2', 77, '1.1.1.1/32', "2.2.2.2/32")
 a.create_traffic_forwarding('openflow:2', 77, '1.1.1.1/32', "10.10.0.10/32")
 # print(a.http_put_request_xml(url,body))
 

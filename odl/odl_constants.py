@@ -8,11 +8,11 @@ class ODLConstants(object):
     NODE = NODES + "/node/{}"
     PORT = NODE + '/node-connector/{}'
 
-    HEADER = {"Accept": "application/json"}
+    HEADER = {"Content-Type": "application/json", "Accept": "application/json"}
 
     PUT_FLOW_URL = ConfigurationConstants.ODL_URL + '/restconf/config/opendaylight-inventory:nodes/node/{' \
-                                                    'node_id}/table/{table}/flow/{flow_id} '
-    PUT_XML_HEADER = {"content-type": "application/xml"}
+                                                    'node_id}/table/{table}/flow/{flow_id}'
+    PUT_XML_HEADER = {"content-type": "application/xml", "Accept": "application/json"}
 
     ETHER_TYPE_ARP_MATCHER = "2054"  # constant decimal value of 0x0806 that matches with only ARP frames
     ETHER_TYPE_IP_MATCHER = "2048"  # constant decimal value of 0x0800 used to match IP
@@ -72,4 +72,43 @@ class ODLConstants(object):
         </instruction>
     </instructions>
 </flow>
+"""
+
+    FLOW_JSON = """
+    {"flow-node-inventory:flow": [
+         {
+             "id": "{flow_id}",
+             "table_id": {table_id},
+             "idle-timeout": {idle_timeout},
+             "priority": {priority},
+             "hard-timeout": {hard_timeout},
+             "match": {
+                 "ipv4-source": "{src_ip}",
+                 "ipv4-destination": "{dst_ip}",
+                 "ethernet-match": {
+                     "ethernet-type": {
+                         "type": 2048
+                     }
+                 }
+             },
+             "cookie": 1,
+             "instructions": {
+                 "instruction": [
+                     {
+                         "order": 0,
+                         "apply-actions": {
+                             "action": [
+                                {
+                                     "order": 0,
+                                     "output-action": {
+                                         "output-node-connector": "3"}
+                                }
+                             ]
+                         }
+                     }
+                 ]
+             }
+         }
+     ]
+}
 """

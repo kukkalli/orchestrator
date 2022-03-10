@@ -96,7 +96,7 @@ class ODLHelperFunctions:
 
 def main():
     odl = ODLHelperFunctions()
-    node = odl.get_nodes_from_inventory().get_node_by_id("openflow:1")
+    node = odl.get_nodes_from_inventory().get_node_by_id("openflow:2")
     print(f'Node: {node.id}')
     flow_table = node.get_flow_table_by_id(0)
     print(f'Flow Table: {flow_table.id}')

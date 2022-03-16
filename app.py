@@ -1,13 +1,16 @@
+import logging
 import sys
 
 from flask import Flask, request, abort, jsonify
 
+from service_chain import ServiceChain
+from templates.input_request import InputRequest
+from templates.serviceprofiles import ServiceProfiles
+
 app = Flask(__name__)
-
-
-@app.route('/', methods=['GET'])
-def get_home():
-    return jsonify({'name': 'Hanif Kukkalli', 'dob': "1984-11-01"})
+app.debug = True
+app.secret_key = '598-626-262'
+logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG)
 
 
 @app.route("/hello", methods=['GET'])
@@ -26,15 +29,40 @@ def get_square():
     return jsonify({'answer': num ** 2})
 
 
-@app.route('/create-vm', methods=['POST'])
+@app.route('/create-service-chain', methods=['POST'])
 def create_vm():
-    if not request.json:
+    params = request.json
+    logging.debug("Create Service Chain {}".format(params))
+    bandwidth = 100
+    max_link_delay = 100
+    domain_name = "tu-chemnitz.de"
+    if not params:
         abort(400)
-    if 'request_id' not in request.json:
+    if 'name' not in params:
         abort(400)
+    if 'service_profile' not in params:
+        abort(400)
+    if ServiceProfiles("FOUR_G_LTE_CORE") not in ServiceProfiles:
+        abort(422)
+    if 'domain_name' in params:
+        domain_name = params["domain_name"]
+    if 'bandwidth' in params:
+        bandwidth = params["bandwidth"]
+    if 'max_link_delay' in params:
+        max_link_delay = params["max_link_delay"]
 
-    return jsonify({'vm-creation': 'success'})
+    input_request = InputRequest(params["name"], params["service_profile"], domain_name, bandwidth, max_link_delay)
+    service_chain = ServiceChain(input_request)
+    # service_chain.create_service_chain()
+    return jsonify({"service-creation": "success"})
+    # service_chain.create_service_chain())
+
+
+@app.route('/', methods=['GET'])
+def main():
+    logging.info("Main Method")
+    return jsonify({'name': 'Hanif Kukkalli', 'dob': "1984-11-01"})
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)

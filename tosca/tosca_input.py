@@ -12,7 +12,7 @@ class TOSCAInput:
         for vm_requirement in vm_requirements:
             self.vm_requirements_dict[vm_requirement.int_id] = vm_requirement
         self.v_links = v_links
-        self.delay = delay                                                  # delay time in in ms
+        self.delay = delay  # delay time in ms
 
     def add_vm(self, vm_requirement: VMRequirement):
         self.vm_requirements.append(vm_requirement)
@@ -20,7 +20,7 @@ class TOSCAInput:
     def add_vlink(self, v_link: VirtualLink):
         self.v_links.append(v_link)
 
-    def get_vm_requirement_by_id(self, _id: str) -> VMRequirement:
+    def get_vm_requirement_by_id(self, _id: int) -> VMRequirement:
         try:
             return self.vm_requirements_dict[_id]
         except RuntimeError:

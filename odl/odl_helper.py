@@ -1,3 +1,4 @@
+import logging
 from typing import List, Dict
 
 # libraries should be installed
@@ -52,7 +53,7 @@ class ODLHelperFunctions:
 
     def get_topology_switches(self) -> List[Switch]:
         topology = self.get_topology_info()
-        print("topology: {}".format(topology))
+        logging.debug("topology: {}".format(topology))
         nodes = topology["network-topology"]["topology"][0]["node"]
         # print("nodes: {}".format(nodes))
         switch_list: List[Switch] = []

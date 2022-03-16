@@ -1,22 +1,29 @@
+import logging
+
 from odl.openflow import OpenFlow
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.virtual_machine import VirtualMachine
 from optimization.optimizer import Optimize
 from optimization.topology_builder import TopologyBuilder
 from optimization.tosca_builder import TOSCABuilder
+from templates.input_request import InputRequest
+from templates.serviceprofiles import ServiceProfiles
 from topology.topology import Topology
 from tosca.tosca_input import TOSCAInput
 
 
 class ServiceChain:
 
-    def __init__(self, topology: Topology = None, tosca: TOSCAInput = None):
-        self.topology: Topology = topology
-        self.tosca: TOSCAInput = tosca
+    def __init__(self, input_request: InputRequest):
 
-    def create_service_chain(self):
+        self.topology: Topology = TopologyBuilder(input_request.name).build_topology()
+        self.tosca: TOSCAInput = TOSCABuilder(input_request).build_tosca()
+        # self.tosca: TOSCAInput = tosca
+
+    def create_service_chain(self) -> {}:
         _optimize = Optimize(self.topology, self.tosca)
         _optimize.optimize()
+        """
         virtual_machine = VirtualMachine()
 
         of = OpenFlow()
@@ -42,12 +49,12 @@ class ServiceChain:
                       format(v_link.id, link.id, src_node.id, dst_node.id, src_v_node.ip_address,
                              dst_v_node.ip_address))
                 if src_node.is_switch:
-                    of.create_arp_flow(src_node.id, src_node.ports_dict[link.src_port_id].number, 1)
-                    of.create_traffic_forwarding(src_node.id, src_node.ports_dict[link.src_port_id].number,
-                                                 dst_v_node.ip_address + dst_v_node.subnet_mask)
+                    of.create_arp_flow(src_node.id, src_node.ports_dict[link.src_port_id].port_number, 1)
+                    of.create_traffic_forwarding(src_node.id, src_node.ports_dict[link.src_port_id].port_number,
+                                                 src_v_node.ip_address, dst_v_node.ip_address + dst_v_node.subnet_mask)
                 if dst_node.is_switch:
-                    of.create_arp_flow(dst_node.id, dst_node.ports_dict[link.dst_port_id].number, 2)
-                    of.create_traffic_forwarding(dst_node.id, dst_node.ports_dict[link.dst_port_id].number,
+                    of.create_arp_flow(dst_node.id, dst_node.ports_dict[link.dst_port_id].port_number, 2)
+                    of.create_traffic_forwarding(dst_node.id, dst_node.ports_dict[link.dst_port_id].port_number,
                                                  src_v_node.ip_address + src_v_node.subnet_mask)
 
                 print("--------------------------------------------------------------------------------------------")
@@ -69,13 +76,16 @@ class ServiceChain:
             print("Created Server: {}".format(server))
 
         virtual_machine.close_connection()
+        """
+        return {"vm-creation": "success"}
 
 
 def main():
-    topology_builder = TopologyBuilder("hanif")
-    tosca_builder = TOSCABuilder("hanif")
-    execute = ServiceChain(topology_builder.build_topology(), tosca_builder.build_tosca())
-    execute.create_service_chain()
+    # topology_builder = TopologyBuilder("hanif")
+    # tosca_builder = TOSCABuilder("hanif")
+    input_request: InputRequest = InputRequest("kn", "FOUR_G_LTE_CORE")
+    execute = ServiceChain(input_request)
+    # execute.create_service_chain()
     exit()
 
 

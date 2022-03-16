@@ -9,6 +9,10 @@ import time
 import pprint
 
 
+def flow_id_generator():
+    return round(time.time() * 1000000)  # create flow_id based on time
+
+
 class OpenFlow:
 
     def __init__(self):
@@ -34,15 +38,12 @@ class OpenFlow:
     def http_delete_request_json(self, query):
         return dict(json.loads(requests.delete(query, headers=ODLConstants.HEADER, auth=self.auth).text))
 
-    def flow_id_generator(self):
-        return round(time.time() * 1000000)  # create flow_id based on time
-
     # arp_op request:1 and reply:2
     def create_arp_flow(self, node_id, output, arp_opcode, table=0, hard_timeout=0, idle_timeout=0, cookie=1,
                         priority=101):
         print("Create ARP from switch {} on port {} with apr code {}".format(node_id, output, arp_opcode))
 
-        flow_id = self.flow_id_generator()
+        flow_id = flow_id_generator()
         arp_xml_body = ODLConstants.FLOW_XML.format(hard_timeout=hard_timeout, idle_timeout=idle_timeout,
                                                     cookie=cookie, priority=priority, flow_id=flow_id,
                                                     table=table, output_action=output)
@@ -72,7 +73,7 @@ class OpenFlow:
     def create_traffic_forwarding(self, node_id, output, src_ip, dst_ip, table=0, hard_timeout=0, idle_timeout=0,
                                   cookie=1, priority=101):
         print("Create Data flow from switch {} on port {} with dst ip {}".format(node_id, output, dst_ip))
-        flow_id = self.flow_id_generator()
+        flow_id = flow_id_generator()
         flow_xml_body = ODLConstants.FLOW_XML.format(hard_timeout=hard_timeout, idle_timeout=idle_timeout,
                                                      cookie=cookie, priority=priority, flow_id=flow_id,
                                                      table=table, output_action=output)
@@ -102,7 +103,7 @@ class OpenFlow:
                                      cookie=1, priority=666):
 
         print("Create Data flow from switch {} on port {} with dst ip {}".format(node_id, output, dst_ip))
-        flow_id = self.flow_id_generator()
+        flow_id = flow_id_generator()
         flow_json_body = json.loads(ODLConstants.FLOW_JSON)
         # flow_json_body['flow-node-inventory:flow'][0]['flow-name']='json_test'
         flow_json_body['flow-node-inventory:flow'][0]['id'] = 10
@@ -127,13 +128,14 @@ class OpenFlow:
         print(f"Response: {self.http_put_request_json(ip_url, flow_json_body)}")
 
 
-# ------test
-a = OpenFlow()
-# url, body = a.create_arp_flow('openflow:3', 77, 1)
-# print(url, '\n', body)
-a.json_forwarding_flow_install('openflow:2', 77, '1.1.1.1/32', "2.2.2.2/32")
-a.create_traffic_forwarding('openflow:2', 77, '1.1.1.1/32', "10.10.0.10/32")
-# print(a.http_put_request_xml(url,body))
+def main():
+    # ------test
+    a = OpenFlow()
+    # url, body = a.create_arp_flow('openflow:3', 77, 1)
+    # print(url, '\n', body)
+    a.json_forwarding_flow_install('openflow:2', 77, '1.1.1.1/32', "2.2.2.2/32")
+    a.create_traffic_forwarding('openflow:2', 77, '1.1.1.1/32', "10.10.0.10/32")
+    # print(a.http_put_request_xml(url,body))
 
 
 """
@@ -160,3 +162,6 @@ a.create_traffic_forwarding('openflow:2', 77, '1.1.1.1/32', "10.10.0.10/32")
 </flow>
 
 """
+
+if __name__ == "__main__":
+    main()

@@ -1,7 +1,7 @@
+import logging
 from typing import List
 
-from openstack_internal.authenticate.authenticate import AuthenticateConnection
-from openstack_internal.nova.nova_details import Nova
+from templates.input_request import InputRequest
 from tosca.tosca_input import TOSCAInput
 from tosca.virtual_link import VirtualLink
 from tosca.vm_requirement import VMRequirement
@@ -9,29 +9,29 @@ from tosca.vm_requirement import VMRequirement
 
 class TOSCABuilder:
 
-    def __init__(self, request_id: str):
-        self.request_id = request_id
-        self.vm_requirements: List[VMRequirement] = []
-        self.v_links: List[VirtualLink] = []
-        self.nova = Nova(AuthenticateConnection().get_connection())
+    def __init__(self, input_request: InputRequest):
+        self.name = input_request.get_name()
+        self.service_template = input_request.get_service_template()
+        self.vm_requirements: List[VMRequirement] = self.service_template.vm_requirements
+        self.v_links: List[VirtualLink] = self.service_template.v_links
 
+    """
     def __create_test_server_requirements(self):
-        hss = VMRequirement(0, self.request_id+"-hss", self.nova.get_flavor_by_id("1"),
+        hss = VMRequirement(0, self.name + "-hss", self.nova.get_flavor_by_id("1"),
                             image_id="c761dd72-eba8-4b73-8f07-b6e575115bff",
                             network_id="9e373e2c-0372-4a06-81a1-bc1cb4c62b85", ip_address="10.11.1.21")
         self.vm_requirements.append(hss)
 
-        mme = VMRequirement(1, self.request_id+"-mme", self.nova.get_flavor_by_id("3"),
+        mme = VMRequirement(1, self.name + "-mme", self.nova.get_flavor_by_id("3"),
                             image_id="c82a2ad8-cb21-44c0-8daa-7bf8a03bf138",
                             network_id="9e373e2c-0372-4a06-81a1-bc1cb4c62b85", ip_address="10.11.1.22")
         self.vm_requirements.append(mme)
 
-        spgw = VMRequirement(2, self.request_id+"-spgw", self.nova.get_flavor_by_id("3"),
+        spgw = VMRequirement(2, self.name + "-spgw", self.nova.get_flavor_by_id("3"),
                              image_id="49bb635a-d8c2-4d28-b439-e7c7e1c2b275",
                              network_id="9e373e2c-0372-4a06-81a1-bc1cb4c62b85", ip_address="10.11.1.23")
         self.vm_requirements.append(spgw)
 
-        """
         spgw01 = VMRequirement(3, "spgw01", self.nova.get_flavor_by_id("4"), "0af72659-a5c0-40a3-8b55-0b398e6b94f2",
                                "9e373e2c-0372-4a06-81a1-bc1cb4c62b85", ip_address="10.11.1.24")
         self.vm_requirements.append(spgw01)
@@ -41,8 +41,8 @@ class TOSCABuilder:
         spgw03 = VMRequirement(5, "spgw03", self.nova.get_flavor_by_id("4"), "0af72659-a5c0-40a3-8b55-0b398e6b94f2",
                                "9e373e2c-0372-4a06-81a1-bc1cb4c62b85", ip_address="10.11.1.26")
         self.vm_requirements.append(spgw03)
-        """
         self.nova.close_connection()
+    """
 
     def __create_test_virtual_links(self):
         hss_mme = VirtualLink("hss-mme", 0, 1, 0, 1000, 30)
@@ -91,9 +91,10 @@ class TOSCABuilder:
         """
 
     def build_tosca(self) -> TOSCAInput:
-        self.__create_test_server_requirements()
-        self.__create_test_virtual_links()
-        tosca = TOSCAInput(self.request_id, self.vm_requirements, self.v_links)
+        logging.info("Build Tosca")
+        # self.__create_test_server_requirements()
+        # self.__create_test_virtual_links()
+        tosca = TOSCAInput(self.name, self.vm_requirements, self.v_links)
         tosca.build()
         print("no of v_links: {}".format(len(tosca.v_links)))
         print("no of VMs: {}".format(len(tosca.vm_requirements)))
@@ -107,7 +108,8 @@ class TOSCABuilder:
 
 
 def main():
-    builder = TOSCABuilder("hanif")
+    input_request = InputRequest("kn hanif")
+    builder = TOSCABuilder(input_request)
     builder.build_tosca()
 
 

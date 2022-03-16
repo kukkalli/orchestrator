@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from odl.odl_helper import ODLHelperFunctions
@@ -27,6 +28,21 @@ class TopologyBuilder:
     def build_topology(self) -> Topology:
         topology = Topology(self.topology_id, self.links, self.servers, self.switches)
         topology.build()
+        for link in topology.links:
+            to_print = "link {}->{}"
+            src = ""
+            dst = ""
+            if link.src_port_id is not None:
+                src = link.src_port_id
+            else:
+                src = link.src_node_id
+            if link.dst_port_id is not None:
+                dst = link.dst_port_id
+            else:
+                dst = link.dst_node_id
+            logging.debug(to_print.format(src, dst))
+            logging.debug("link id: {}".format(link.int_id))
+
         """
         print("no of links: {}".format(len(topology.links)))
         print("no of servers: {}".format(len(topology.servers)))
@@ -50,7 +66,7 @@ class TopologyBuilder:
     def hardcoded_links(self):
         # compute01 <--> switch03[port11]
         links_length = len(self.links)
-        print("links_length: {}".format(links_length))
+        logging.debug("links_length: {}".format(links_length))
         self.links.append(Link(_id="compute01-switch03", int_id=links_length,
                                dst_node_id=self.get_node_int_id("openflow:3"),
                                src_node_id=self.get_node_int_id("b755b8b1-363f-40dc-ba6e-8b55dd3a4767"),

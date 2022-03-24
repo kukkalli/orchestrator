@@ -15,4 +15,5 @@ chronicler~=0.3
 python-novaclient~=17.7.0
 flask~=2.0.3
 uwsgi~=2.0.20
-
+mysql-connector-python~=8.0.28
+ptvsd~=4.3.2

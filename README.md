@@ -41,3 +41,15 @@ chmod +x ~/.docker/cli-plugins/docker-compose
 sudo chown $USER /var/run/docker.sock
 docker compose version
 ```
+
+Place the ```create-docker.sh``` file on same level as the orchestrator directory.
+
+```
+hanif@kukkalli:~/PycharmProjects$ ll
+total 24
+drwxrwxr-x  5 hanif hanif 4096 Mär 10 14:53 ./
+drwxr-xr-x 20 hanif hanif 4096 Mär 15 15:39 ../
+-rwxrwxr-x  1 hanif hanif  371 Mär  1 19:49 create-docker.sh*
+drwxrwxr-x 18 hanif hanif 4096 Mär 22 12:19 orchestrator/
+```
+

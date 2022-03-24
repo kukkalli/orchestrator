@@ -1,5 +1,6 @@
 import logging
 import sys
+import time
 
 from flask import Flask, request, abort, jsonify
 
@@ -10,7 +11,10 @@ from templates.serviceprofiles import ServiceProfiles
 app = Flask(__name__)
 app.debug = True
 app.secret_key = '598-626-262'
-logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='orchestrator.log', filemode='w',
+                    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
+                    datefmt='%Y-%m-%d,%H:%M:%S', level=logging.DEBUG)
+log = logging.getLogger(__name__)
 
 
 @app.route("/hello", methods=['GET'])
@@ -30,9 +34,10 @@ def get_square():
 
 
 @app.route('/create-service-chain', methods=['POST'])
-def create_vm():
+def create_service_chain():
+    log.info(f"Create Service Chain Input Time: {time.time()}")
     params = request.json
-    logging.debug("Create Service Chain {}".format(params))
+    app.logger.debug(f"Create Service Chain {params}")
     bandwidth = 100
     max_link_delay = 100
     domain_name = "tu-chemnitz.de"
@@ -52,7 +57,7 @@ def create_vm():
         max_link_delay = params["max_link_delay"]
 
     input_request = InputRequest(params["name"], params["service_profile"], domain_name, bandwidth, max_link_delay)
-    service_chain = ServiceChain(input_request)
+    # service_chain = ServiceChain(input_request)
     # service_chain.create_service_chain()
     return jsonify({"service-creation": "success"})
     # service_chain.create_service_chain())
@@ -60,7 +65,7 @@ def create_vm():
 
 @app.route('/', methods=['GET'])
 def main():
-    logging.info("Main Method")
+    log.info("Main Method")
     return jsonify({'name': 'Hanif Kukkalli', 'dob': "1984-11-01"})
 
 

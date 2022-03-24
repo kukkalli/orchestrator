@@ -1,9 +1,14 @@
+import logging
+import time
+
 from templates.hss_template import HSSTemplate
 from templates.mme_template import MMETemplate
 from templates.service_profile_template import ServiceProfileTemplate
 from templates.spgw_template import SPGWTemplate
 from tosca.virtual_link import VirtualLink
 from tosca.vm_requirement import VMRequirement
+
+log = logging.getLogger(__name__)
 
 
 class FourGLTECore(ServiceProfileTemplate):
@@ -16,6 +21,7 @@ class FourGLTECore(ServiceProfileTemplate):
         self.__build()
 
     def __build(self):
+        log.info(f"Build FourGLTECore: {time.time()}")
         hss = VMRequirement(0, self.hss.vm_name, self.nova.get_flavor_by_id(self.hss.flavor),
                             image_id=self.hss.image_id, network_id=self.hss.network_id, ip_address=self.hss.ip_address)
         self.vm_requirements.append(hss)
@@ -38,4 +44,5 @@ class FourGLTECore(ServiceProfileTemplate):
         self.v_links.append(mme_spgw)
         spgw_mme = VirtualLink("spgw-mme", 3, 1, 2, self.bandwidth, 10)
         self.v_links.append(spgw_mme)
+        log.info(f"Built FourGLTECore: {time.time()}")
 

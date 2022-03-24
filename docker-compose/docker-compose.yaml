@@ -8,12 +8,13 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MARIADB_USER: "kn"
+      MARIADB_USER: "hanif"
       MARIADB_PASSWORD: "TUC-2018"
       MARIADB_ROOT_PASSWORD: "TUC-2018"
-      MARIADB_DATABASE: "kn"
+      MARIADB_DATABASE: "orchestrator"
     volumes:
       - ./db:/var/lib/mysql
+      - ./init_db/kn.sql:/docker-entrypoint-initdb.d/kn.sql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -21,11 +22,11 @@ services:
     hostname: kn-phpmyadmin
     depends_on: [mariadb]
     ports:
-      - "8080:80"
+      - "8000:80"
     environment:
       PMA_HOST: "kn-mariadb"
       PMA_PORT: "3306"
-      PMA_USER: "kn"
+      PMA_USER: "hanif"
       PMA_PASSWORD: "TUC-2018"
       MYSQL_ROOT_PASSWORD: "TUC-2018"
 
@@ -43,9 +44,15 @@ services:
     image: kukkalli/orchestrator:latest
     container_name: kn_orchestrator
     hostname: kn-orchestrator
-    depends_on: [mariadb, odl]
+    depends_on: [mariadb]
     ports:
       - "8080:80"
     environment:
       ODL_IP: "10.10.0.10"
-      OPENSTAcK_IP: "10.10.0.21"
+      OPENSTACK_IP: "10.10.0.21"
+      MARIADB_HOSTNAME: "kn-mariadb"
+      MARIADB_USERNAME: "hanif"
+      MARIADB_PASSWORD: "TUC-2018"
+      MARIADB_DATABASE: "orchestrator"
+    volumes:
+      - ./orchestrator.log:/app/orchestrator.log

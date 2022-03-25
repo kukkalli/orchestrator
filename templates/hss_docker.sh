@@ -10,6 +10,9 @@ ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAEBCbxZ
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAHLT0AS5MHwwJ6hX1Up5stfz361+IWA/8/MhZBH+mYA32h/Bp5hSWkQDXow4aDiHRlxVV1WLlHHup+GPBBA9XLTRwHP8gAjbP5EM4EVxR9EbDh5Hz13xcN0/n9J9rasefHS8UgTJUgRrWeNRCSAhkbNfDfSeQzk8NWlzhiwwCIUacKnzg== hanif@kukkalli
 EOF
 
+
+DOMAIN="tu-chemnitz.de"
+
 INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
 
 first=true
@@ -42,7 +45,7 @@ sudo netplan apply
 
 HOSTNAME=$(hostname -s)
 
-sudo hostnamectl set-hostname "$HOSTNAME".tu-chemnitz.de
+sudo hostnamectl set-hostname "$HOSTNAME"."$DOMAIN"
 
 FQDN_HOSTNAME=$(hostname)
 
@@ -95,23 +98,15 @@ sudo usermod -aG docker ubuntu
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 
-IP_ADDR=`ip address |grep ens|grep inet|awk '{print $2}'| awk -F / '{print $1}'`
-HOSTNAME=`hostname`
-FQDN_HOSTNAME=`hostname -f`
+IP_ADDR=$(ip address |grep ens|grep inet|awk '{print $2}'| awk -F / '{print $1}')
 
-echo $FQDN_HOSTNAME
+echo "$FQDN_HOSTNAME"
 
 sudo -- sh -c "echo '' >>  /etc/hosts"
 
 for i in $IP_ADDR; do
     sudo -- sh -c "echo $i $HOSTNAME $FQDN_HOSTNAME >> /etc/hosts"
 done
-
-# echo "$IP_ADDR $HOSTNAME" >> /etc/hosts
-
-# echo '' >>  /home/ubuntu/.ssh/authorized_keys
-
-# echo 'ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAHLT0AS5MHwwJ6hX1Up5stfz361+IWA/8/MhZBH+mYA32h/Bp5hSWkQDXow4aDiHRlxVV1WLlHHup+GPBBA9XLTRwHP8gAjbP5EM4EVxR9EbDh5Hz13xcN0/n9J9rasefHS8UgTJUgRrWeNRCSAhkbNfDfSeQzk8NWlzhiwwCIUacKnzg== hanif@kukkalli' >> /home/ubuntu/.ssh/authorized_keys
 
 docker login -u kukkalli -p c3360058-8abf-4091-b178-d3d94bc18636
 
@@ -121,10 +116,36 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 docker-compose --version
 
+su - ubuntu
+
+cd /home/ubuntu/ || exit
+
+git clone https://github.com/kukkalli/oai-docker-compose.git
+
+chown ubuntu:ubuntu -R oai-docker-compose
+
+cd oai-docker-compose/4g/hss/ || exit
+
+docker-compose up -d db_init
+
+docker-compose up -d cassandra_web
+
+export HSS_FQDN="$FQDN_HOSTNAME"
+
+echo "$HSS_FQDN"
+
+export REALM="$DOMAIN"
+
+echo "$REALM"
+
+docker-compose up -d oai_hss
+
+docker ps
+
+exit 0
 
 # sudo apt-get upgrade -y
 
 # sudo apt-get auto-remove -y
 # END
 
-exit 0

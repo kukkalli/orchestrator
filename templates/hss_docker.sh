@@ -21,7 +21,8 @@ sudo rm /etc/netplan/50-cloud-init.yaml
 sudo -- sh -c "echo 'network:' >> /etc/netplan/50-cloud-init.yaml"
 sudo -- sh -c "echo '    ethernets:' >> /etc/netplan/50-cloud-init.yaml"
 
-for i in "${INTERFACES[@]}";
+# shellcheck disable=SC2068
+for i in ${INTERFACES[@]};
 do
     if ${first}
     then
@@ -39,7 +40,7 @@ done
 
 sudo -- sh -c "echo '    version: 2' >> /etc/netplan/50-cloud-init.yaml"
 
-sudo -- sh -c "echo network: {config: disabled} >> /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg"
+sudo -- sh -c "echo 'network: {config: disabled}' >> /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg"
 
 sudo netplan apply
 
@@ -141,6 +142,8 @@ echo "$REALM"
 export HSS_HOSTNAME="$FQDN_HOSTNAME"
 
 echo "$HSS_HOSTNAME"
+
+sleep 5
 
 docker-compose up -d oai_hss
 

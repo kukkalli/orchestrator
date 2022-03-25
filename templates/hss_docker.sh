@@ -21,7 +21,7 @@ sudo rm /etc/netplan/50-cloud-init.yaml
 sudo -- sh -c "echo 'network:' >> /etc/netplan/50-cloud-init.yaml"
 sudo -- sh -c "echo '    ethernets:' >> /etc/netplan/50-cloud-init.yaml"
 
-for i in ${INTERFACES[@]};
+for i in "${INTERFACES[@]}";
 do
     if ${first}
     then
@@ -137,6 +137,10 @@ echo "$HSS_FQDN"
 export REALM="$DOMAIN"
 
 echo "$REALM"
+
+export HSS_HOSTNAME="$FQDN_HOSTNAME"
+
+echo "$HSS_HOSTNAME"
 
 docker-compose up -d oai_hss
 

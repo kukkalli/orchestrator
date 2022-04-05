@@ -49,6 +49,15 @@ CREATE TABLE `sc_parameters` (
     FOREIGN KEY (`service_uuid`) REFERENCES `service_chain`(`service_uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `cable_links` (
+    `link_id` INT NOT NULL,
+    `link_name` varchar(256) NOT NULL,
+    `src_node` varchar(256) NOT NULL,
+    `src_port` varchar(256) ,
+    `dst_node` varchar(256) NOT NULL,
+    `dst_port` varchar(256) ,
+    PRIMARY KEY (`link_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 --

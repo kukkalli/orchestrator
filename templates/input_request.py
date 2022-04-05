@@ -9,7 +9,7 @@ from templates.four_g_lte_core import FourGLTECore
 from templates.four_g_lte_core_rcc import FourGLTECoreRCC
 from templates.serviceprofiles import ServiceProfiles
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class InputRequest:
@@ -27,7 +27,7 @@ class InputRequest:
     def __add_service_chain(self):
         service_uuid = uuid.uuid4().hex
         try:
-            log.debug(f"generated UUID: {service_uuid}")
+            LOG.debug(f"generated UUID: {service_uuid}")
             values_tuple = (service_uuid, self.name, "hanif", "hanif")
             sql_query = """INSERT INTO `service_chain` (`service_uuid`, `service_name`, `start_date`, `end_date`,
              `created_on`, `created_by`, `updated_on`, `updated_by`)
@@ -35,15 +35,15 @@ class InputRequest:
             connection = self.mariadb.get_db_connection()
             cursor = connection.cursor(prepared=True)
             result = cursor.execute(sql_query, values_tuple)
-            log.debug(f"Result after execute: {result}")
+            LOG.debug(f"Result after execute: {result}")
             connection.commit()
-            log.debug("Data inserted successfully into service_chain table using the prepared statement")
+            LOG.debug("Data inserted successfully into service_chain table using the prepared statement")
             cursor.close()
         except database.Error as error:
-            log.exception(f"Insert Operation failed due to \n {error}", exc_info=True)
+            LOG.exception(f"Insert Operation failed due to \n {error}", exc_info=True)
         finally:
             self.mariadb.close_connection()
-            log.debug("MariaDB connection is closed")
+            LOG.debug("MariaDB connection is closed")
             self.__add_service_chain_values(service_uuid)
 
     def __add_service_chain_values(self, service_uuid):
@@ -51,7 +51,7 @@ class InputRequest:
             connection = self.mariadb.get_db_connection()
             if not self.domain_name:
                 parameter_id = uuid.uuid4().hex
-                log.debug(f"parameter_id UUID: {parameter_id}")
+                LOG.debug(f"parameter_id UUID: {parameter_id}")
                 values_tuple = (parameter_id, service_uuid, "domain_name", self.domain_name)
                 sql_query = """INSERT INTO `sc_parameters` (`parameter_id`, `service_uuid`, `key`, `value`)
                   VALUES (%s, %s, %s, %s)"""
@@ -59,7 +59,7 @@ class InputRequest:
                 cursor.execute(sql_query, values_tuple)
             if not self.bandwidth:
                 parameter_id = uuid.uuid4().hex
-                log.debug(f"parameter_id UUID: {parameter_id}")
+                LOG.debug(f"parameter_id UUID: {parameter_id}")
                 values_tuple = (parameter_id, service_uuid, "bandwidth", self.bandwidth)
                 sql_query = """INSERT INTO `sc_parameters` (`parameter_id`, `service_uuid`, `key`, `value`)
                   VALUES (%s, %s, %s, %s)"""
@@ -67,7 +67,7 @@ class InputRequest:
                 cursor.execute(sql_query, values_tuple)
             if not self.max_link_delay:
                 parameter_id = uuid.uuid4().hex
-                log.debug(f"parameter_id UUID: {parameter_id}")
+                LOG.debug(f"parameter_id UUID: {parameter_id}")
                 values_tuple = (parameter_id, service_uuid, "max_link_delay", self.max_link_delay)
                 sql_query = """INSERT INTO `sc_parameters` (`parameter_id`, `service_uuid`, `key`, `value`)
                   VALUES (%s, %s, %s, %s)"""
@@ -75,12 +75,12 @@ class InputRequest:
                 cursor.execute(sql_query, values_tuple)
 
             connection.commit()
-            log.debug("Data inserted successfully into sc_parameters table using the prepared statement")
+            LOG.debug("Data inserted successfully into sc_parameters table using the prepared statement")
         except database.Error as error:
-            log.exception(f"Insert Operation failed due to \n {error}", exc_info=True)
+            LOG.exception(f"Insert Operation failed due to \n {error}", exc_info=True)
         finally:
             self.mariadb.close_connection()
-            log.info("MySQL connection is closed")
+            LOG.info("MySQL connection is closed")
 
     def get_service_chains(self):
         try:
@@ -88,7 +88,7 @@ class InputRequest:
             connection = self.mariadb.get_db_connection()
 
         except database.Error as error:
-            log.error(f"Get Operation failed due to \n {error}")
+            LOG.error(f"Get Operation failed due to \n {error}")
         self.mariadb.close_connection()
 
     def get_name(self):
@@ -98,7 +98,7 @@ class InputRequest:
         return self.service_profile
 
     def get_service_template(self):
-        log.info(f"Fetch Service Profile Template: {time.time()}")
+        LOG.info(f"Fetch Service Profile Template: {time.time()}")
         if self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE:
             four_g_lte_core = FourGLTECore(self.name, self.domain_name, self.bandwidth)
             four_g_lte_core.nova.close_connection()
@@ -113,7 +113,7 @@ class InputRequest:
             return None
         else:
             abort(404)
-        log.info(f"Service Profile Template Fetched: {time.time()}")
+        LOG.info(f"Service Profile Template Fetched: {time.time()}")
 
     def get_domain_name(self):
         return self.domain_name

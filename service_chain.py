@@ -11,6 +11,8 @@ from templates.serviceprofiles import ServiceProfiles
 from topology.topology import Topology
 from tosca.tosca_input import TOSCAInput
 
+LOG = logging.getLogger(__name__)
+
 
 class ServiceChain:
 
@@ -83,9 +85,9 @@ class ServiceChain:
 def main():
     # topology_builder = TopologyBuilder("hanif")
     # tosca_builder = TOSCABuilder("hanif")
-    input_request: InputRequest = InputRequest("kn", "FOUR_G_LTE_CORE")
+    input_request: InputRequest = InputRequest("KN 1st test", "FOUR_G_LTE_CORE")
     execute = ServiceChain(input_request)
-    # execute.create_service_chain()
+    execute.create_service_chain()
     exit()
 
 

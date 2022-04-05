@@ -1,9 +1,13 @@
+import logging
+
 import chronicler as chronicler
 from gurobipy import GRB, Model, quicksum, GurobiError
 from topology.topology import Topology
 from tosca.tosca_input import TOSCAInput
 import sys
 import numpy as np
+
+LOG = logging.getLogger(__name__)
 
 
 class Optimize:
@@ -83,6 +87,7 @@ class Optimize:
     def add_server_flow_constraint(self, vm_placement, element, length, flow):
         serv = self.servers[element]
         for count in range(length):
+            print(f"")
             self.problem_statement.addConstr(
                 flow[count, serv.out_links.int_id] - flow[count, serv.in_links.int_id]
                 == vm_placement[self.v_links[count].src_node_id, element] - vm_placement[

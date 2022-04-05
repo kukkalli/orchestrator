@@ -1,3 +1,4 @@
+"""
 from keystoneauth1.identity import v3
 from keystoneauth1 import session
 from novaclient import client
@@ -15,21 +16,21 @@ class ConnectToNova:
         self.sess = session.Session(auth=self.auth)
         self.nova = client.Client(version='2',session=self.sess)
 
-
-    def show_network_name(self,item):
+    def show_network_name(self, item):
         for elm in item:
-            network_name=elm
+            network_name = elm
         return network_name
 
     def show_all_servers_detail(self):
         for item in self.nova.servers.list():
-            print('Server Name: ',item.name)
+            print('Server Name: ', item.name)
             print('Server ID: ', item.id)
-            print('Server Network Name: ',self.show_network_name(item.addresses))
-            print('Server IP: ',item.addresses[(self.show_network_name(item.addresses))][0].get('addr'))
-            print('Server MAC: ',item.addresses[(self.show_network_name(item.addresses))][0].get('OS-EXT-IPS-MAC:mac_addr'))
-            print('Server Compute Node: ',getattr(item, 'OS-EXT-SRV-ATTR:hypervisor_hostname'))
+            print('Server Network Name: ', self.show_network_name(item.addresses))
+            print('Server IP: ', item.addresses[(self.show_network_name(item.addresses))][0].get('addr'))
+            print('Server MAC: ', item.addresses[(self.show_network_name(item.addresses))][0].get('OS-EXT-IPS-MAC:mac_addr'))
+            print('Server Compute Node: ', getattr(item, 'OS-EXT-SRV-ATTR:hypervisor_hostname'))
             print('----------------------------------------------------')
+
     def show_server_info(self,server_id):
         for item in self.nova.servers.list():
             if item.id==server_id:
@@ -64,3 +65,4 @@ nova_client.show_all_servers_detail()
 #print(nova_client.show_server_mac('94df548c-46e8-49f5-b94a-ab2f9fd9ffcb'))
 
 
+"""

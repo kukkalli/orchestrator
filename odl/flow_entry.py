@@ -17,7 +17,6 @@ class FlowEntry(object):
         self.match = None
         if "match" in flow_entry:
             self.match = FlowMatch(flow_entry["match"])
-            print(f"FlowID{self.id} match:{self.match.to_string()}")
         self.cookie_mask = flow_entry["cookie_mask"]
         self.cookie = flow_entry["cookie"]
         self.flags = flow_entry["flags"]

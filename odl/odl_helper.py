@@ -15,6 +15,8 @@ from topology.switch_port import SwitchPort
 from topology.topology import Topology
 from odl.inventory_nodes import InventoryNodes
 
+LOG = logging.getLogger(__name__)
+
 
 def get_src_dst(switches: List[Switch], node_id: str) -> int:
     for switch in switches:
@@ -53,9 +55,9 @@ class ODLHelperFunctions:
 
     def get_topology_switches(self) -> List[Switch]:
         topology = self.get_topology_info()
-        logging.debug("topology: {}".format(topology))
+        LOG.debug("topology: {}".format(topology))
         nodes = topology["network-topology"]["topology"][0]["node"]
-        # print("nodes: {}".format(nodes))
+        print(f"nodes: {nodes}")
         switch_list: List[Switch] = []
         n = 0
         for node in nodes:
@@ -102,9 +104,9 @@ def main():
     flow_table = node.get_flow_table_by_id(0)
     print(f'Flow Table: {flow_table.id}')
     # flow = flow_table.get_flow_by_src_ip_dest_ip("", "10.11.1.213/32")
-    flow = flow_table.get_flow_by_src_ip_dest_ip("10.11.1.213/32", "10.11.1.0/24")
+    flow = flow_table.get_flow_by_src_ip_dest_ip("1.1.1.1/8", "2.2.2.2/8")
     print(f'Flow: {flow.id}')
-    flow_by_id = flow_table.get_flow_by_id("#UF$TABLE*0-63")
+    # flow_by_id = flow_table.get_flow_by_id("#UF$TABLE*0-63")
     print(f'Flow By Id: #UF$TABLE*0-63: {flow.to_string()}')
     flow_statistics = flow.flow_statistics
     print(f'Flow Statistics: {flow_statistics.to_string()}')

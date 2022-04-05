@@ -117,8 +117,8 @@ for i in $IP_ADDR; do
     fi
 done
 
-export HSS_MANAGEMENT_IP="$MANAGEMENT_IP"
-export HSS_FABRIC_IP="$FABRIC_IP"
+export MME_MANAGEMENT_IP="$MANAGEMENT_IP"
+export MME_FABRIC_IP="$FABRIC_IP"
 
 docker login -u kukkalli -p c3360058-8abf-4091-b178-d3d94bc18636
 

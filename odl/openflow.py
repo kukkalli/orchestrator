@@ -6,7 +6,6 @@ from xml.etree import ElementTree
 from configuration_constants import ConfigurationConstants
 from odl.odl_constants import ODLConstants
 import time
-import pprint
 
 
 def flow_id_generator():
@@ -135,33 +134,7 @@ def main():
     # print(url, '\n', body)
     a.json_forwarding_flow_install('openflow:2', 77, '1.1.1.1/32', "2.2.2.2/32")
     a.create_traffic_forwarding('openflow:2', 77, '1.1.1.1/32', "10.10.0.10/32")
-    # print(a.http_put_request_xml(url,body))
 
-
-"""
-<flow xmlns="urn:opendaylight:flow:inventory">
-    <hard-timeout>0</hard-timeout>
-    <match><ethernet-match><ethernet-type><type>2048</type></ethernet-type></ethernet-match><ipv4-source>1.1.1.1/32</ipv4-source><ipv4-destination>10.10.0.10/32</ipv4-destination></match><idle-timeout>0</idle-timeout>
-    <cookie>1</cookie>
-    <priority>101</priority>
-    <id>1641468195592085</id>
-    <table_id>0</table_id>
-    <instructions>
-        <instruction>
-            <order>0</order>
-            <apply-actions>
-                <action>
-                    <output-action>
-                        <output-node-connector>77</output-node-connector>
-                    </output-action>
-                    <order>0</order>
-                </action>
-            </apply-actions>
-        </instruction>
-    </instructions>
-</flow>
-
-"""
 
 if __name__ == "__main__":
     main()

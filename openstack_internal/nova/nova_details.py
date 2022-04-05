@@ -16,11 +16,10 @@ class Nova:
 
     def create_virtual_machine(self, vm_name, image=None, flavor=None, auto_ip=True, ips=None, ip_pool=None,
                                wait=False, network=None, key_pair=None, security_groups=None,
-                               min_count=1, max_count=1):
+                               min_count=1):
         return self.__connection.create_server(vm_name, image=image, flavor=flavor, auto_ip=auto_ip, ips=ips,
                                                ip_pool=ip_pool, wait=wait, network=network, key_name=key_pair,
-                                               security_groups=security_groups, min_count=min_count,
-                                               max_count=max_count)
+                                               security_groups=security_groups, min_count=min_count)
 
     def get_flavors_list(self):
         return self.__connection.compute.flavors()

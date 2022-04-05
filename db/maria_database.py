@@ -2,22 +2,22 @@ import logging
 import os
 import mysql.connector as database
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class MariaDB:
 
     def __init__(self):
-        self.hostname = os.environ["MARIADB_HOSTNAME"]
-        self.username = os.environ["MARIADB_USERNAME"]
-        self.password = os.environ["MARIADB_PASSWORD"]
-        self.database = os.environ["MARIADB_DATABASE"]
-        log.debug(f"MariaDB username: {self.username}, hostname: {self.hostname}, database: {self.database}")
+        self.hostname = "10.0.1.10"  # os.environ["MARIADB_HOSTNAME"]
+        self.username = "hanif"  # os.environ["MARIADB_USERNAME"]
+        self.password = "TUC-2018"  # os.environ["MARIADB_PASSWORD"]
+        self.database = "orchestrator"  # os.environ["MARIADB_DATABASE"]
+        LOG.debug(f"MariaDB username: {self.username}, hostname: {self.hostname}, database: {self.database}")
         self.connection = None
 
     def get_db_connection(self):
         try:
-            log.debug(f"Get DB Connection.")
+            LOG.debug(f"Get DB Connection.")
             self.connection = database.connect(
                 user=self.username,
                 password=self.password,
@@ -26,7 +26,7 @@ class MariaDB:
             )
             return self.connection
         except database.Error as error:
-            log.exception(f"Connection failed:\n{error}", exc_info=True)
+            LOG.exception(f"Connection failed:\n{error}", exc_info=True)
 
     def close_connection(self):
         self.connection.close()
@@ -34,9 +34,9 @@ class MariaDB:
 
 def main():
     mariadb = MariaDB()
-    log.debug(f"username: {mariadb.username}, password: {mariadb.password}")
+    LOG.debug(f"username: {mariadb.username}, password: {mariadb.password}")
     connection = mariadb.get_db_connection()
-    log.debug(f"connection: {connection.is_connected()}, connection: {connection.close()}")
+    LOG.debug(f"connection: {connection.is_connected()}, connection: {connection.close()}")
 
 
 if __name__ == "__main__":

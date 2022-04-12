@@ -10,11 +10,11 @@ RUN pip install --upgrade pip
 
 # RUN openssl ecparam -name sect571r1 -genkey -noout -out kukkalli.com.pem
 # RUN openssl req -new -sha256 -key kukkalli.com.pem -out kukkalli.com.csr
-COPY orchestrator/docker/kukkalli.com.csr /etc/nginx/ssl/kukkalli.com.csr
+COPY docker/kukkalli.com.csr /etc/nginx/ssl/kukkalli.com.csr
 
 
 # Install requirements
-COPY orchestrator/requirements.txt /tmp/requirements.txt
+COPY app/requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 RUN useradd -ms /bin/bash hanif
@@ -30,17 +30,17 @@ EXPOSE 443
 # RUN rm /etc/nginx/conf.d/default.conf
 
 # Copy the base uWSGI ini file to enable default dynamic uwsgi process number
-COPY orchestrator/docker/uwsgi.ini /etc/uwsgi/
+COPY docker/uwsgi.ini /etc/uwsgi/
 
 
 # Install Supervisord
 RUN apt update && apt install -y supervisor \
 && rm -rf /var/lib/apt/lists/*
 # Custom Supervisord config
-COPY orchestrator/docker/supervisord-debian.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/supervisord-debian.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Copy stop-supervisor.sh to kill the supervisor and substasks on app failure
-COPY orchestrator/docker/stop-supervisor.sh /etc/supervisor/stop-supervisor.sh
+COPY docker/stop-supervisor.sh /etc/supervisor/stop-supervisor.sh
 RUN chmod +x /etc/supervisor/stop-supervisor.sh
 
 # Which uWSGI .ini file should be used, to make it customizable
@@ -77,7 +77,7 @@ ENV STATIC_PATH /app/static
 ENV STATIC_INDEX 0
 
 # Copy start.sh script that will check for a /app/prestart.sh script and run it before starting the app
-COPY orchestrator/docker/start.sh /start.sh
+COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 
 # Copy the entrypoint that will generate Nginx additional configs
@@ -87,7 +87,7 @@ RUN chmod +x /start.sh
 # ENTRYPOINT ["/entrypoint.sh"]
 
 # Add demo app
-COPY /orchestrator /app
+COPY /app /app
 WORKDIR /app
 
 # Make /app/* available to be imported by Python globally to better support several use cases like Alembic migrations.
@@ -97,7 +97,7 @@ ENV PYTHONPATH=/app
 # Move the base entrypoint to reuse it
 # COPY orchestrator/docker/uwsgi-nginx-entrypoint.sh /uwsgi-nginx-entrypoint.sh
 # Copy the entrypoint that will generate Nginx additional configs
-COPY orchestrator/docker/entrypoint.sh /entrypoint.sh
+COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

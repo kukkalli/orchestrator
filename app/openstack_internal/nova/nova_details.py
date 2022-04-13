@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 
@@ -5,6 +6,8 @@ from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.nova.flavor import Flavor
 from openstack_internal.nova.hypervisor_details import OSHypervisor
 from openstack.connection import Connection
+
+LOG = logging.getLogger(__name__)
 
 
 class Nova:

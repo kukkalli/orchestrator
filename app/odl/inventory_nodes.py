@@ -1,7 +1,10 @@
+import logging
 from typing import List, Dict
 
 from odl.inventory_node import InventoryNode
 from utilities.list_utility import add_elements_with_type
+
+LOG = logging.getLogger(__name__)
 
 
 class InventoryNodes(object):

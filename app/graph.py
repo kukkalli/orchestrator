@@ -1,4 +1,7 @@
+import logging
 from collections import defaultdict
+
+LOG = logging.getLogger(__name__)
 
 
 class Graph:

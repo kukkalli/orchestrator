@@ -1,3 +1,8 @@
+import logging
+
+LOG = logging.getLogger(__name__)
+
+
 class FlowTableStatistics(object):
     def __init__(self, flow_table_statistics):
         self.__json = flow_table_statistics

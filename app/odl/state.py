@@ -1,3 +1,8 @@
+import logging
+
+LOG = logging.getLogger(__name__)
+
+
 class State(object):
     def __init__(self, state):
         self.__json = state

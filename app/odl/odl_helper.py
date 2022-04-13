@@ -57,11 +57,18 @@ class ODLHelperFunctions:
         topology = self.get_topology_info()
         LOG.debug("topology: {}".format(topology))
         nodes = topology["network-topology"]["topology"][0]["node"]
-        print(f"nodes: {nodes}")
+        # print(f"nodes:\n{json.dumps(nodes, indent=4, sort_keys=True)}")
+        LOG.debug(f"nodes:\n{json.dumps(nodes, indent=4, sort_keys=True)}")
         switch_list: List[Switch] = []
         n = 0
         for node in nodes:
-            switch = Switch(node['node-id'], n)
+            node_id = node['node-id']
+            switch_name_split = node_id.split(":")
+            # print(f"switch_name_split: {switch_name_split}")
+            LOG.debug(f"switch_name_split: {switch_name_split}")
+            switch = Switch(n, node['node-id'], "switch"+switch_name_split[1])
+            # print(f"switch: {switch.name}")
+            LOG.debug(f"switch: {switch.name}")
             for port in node['termination-point']:
                 if "LOCAL" not in port['tp-id']:
                     switch.add_port(self.get_switch_port_data(switch.id, port['tp-id']))
@@ -99,6 +106,9 @@ class ODLHelperFunctions:
 
 def main():
     odl = ODLHelperFunctions()
+    switches = odl.get_topology_switches()
+    print(f'switches: {switches}')
+    """
     node = odl.get_nodes_from_inventory().get_node_by_id("openflow:2")
     print(f'Node: {node.id}')
     flow_table = node.get_flow_table_by_id(0)
@@ -107,7 +117,7 @@ def main():
     flow = flow_table.get_flow_by_src_ip_dest_ip("1.1.1.1/8", "2.2.2.2/8")
     print(f'Flow: {flow.id}')
     # flow_by_id = flow_table.get_flow_by_id("#UF$TABLE*0-63")
-    print(f'Flow By Id: #UF$TABLE*0-63: {flow.to_string()}')
+    print(f'Flow By Id: {flow.id}: {flow.to_string()}')
     flow_statistics = flow.flow_statistics
     print(f'Flow Statistics: {flow_statistics.to_string()}')
     packet_count = flow_statistics.packet_count
@@ -117,6 +127,7 @@ def main():
     # for link in topology.links:
     #    print("link {}".format(link.id))
     #    print(odl.get_switch_port_data('openflow:4', 'openflow:4:10').port_stats.receive_errors)
+    """
 
 
 if __name__ == "__main__":

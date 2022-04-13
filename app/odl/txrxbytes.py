@@ -1,3 +1,8 @@
+import logging
+
+LOG = logging.getLogger(__name__)
+
+
 class TxRxBytes(object):
     def __init__(self, _bytes):
         self.__json = _bytes

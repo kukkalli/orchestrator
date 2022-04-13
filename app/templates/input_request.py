@@ -1,4 +1,5 @@
 import logging
+import re
 import time
 import uuid
 import mysql.connector as database
@@ -16,7 +17,11 @@ class InputRequest:
 
     def __init__(self, name: str, service_profile: str, domain_name: str = "tu-chemnitz.de", bandwidth: int = 100,
                  max_link_delay: int = 100):
-        self.name = name.replace(" ", "-").lower()
+        self.name = name
+        prefix = re.sub('[^a-zA-Z0-9 \n\.]', '', name)
+        prefix = prefix.replace(" ", "-").lower()
+        self.hostname_prefix = (prefix[:20]) if len(prefix) > 20 else prefix
+        self.service_uuid = uuid.uuid4().hex
         self.domain_name = domain_name
         self.service_profile: ServiceProfiles = ServiceProfiles(service_profile)
         self.bandwidth = bandwidth
@@ -25,10 +30,10 @@ class InputRequest:
         self.__add_service_chain()
 
     def __add_service_chain(self):
-        service_uuid = uuid.uuid4().hex
+
         try:
-            LOG.debug(f"generated UUID: {service_uuid}")
-            values_tuple = (service_uuid, self.name, "hanif", "hanif")
+            LOG.debug(f"generated UUID: {self.service_uuid}")
+            values_tuple = (self.service_uuid, self.name, "hanif", "hanif")
             sql_query = """INSERT INTO `service_chain` (`service_uuid`, `service_name`, `start_date`, `end_date`,
              `created_on`, `created_by`, `updated_on`, `updated_by`)
               VALUES (%s, %s, NOW(), NOW(), NOW(), %s, NOW(), %s)"""
@@ -44,31 +49,31 @@ class InputRequest:
         finally:
             self.mariadb.close_connection()
             LOG.debug("MariaDB connection is closed")
-            self.__add_service_chain_values(service_uuid)
+            self.__add_service_chain_values()
 
-    def __add_service_chain_values(self, service_uuid):
+    def __add_service_chain_values(self):
         try:
             connection = self.mariadb.get_db_connection()
-            if not self.domain_name:
+            if len(self.domain_name) > 0:
                 parameter_id = uuid.uuid4().hex
                 LOG.debug(f"parameter_id UUID: {parameter_id}")
-                values_tuple = (parameter_id, service_uuid, "domain_name", self.domain_name)
+                values_tuple = (parameter_id, self.service_uuid, "domain_name", self.domain_name)
                 sql_query = """INSERT INTO `sc_parameters` (`parameter_id`, `service_uuid`, `key`, `value`)
                   VALUES (%s, %s, %s, %s)"""
                 cursor = connection.cursor(prepared=True)
                 cursor.execute(sql_query, values_tuple)
-            if not self.bandwidth:
+            if self.bandwidth > 0:
                 parameter_id = uuid.uuid4().hex
                 LOG.debug(f"parameter_id UUID: {parameter_id}")
-                values_tuple = (parameter_id, service_uuid, "bandwidth", self.bandwidth)
+                values_tuple = (parameter_id, self.service_uuid, "bandwidth", self.bandwidth)
                 sql_query = """INSERT INTO `sc_parameters` (`parameter_id`, `service_uuid`, `key`, `value`)
                   VALUES (%s, %s, %s, %s)"""
                 cursor = connection.cursor(prepared=True)
                 cursor.execute(sql_query, values_tuple)
-            if not self.max_link_delay:
+            if self.max_link_delay > 0:
                 parameter_id = uuid.uuid4().hex
                 LOG.debug(f"parameter_id UUID: {parameter_id}")
-                values_tuple = (parameter_id, service_uuid, "max_link_delay", self.max_link_delay)
+                values_tuple = (parameter_id, self.service_uuid, "max_link_delay", self.max_link_delay)
                 sql_query = """INSERT INTO `sc_parameters` (`parameter_id`, `service_uuid`, `key`, `value`)
                   VALUES (%s, %s, %s, %s)"""
                 cursor = connection.cursor(prepared=True)
@@ -91,7 +96,7 @@ class InputRequest:
             LOG.error(f"Get Operation failed due to \n {error}")
         self.mariadb.close_connection()
 
-    def get_name(self):
+    def get_service_chain_name(self):
         return self.name
 
     def get_service_profile(self):
@@ -100,11 +105,11 @@ class InputRequest:
     def get_service_template(self):
         LOG.info(f"Fetch Service Profile Template: {time.time()}")
         if self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE:
-            four_g_lte_core = FourGLTECore(self.name, self.domain_name, self.bandwidth)
+            four_g_lte_core = FourGLTECore(self.service_uuid, self.domain_name, self.bandwidth)
             four_g_lte_core.nova.close_connection()
             return four_g_lte_core
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_BBU:
-            four_g_lte_core_rcc = FourGLTECoreRCC(self.name, self.domain_name, self.bandwidth)
+            four_g_lte_core_rcc = FourGLTECoreRCC(self.service_uuid, self.domain_name, self.bandwidth)
             four_g_lte_core_rcc.nova.close_connection()
             return four_g_lte_core_rcc
         elif self.service_profile == ServiceProfiles.FIVE_G_CORE:
@@ -126,8 +131,9 @@ class InputRequest:
 
 
 def main():
-    input_request = InputRequest("Hanif testinG kn", "FOUR_G_LTE_CORE", "", 150, 10)
-    print(f"name: {input_request.get_name()}, service_profile: {input_request.get_service_profile()}", )
+    input_request = InputRequest(name="Hanif testing orchestrator", service_profile="FOUR_G_LTE_CORE", bandwidth=150,
+                                 max_link_delay=200)
+    print(f"name: {input_request.get_service_chain_name()}, service_profile: {input_request.get_service_profile()}", )
     print(f'service template: {input_request.get_service_template()}')
 
 

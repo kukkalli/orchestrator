@@ -1,5 +1,9 @@
+import logging
+
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.clients.clients import Clients
+
+LOG = logging.getLogger(__name__)
 
 
 class NovaClient:

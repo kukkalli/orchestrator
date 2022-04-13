@@ -1,5 +1,9 @@
+import logging
+
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack.connection import Connection
+
+LOG = logging.getLogger(__name__)
 
 
 class Project:

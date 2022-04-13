@@ -1,5 +1,9 @@
+import logging
+
 from odl.node_connector_statistics import NodeConnectorStatistics
 from odl.state import State
+
+LOG = logging.getLogger(__name__)
 
 
 class NodeConnector(object):

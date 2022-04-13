@@ -1,3 +1,8 @@
+import logging
+
+LOG = logging.getLogger(__name__)
+
+
 def extract_mac(obj, _id):
     for item in obj["ports"]:
         if item['id'] == _id:

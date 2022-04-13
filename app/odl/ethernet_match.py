@@ -1,3 +1,8 @@
+import logging
+
+LOG = logging.getLogger(__name__)
+
+
 class EthernetMatch(object):
     def __init__(self, ethernet_match):
         self.__json = ethernet_match

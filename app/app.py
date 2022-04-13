@@ -1,25 +1,41 @@
 import logging
 import sys
 import time
+from logging.handlers import RotatingFileHandler
 
 from flask import Flask, request, abort, jsonify
 
+from service_chain import ServiceChain
 from templates.input_request import InputRequest
 from templates.serviceprofiles import ServiceProfiles
 
 app = Flask(__name__)
 app.debug = True
-app.secret_key = '598-626-262'
-logging.basicConfig(filename='orchestrator.log', filemode='w',
-                    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
-                    datefmt='%Y-%m-%d,%H:%M:%S', level=logging.DEBUG)
-log = logging.getLogger(__name__)
+LOG_FORMATTER = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(funcName)s - (%(lineno)d) - %(message)s')
+LOG_FILE = "./logs/orchestrator.log"
+LOG_HANDLER = RotatingFileHandler(LOG_FILE, mode='a', maxBytes=1024*1024,
+                                  backupCount=9, encoding=None, delay=False)
+LOG_HANDLER.setFormatter(LOG_FORMATTER)
+LOG_HANDLER.setLevel(logging.DEBUG)
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(name)s - %(funcName)s - (%(lineno)d) - %(message)s",
+    datefmt="%y-%m-%d %H:%M:%S",
+    handlers=[
+        LOG_HANDLER
+    ]
+)
+
+LOG = logging.getLogger(__name__)
 
 
 @app.route("/hello", methods=['GET'])
 def hello():
+    LOG.info(f"Calling Hello at Time: {time.time()}")
     version = "{}.{}".format(sys.version_info.major, sys.version_info.minor)
     message = "Hello World from Flask in a uWSGI Nginx Docker container with Python {} (default)".format(version)
+    LOG.info(f"Returning Message: '{message}' at Time: {time.time()}")
     return message
 
 
@@ -34,7 +50,7 @@ def get_square():
 
 @app.route('/create-service-chain', methods=['POST'])
 def create_service_chain():
-    log.info(f"Create Service Chain Input Time: {time.time()}")
+    LOG.info(f"Create Service Chain Input Time: {time.time()}")
     params = request.json
     app.logger.debug(f"Create Service Chain {params}")
     bandwidth = 100
@@ -56,7 +72,7 @@ def create_service_chain():
         max_link_delay = params["max_link_delay"]
 
     input_request = InputRequest(params["name"], params["service_profile"], domain_name, bandwidth, max_link_delay)
-    # service_chain = ServiceChain(input_request)
+    service_chain = ServiceChain(input_request)
     # service_chain.create_service_chain()
     return jsonify({"service-creation": "success"})
     # service_chain.create_service_chain())
@@ -64,7 +80,7 @@ def create_service_chain():
 
 @app.route('/', methods=['GET'])
 def main():
-    log.info("Main Method")
+    LOG.info("Main Method")
     return jsonify({'name': 'Hanif Kukkalli', 'dob': "1984-11-01"})
 
 

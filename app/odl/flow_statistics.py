@@ -1,4 +1,8 @@
+import logging
+
 from odl.duration import Duration
+
+LOG = logging.getLogger(__name__)
 
 
 class FlowStatistics(object):

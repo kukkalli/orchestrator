@@ -1,8 +1,0 @@
-2022-03-23,20:38:08 - INFO - app - 1648067888.839424
-2022-03-23,20:38:08 - DEBUG - app - Create Service Chain {'name': 'test001 service chain', 'domain_name': 'tu-chemnitz.de', 'service_profile': 'FOUR_G_LTE_CORE', 'bandwidth': '1000', 'max_link_delay': '100'}
-2022-03-23,20:38:08 - DEBUG - db.maria_database - MariaDB username: hanif, password: TUC-2018, database: orchestrator
-2022-03-23,20:38:08 - DEBUG - templates.input_request - generated UUID: 6f64a179411d4be4b112b229c503bf5e
-2022-03-23,20:38:08 - DEBUG - db.maria_database - Get DB Connection.
-2022-03-23,20:38:08 - DEBUG - templates.input_request - Result after execute: None
-2022-03-23,20:38:08 - DEBUG - templates.input_request - Data inserted successfully into service_chain table using the prepared statement
-2022-03-23,20:38:08 - DEBUG - templates.input_request - MariaDB connection is closed

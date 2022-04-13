@@ -1,3 +1,5 @@
+import logging
+
 from configuration_constants import ConfigurationConstants
 from openstack_internal.openstack_constants import OpenStackConstants
 from openstack import connect
@@ -5,12 +7,13 @@ from keystoneauth1.identity.v3 import Password
 from keystoneauth1.session import Session
 from openstack.connection import Connection
 
-'''
-Authentication and provide the OpenStack Connection object
-'''
+LOG = logging.getLogger(__name__)
 
 
 class AuthenticateConnection:
+    """
+    Authentication and provide the OpenStack Connection object
+    """
 
     def __init__(self):
         self.__connection: Connection = connect(auth_url=OpenStackConstants.KEYSTONE_URL,

@@ -1,4 +1,7 @@
-import requests  # library should be installed
+import logging
+
+# library should be installed
+import requests
 from requests.auth import HTTPBasicAuth
 import json
 import xml.etree.ElementTree as ET
@@ -6,6 +9,8 @@ from xml.etree import ElementTree
 from configuration_constants import ConfigurationConstants
 from odl.odl_constants import ODLConstants
 import time
+
+LOG = logging.getLogger(__name__)
 
 
 def flow_id_generator():
@@ -99,7 +104,7 @@ class OpenFlow:
         print(f"Response: {self.http_put_request_xml(ip_url, xml_body)}")
 
     def json_forwarding_flow_install(self, node_id, output, src_ip, dst_ip, table=0, hard_timeout=0, idle_timeout=0,
-                                     cookie=1, priority=666):
+                                     cookie=1, priority=101):
 
         print("Create Data flow from switch {} on port {} with dst ip {}".format(node_id, output, dst_ip))
         flow_id = flow_id_generator()
@@ -132,8 +137,8 @@ def main():
     a = OpenFlow()
     # url, body = a.create_arp_flow('openflow:3', 77, 1)
     # print(url, '\n', body)
-    a.json_forwarding_flow_install('openflow:2', 77, '1.1.1.1/32', "2.2.2.2/32")
-    a.create_traffic_forwarding('openflow:2', 77, '1.1.1.1/32', "10.10.0.10/32")
+    a.json_forwarding_flow_install(node_id='openflow:2', output=77, src_ip='1.1.1.1/32', dst_ip="2.2.2.2/32")
+    a.create_traffic_forwarding(node_id='openflow:2', output=77, src_ip='1.1.1.1/32', dst_ip="10.10.0.10/32")
 
 
 if __name__ == "__main__":

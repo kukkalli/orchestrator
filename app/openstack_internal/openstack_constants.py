@@ -1,4 +1,8 @@
+import logging
+
 from configuration_constants import ConfigurationConstants
+
+LOG = logging.getLogger(__name__)
 
 
 class OpenStackConstants(object):

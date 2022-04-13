@@ -6,7 +6,7 @@ from templates.rcc_template import RCCTemplate
 from tosca.virtual_link import VirtualLink
 from tosca.vm_requirement import VMRequirement
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class FourGLTECoreRCC(FourGLTECore):
@@ -17,7 +17,7 @@ class FourGLTECoreRCC(FourGLTECore):
         self.__build()
 
     def __build(self):
-        log.info(f"Build FourGLTECoreRCC: {time.time()}")
+        LOG.info(f"Build FourGLTECoreRCC: {time.time()}")
         rcc = VMRequirement(3, self.rcc.vm_name, self.nova.get_flavor_by_id(self.rcc.flavor),
                             image_id=self.rcc.image_id, network_id=self.rcc.network_id, ip_address=self.rcc.ip_address)
         self.vm_requirements.append(rcc)
@@ -31,5 +31,5 @@ class FourGLTECoreRCC(FourGLTECore):
         self.v_links.append(spgw_rcc)
         rcc_spgw = VirtualLink("rcc-spgw", 6, 2, 1, self.bandwidth, 10)
         self.v_links.append(rcc_spgw)
-        log.info(f"Built FourGLTECoreRCC: {time.time()}")
+        LOG.info(f"Built FourGLTECoreRCC: {time.time()}")
 

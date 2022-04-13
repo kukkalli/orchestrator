@@ -1,5 +1,9 @@
+import logging
+
 import networkx as nx
 import matplotlib.pyplot as plt
+
+LOG = logging.getLogger(__name__)
 
 
 def show_graph(g, pos):

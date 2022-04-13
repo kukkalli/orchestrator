@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import logging
 import sys
 
 import numpy as np
@@ -9,6 +10,8 @@ import numpy as np
 from gurobipy import GRB, Model, quicksum
 
 from optimization import vm_prp_io
+
+LOG = logging.getLogger(__name__)
 
 
 def build_ILP(nodes, edges, VMs, vLinks):

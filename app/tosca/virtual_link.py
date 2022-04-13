@@ -1,6 +1,9 @@
+import logging
 from typing import List
 
 from topology.link import Link
+
+LOG = logging.getLogger(__name__)
 
 
 class VirtualLink:

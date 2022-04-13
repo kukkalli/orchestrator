@@ -1,9 +1,12 @@
+import logging
 from typing import List
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.nova.nova_details import Nova
 from tosca.virtual_link import VirtualLink
 from tosca.vm_requirement import VMRequirement
+
+LOG = logging.getLogger(__name__)
 
 
 class ServiceProfileTemplate:

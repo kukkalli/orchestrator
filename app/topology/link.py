@@ -1,3 +1,8 @@
+import logging
+
+LOG = logging.getLogger(__name__)
+
+
 class Link:
 
     def __init__(self, _id, int_id: int, dst_node_id: int, src_node_id: int, dst_port_id: str = None,

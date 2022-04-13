@@ -1,5 +1,9 @@
+import logging
 from typing import List
+
 from utilities.list_utility import add_elements
+
+LOG = logging.getLogger(__name__)
 
 
 class SwitchFeatures(object):

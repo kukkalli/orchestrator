@@ -1,3 +1,8 @@
+import logging
+
+LOG = logging.getLogger(__name__)
+
+
 class ConfigurationConstants(object):
     # OpenDayLight Constants
     ODL_URL = "http://10.10.0.10:8181"

@@ -1,13 +1,16 @@
+import logging
 from typing import List, Dict
 
 from topology.node import Node
 from topology.switch_port import SwitchPort
 
+LOG = logging.getLogger(__name__)
+
 
 class Switch(Node):
 
-    def __init__(self, _id, int_id: int):
-        super().__init__(_id, int_id)
+    def __init__(self, int_id: int, _id: str, name: str):
+        super().__init__(int_id, _id, name)
 
         self.ports: List[SwitchPort] = []
         self.ports_dict: Dict[str, SwitchPort] = {}

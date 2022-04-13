@@ -1,6 +1,9 @@
+import logging
 from typing import List
 
 from utilities.list_utility import add_elements_with_type
+
+LOG = logging.getLogger(__name__)
 
 
 class FlowInstruction(object):

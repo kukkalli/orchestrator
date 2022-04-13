@@ -6,6 +6,8 @@ from tosca.tosca_input import TOSCAInput
 from tosca.virtual_link import VirtualLink
 from tosca.vm_requirement import VMRequirement
 
+LOG = logging.getLogger(__name__)
+
 
 class TOSCABuilder:
 
@@ -42,7 +44,6 @@ class TOSCABuilder:
                                "9e373e2c-0372-4a06-81a1-bc1cb4c62b85", ip_address="10.11.1.26")
         self.vm_requirements.append(spgw03)
         self.nova.close_connection()
-    """
 
     def __create_test_virtual_links(self):
         hss_mme = VirtualLink("hss-mme", 0, 1, 0, 1000, 30)
@@ -54,8 +55,9 @@ class TOSCABuilder:
         self.v_links.append(mme_spgw)
         spgw_mme = VirtualLink("spgw-mme", 3, 1, 2, 1000, 10)
         self.v_links.append(spgw_mme)
+    """
 
-        """
+    """
             Variable            X 
         -------------------------
                x_0_0            1 
@@ -71,9 +73,9 @@ class TOSCABuilder:
            flow_2_11            1 
                   mu     0.131291 
                    z            1 
-        """
+    """
 
-        """
+    """
         mme_spgw01 = VirtualLink("mme-spgw01", 4, 3, 1)
         self.v_links.append(mme_spgw01)
         spgw01_mme = VirtualLink("spgw01-mme", 5, 1, 3)
@@ -88,10 +90,10 @@ class TOSCABuilder:
         self.v_links.append(mme_spgw03)
         spgw03_mme = VirtualLink("spgw03-mme", 9, 1, 5)
         self.v_links.append(spgw03_mme)
-        """
+    """
 
     def build_tosca(self) -> TOSCAInput:
-        logging.info("Build Tosca")
+        LOG.info("Build Tosca")
         # self.__create_test_server_requirements()
         # self.__create_test_virtual_links()
         tosca = TOSCAInput(self.name, self.vm_requirements, self.v_links)

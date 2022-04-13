@@ -1,3 +1,8 @@
+import logging
+
+LOG = logging.getLogger(__name__)
+
+
 class Flavor:
     def __init__(self, flavor):
         self.__id = flavor.id

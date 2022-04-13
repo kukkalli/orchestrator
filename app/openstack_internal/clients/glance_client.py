@@ -1,4 +1,8 @@
+import logging
+
 from openstack_internal.clients.clients import Clients
+
+LOG = logging.getLogger(__name__)
 
 
 class Glance:

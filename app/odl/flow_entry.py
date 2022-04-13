@@ -1,9 +1,12 @@
+import logging
 from typing import List
 
 from odl.flow_instruction import FlowInstruction
 from odl.flow_match import FlowMatch
 from odl.flow_statistics import FlowStatistics
 from utilities.list_utility import add_elements_with_type
+
+LOG = logging.getLogger(__name__)
 
 
 class FlowEntry(object):

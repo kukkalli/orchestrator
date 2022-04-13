@@ -1,6 +1,10 @@
+import logging
+
 from odl.txrxbytes import TxRxBytes
 from odl.duration import Duration
 from odl.packets import Packets
+
+LOG = logging.getLogger(__name__)
 
 
 class NodeConnectorStatistics(object):

@@ -1,12 +1,14 @@
+import logging
 from typing import List, Dict
 
-from openstack_internal.nova.flavor import Flavor
 from tosca.virtual_link import VirtualLink
+
+LOG = logging.getLogger(__name__)
 
 
 class VMRequirement:
 
-    def __init__(self, int_id: int, hostname: str, flavor: Flavor, image_id: str, networks: List[Dict[str, str]],
+    def __init__(self, int_id: int, hostname: str, flavor: str, image_id: str, networks: List[Dict[str, str]],
                  key_pair: str = None, ip_addresses: Dict[str, str] = [], subnet_mask: str = "/32",
                  security_groups: [str] = ["default"]):
         self.__id = hostname

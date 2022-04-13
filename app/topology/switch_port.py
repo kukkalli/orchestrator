@@ -1,5 +1,9 @@
+import logging
+
 from topology.link import Link
 from topology.port_stats import PortStats
+
+LOG = logging.getLogger(__name__)
 
 
 class SwitchPort:

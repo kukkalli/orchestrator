@@ -1,4 +1,8 @@
+import logging
 from typing import List, TypeVar
+
+LOG = logging.getLogger(__name__)
+
 
 T = TypeVar('T')
 

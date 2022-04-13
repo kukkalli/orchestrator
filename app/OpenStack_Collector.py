@@ -1,9 +1,13 @@
+import logging
+
 from neutronclient.v2_0 import client
 from keystoneauth1.identity import v3
 from keystoneauth1 import session
 import openstack_extract as ex
 # import novaclient.v2.client as nvclient
 from novaclient import client
+
+LOG = logging.getLogger(__name__)
 
 auth = v3.Password(auth_url="http://10.10.0.21:5000/v3", username="admin",
                    user_domain_name="tuc",

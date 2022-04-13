@@ -1,3 +1,5 @@
+import logging
+
 from keystoneclient.v3.client import Client as KeystoneClient
 from glanceclient.v2.client import Client as GlanceClient
 from novaclient.client import Client as NovaClient
@@ -7,6 +9,8 @@ from openstack.connection import Connection
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.openstack_constants import OpenStackConstants
+
+LOG = logging.getLogger(__name__)
 
 
 class Clients:

@@ -1,3 +1,8 @@
+import logging
+
+LOG = logging.getLogger(__name__)
+
+
 class PortStats:
 
     #    def __init__(self, packet_transmitted: int, packet_received:int, bytes_transmitted: int, bytes_received: int,

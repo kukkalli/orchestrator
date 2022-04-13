@@ -1,6 +1,10 @@
+import logging
+
 from tosca.vm_requirement import VMRequirement
 from tosca.virtual_link import VirtualLink
 from typing import List, Dict
+
+LOG = logging.getLogger(__name__)
 
 
 class TOSCAInput:

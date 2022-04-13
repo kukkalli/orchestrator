@@ -8,10 +8,10 @@ LOG = logging.getLogger(__name__)
 class MariaDB:
 
     def __init__(self):
-        self.hostname = "10.0.1.10"  # os.environ["MARIADB_HOSTNAME"]
-        self.username = "hanif"  # os.environ["MARIADB_USERNAME"]
-        self.password = "TUC-2018"  # os.environ["MARIADB_PASSWORD"]
-        self.database = "orchestrator"  # os.environ["MARIADB_DATABASE"]
+        self.hostname = os.environ["MARIADB_HOSTNAME"]
+        self.username = os.environ["MARIADB_USERNAME"]
+        self.password = os.environ["MARIADB_PASSWORD"]
+        self.database = os.environ["MARIADB_DATABASE"]
         LOG.debug(f"MariaDB username: {self.username}, hostname: {self.hostname}, database: {self.database}")
         self.connection = None
 

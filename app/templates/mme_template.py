@@ -1,4 +1,8 @@
+import logging
+
 from templates.vm_template import VMTemplate
+
+LOG = logging.getLogger(__name__)
 
 
 class MMETemplate(VMTemplate):

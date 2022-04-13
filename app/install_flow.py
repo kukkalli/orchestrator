@@ -1,3 +1,5 @@
+import logging
+
 import requests
 import pandas as pd
 from requests.auth import HTTPBasicAuth
@@ -5,6 +7,8 @@ import httplib2
 import xml.etree.ElementTree as ET
 from xml.etree import ElementTree
 import json
+
+LOG = logging.getLogger(__name__)
 
 
 # ODL links

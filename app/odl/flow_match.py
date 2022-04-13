@@ -1,4 +1,8 @@
+import logging
+
 from odl.ethernet_match import EthernetMatch
+
+LOG = logging.getLogger(__name__)
 
 
 class FlowMatch(object):

@@ -1,3 +1,4 @@
+import logging
 from typing import List, Dict
 
 from odl.flow_table import FlowTable
@@ -6,6 +7,8 @@ from odl.node_group_features import GroupFeatures
 from odl.switch_features import SwitchFeatures
 from utilities.validate_ipaddress import IPAddress
 from utilities.list_utility import add_elements_with_type
+
+LOG = logging.getLogger(__name__)
 
 
 class InventoryNode(object):

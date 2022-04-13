@@ -1,3 +1,8 @@
+import logging
+
+LOG = logging.getLogger(__name__)
+
+
 class HSSDocker:
     USERDATA = """#!/bin/bash
 

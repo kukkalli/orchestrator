@@ -1,4 +1,7 @@
+import logging
 import multiprocessing
+
+LOG = logging.getLogger(__name__)
 
 workers = multiprocessing.cpu_count() * 2 + 1
 bind = 'unix:flaskrest.sock'

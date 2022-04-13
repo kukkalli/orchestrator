@@ -1,8 +1,12 @@
+import logging
+from typing import List, Dict
+
 from topology.link import Link
 from topology.node import Node
 from topology.server import Server
 from topology.switch import Switch
-from typing import List, Dict
+
+LOG = logging.getLogger(__name__)
 
 
 class Topology:

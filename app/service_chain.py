@@ -16,7 +16,6 @@ class ServiceChain:
 
         self.topology: Topology = TopologyBuilder(input_request.name).build_topology()
         self.tosca: TOSCAInput = TOSCABuilder(input_request).build_tosca()
-        # self.tosca: TOSCAInput = tosca
 
     def create_service_chain(self) -> {}:
         _optimize = Optimize(self.topology, self.tosca)

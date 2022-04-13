@@ -28,6 +28,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 !example.log
+!app/logs/*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -58,7 +59,7 @@ coverage.xml
 *.pot
 
 # Django stuff:
-*.log
+# *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal

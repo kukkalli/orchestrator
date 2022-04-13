@@ -1,0 +1,9 @@
+2022-04-13 15:46:23,727 - INFO - werkzeug - _log - (225) -  * Restarting with stat
+2022-04-13 15:46:24,166 - WARNING - werkzeug - _log - (225) -  * Debugger is active!
+2022-04-13 15:46:24,166 - INFO - werkzeug - _log - (225) -  * Debugger PIN: 644-854-116
+2022-04-13 15:47:06,858 - INFO - werkzeug - _log - (225) -  * Detected change in '/home/hanif/PycharmProjects/orchestrator/app/templates/input_request.py', reloading
+2022-04-13 15:47:06,956 - INFO - werkzeug - _log - (225) -  * Restarting with stat
+2022-04-13 15:47:07,435 - WARNING - werkzeug - _log - (225) -  * Debugger is active!
+2022-04-13 15:47:07,436 - INFO - werkzeug - _log - (225) -  * Debugger PIN: 644-854-116
+2022-04-13 15:48:16,690 - INFO - werkzeug - _log - (225) -  * Detected change in '/home/hanif/PycharmProjects/orchestrator/app/templates/input_request.py', reloading
+2022-04-13 15:48:16,758 - INFO - werkzeug - _log - (225) -  * Restarting with stat

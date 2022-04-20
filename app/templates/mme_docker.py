@@ -26,17 +26,25 @@ MME_GID={mme_gid} # 32768
 MME_CODE={mme_code} # 3
 SGWC_IP_ADDRESS={sgwc_ip_address}
 
-export DOMAIN="$DOMAIN" # "tu-chemnitz.de"
-export HSS_IP="$HSS_IP" # "10.10.1.130"
+export DOMAIN="$DOMAIN"
+export REALM="$REALM"
+echo "REALM is: $REALM"
+export HSS_IP="$HSS_IP"
+echo "HSS IP is: $HSS_IP"
 export HSS_HOSTNAME="$HSS_HOSTNAME"
+echo "HSS HOSTNAME is:" $HSS_HOSTNAME
 export HSS_FQDN="$HSS_HOSTNAME"."$DOMAIN"
-echo "HSS FQDN is:" $HSS_FQDN
+echo "HSS FQDN is: $HSS_FQDN"
 export MCC="$MCC"
+echo "MCC is: $MCC"
 export MNC="$MNC"
+echo "MNC is: $MNC"
 export MME_GID="$MME_GID"
+echo "MME GID is: $MME_GID"
 export MME_CODE="$MME_CODE"
+echo "MME CODE is: $MME_CODE"
 export SGWC_IP_ADDRESS="$SGWC_IP_ADDRESS"
-
+echo "SGWC IP is: $SGWC_IP_ADDRESS"
 
 
 INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
@@ -127,7 +135,7 @@ sudo systemctl restart docker
 
 IP_ADDR=$(ip address |grep ens|grep inet|awk '{print $2}'| awk -F / '{print $1}')
 
-echo "$FQDN_HOSTNAME"
+echo "MME FQDN $FQDN_HOSTNAME"
 
 sudo -- sh -c "echo '' >>  /etc/hosts"
 
@@ -142,6 +150,8 @@ for i in $IP_ADDR; do
       export FABRIC_IP=$i
     fi
 done
+
+sudo -- sh -c "echo $HSS_IP $HSS_HOSTNAME $HSS_FQDN >> /etc/hosts"
 
 export MME_MANAGEMENT_IP="$MANAGEMENT_IP"
 export MME_FABRIC_IP="$MANAGEMENT_IP"  # "$FABRIC_IP"
@@ -175,21 +185,16 @@ echo "HSS at IP: $HSS_IP is up and running"
 
 MME_HOSTNAME="$(hostname -s)"
 export MME_HOSTNAME="$MME_HOSTNAME"
+echo "MME hostname is $MME_HOSTNAME"
+
 export TZ="Europe/Berlin"
-
-echo "$MME_HOSTNAME"
-
-export REALM="$DOMAIN"
-
-echo "$REALM"
+echo "Timezone is $TZ"
 
 export HSS_REALM="$DOMAIN"
+echo "HSS Realm is $HSS_REALM"
 
 export MME_FQDN="$FQDN_HOSTNAME"
-
-export HSS_HOSTNAME="$FQDN_HOSTNAME"
-
-echo "$HSS_HOSTNAME"
+echo "MME FQDN is $MME_FQDN"
 
 echo "Sleeping for 120 seconds to check database if any updates there"
 sleep 120

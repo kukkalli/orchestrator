@@ -21,7 +21,6 @@ DOMAIN={domain}
 DOCKER_PASS={docker_pass}
 MME_IP={mme_ip}
 MME_HOSTNAME={mme_hostname}
-MME_FQDN_HOSTNAME={mme_fqdn_hostname}
 
 INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
 
@@ -126,7 +125,7 @@ for i in $IP_ADDR; do
     fi
 done
 
-sudo -- sh -c "echo $MME_IP $MME_HOSTNAME $MME_FQDN_HOSTNAME >> /etc/hosts"
+sudo -- sh -c "echo $MME_IP $MME_HOSTNAME $MME_HOSTNAME.$DOMAIN >> /etc/hosts"
 
 export HSS_MANAGEMENT_IP="$MANAGEMENT_IP"
 export HSS_FABRIC_IP="$FABRIC_IP"
@@ -159,7 +158,7 @@ export REALM="$DOMAIN"
 
 echo "The REALM is $REALM"
 
-export HSS_HOSTNAME="$FQDN_HOSTNAME"
+export HSS_HOSTNAME="$HOSTNAME"
 
 echo "The HSS HOSTNAME is $HSS_HOSTNAME"
 

@@ -27,7 +27,7 @@ export HSS_IP="$HSS_IP"
 echo "HSS IP is: $HSS_IP"
 export HSS_HOSTNAME="$HSS_HOSTNAME"
 echo "HSS HOSTNAME is:" $HSS_HOSTNAME
-export HSS_FQDN="$HSS_HOSTNAME"."$REALM"
+export HSS_FQDN="$HSS_HOSTNAME"."$DOMAIN"
 echo "HSS FQDN is: $HSS_FQDN"
 export MCC="$MCC"
 echo "MCC is: $MCC"
@@ -129,7 +129,7 @@ sudo systemctl restart docker
 
 IP_ADDR=$(ip address |grep ens|grep inet|awk '{print $2}'| awk -F / '{print $1}')
 
-echo "$FQDN_HOSTNAME"
+echo "MME FQDN $FQDN_HOSTNAME"
 
 sudo -- sh -c "echo '' >>  /etc/hosts"
 
@@ -144,6 +144,8 @@ for i in $IP_ADDR; do
       export FABRIC_IP=$i
     fi
 done
+
+sudo -- sh -c "echo $HSS_IP $HSS_HOSTNAME $HSS_FQDN >> /etc/hosts"
 
 export MME_MANAGEMENT_IP="$MANAGEMENT_IP"
 export MME_FABRIC_IP="$MANAGEMENT_IP"  # "$FABRIC_IP"
@@ -181,7 +183,6 @@ echo "MME hostname is $MME_HOSTNAME"
 
 export TZ="Europe/Berlin"
 echo "Timezone is $TZ"
-
 
 export HSS_REALM="$DOMAIN"
 echo "HSS Realm is $HSS_REALM"

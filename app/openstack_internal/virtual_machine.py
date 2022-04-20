@@ -121,10 +121,8 @@ def main():
     host = "compute01.etit.tu-chemnitz.de"
     domain = "tu-chemnitz.de"
     docker_pass = "c3360058-8abf-4091-b178-d3d94bc18636"
-    mme_fqdn_hostname = mme_hostname + "." + domain
     hss_user_data = HSSDocker.USERDATA.replace("{domain}", domain, 10).replace("{docker_pass}", docker_pass, 10).\
-        replace("{mme_ip}", mme.ip_addresses[management_network_id]).replace("{mme_hostname}", mme_hostname).\
-        replace("{mme_fqdn_hostname}", mme_fqdn_hostname)
+        replace("{mme_ip}", mme.ip_addresses[management_network_id]).replace("{mme_hostname}", mme_hostname)
 
     mme_user_data = MMEDocker.USERDATA.replace("{domain}", domain, 10).replace("{docker_pass}", docker_pass, 10). \
         replace("{hss_ip}", hss.ip_addresses[management_network_id]).replace("{hss_hostname}", hss_hostname). \

@@ -15,7 +15,6 @@ DOMAIN={domain}
 DOCKER_PASS={docker_pass}
 MME_IP={mme_ip}
 MME_HOSTNAME={mme_hostname}
-MME_FQDN_HOSTNAME={mme_fqdn_hostname}
 
 INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
 
@@ -170,4 +169,3 @@ docker rm db-init
 docker ps -a
 
 exit 0
-

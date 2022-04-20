@@ -56,20 +56,25 @@ class Neutron:
     def get_ip_address(self, network_id: str, name: str):
         return self.connection.create_port(network_id, name)
 
-    def get_available_ip(self, network_id: str):
+    def get_available_ip(self, network_id: str, is_delete: bool = True):
         port = self.connection.create_port(network_id)
-        self.ports_list.append(port)
         LOG.debug(f"Port details: {port}")
         LOG.debug(f"Port id: {port['id']}")
         ip_address = port.fixed_ips[0]['ip_address']
         LOG.debug(f"Available ip_address: {ip_address}")
+        if is_delete:
+            self.connection.delete_port(port)
+        else:
+            self.ports_list.append(port)
+
         return ip_address
 
     def get_available_ip_list(self, network_id: str, count: int = 1):
         ip_list = []
         for i in range(0, count):
-            ip_list.append(self.get_available_ip(network_id))
+            ip_list.append(self.get_available_ip(network_id=network_id, is_delete=False))
             self.connection.delete_port(self.ports_list[i].id)
+            self.ports_list.remove(self.ports_list[i])
         return ip_list
 
 

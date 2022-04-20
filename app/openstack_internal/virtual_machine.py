@@ -12,6 +12,9 @@ from openstack_internal.keystone.user_details import User
 from novaclient.v2.client import Client as NovaV2Client
 
 from templates.hss_docker import HSSDocker
+from templates.hss_template import HSSTemplate
+from templates.mme_docker import MMEDocker
+from templates.mme_template import MMETemplate
 
 LOG = logging.getLogger(__name__)
 
@@ -23,14 +26,17 @@ class VirtualMachine(object):
         self.authenticate = AuthenticateConnection()
         self.connection = self.authenticate.get_connection()
         self.__clients = Clients(self.authenticate)
-        self.__glance = Glance(self.connection)
-        self.__keypair = KeyPair(self.connection)
-        self.__neutron = Neutron(self.connection)
-        self.__nova = Nova(self.connection)
-        self.__project = Project(self.connection)
-        self.__user = User(self.connection)
+        # self.__glance = Glance(self.connection)
+        # self.__keypair = KeyPair(self.connection)
+        # self.__neutron = Neutron(self.connection)
+        # self.__nova = Nova(self.connection)
+        # self.__project = Project(self.connection)
+        # self.__user = User(self.connection)
 
-    def create_virtual_machine(self, name, image, flavor=2, vm_count=1, security_groups: list = None,
+    def get_id(self):
+        return self.__id
+
+    def create_virtual_machine(self, name, image, flavor="2", vm_count=1, security_groups: list = None,
                                userdata: str = "", key_pair=None, networks: list = None, host=None):
         if security_groups is None:
             security_groups = ["default"]
@@ -39,10 +45,12 @@ class VirtualMachine(object):
                         {"net-id": "9e373e2c-0372-4a06-81a1-bc1cb4c62b85", "v4-fixed-ip": "10.11.2.50"}]
         nova_client: NovaV2Client = self.__clients.get_nova_client()
         return nova_client.servers.create(name=name, image=image, flavor=flavor, min_count=vm_count, max_count=vm_count,
-                                          security_groups=security_groups, userdata=userdata, key_name=key_pair, admin_pass=None,
+                                          security_groups=security_groups, userdata=userdata, key_name=key_pair,
+                                          admin_pass=None,
                                           nics=networks, access_ip_v4=None, access_ip_v6=None, host=host,
                                           hypervisor_hostname=None)
 
+    """
     def get_vm_info(self):
         nova = self.__get_nova_api()
         return nova.get_hypervisor_by_id(self.__id)
@@ -78,33 +86,63 @@ class VirtualMachine(object):
 
     def get_user_api(self):
         return self.__user
+    """
 
     def close_connection(self):
         self.authenticate.close_connection()
 
 
 def main():
-    vm = VirtualMachine("test001-hss")
-    name = "prof-hss"
-    image = "af8b3413-3d71-429e-83e1-de279bc2f4ea"
+    service_chain_name = "etit-kn"
+    hss = HSSTemplate(service_chain_name)
+    mme = MMETemplate(service_chain_name)
+    vm = VirtualMachine(mme.get_vm_name())
     security_groups = ["default"]
-    # key_pair = "compute01"
+    key_pair = "compute01"
     neutron = Neutron(AuthenticateConnection().get_connection())
-    networks = [{"net-id": "a0ebb620-d0e6-44d9-b584-489e841bc796"},
-                {"net-id": "9e373e2c-0372-4a06-81a1-bc1cb4c62b85"}]
+    management_network_id = "a0ebb620-d0e6-44d9-b584-489e841bc796"
+    hss_hostname = hss.get_vm_name()
+    print(f"hss hostname: {hss_hostname}")
+    mme_hostname = mme.get_vm_name()
+    print(f"mme hostname: {mme_hostname}")
 
-    for network in networks:
-        print(f"network: {network}")
+    for network in hss.networks:
         network["v4-fixed-ip"] = neutron.get_available_ip(network["net-id"])
-    print(f"networks: {networks}")
+        hss.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
+    print(f"networks: {hss.networks}")
+    print(f"HSS management network IP: {hss.ip_addresses[management_network_id]}")
 
-    host = "compute02.etit.tu-chemnitz.de"
+    for network in mme.networks:
+        network["v4-fixed-ip"] = neutron.get_available_ip(network["net-id"])
+        mme.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
+    print(f"networks: {mme.networks}")
+    print(f"MME management network IP: {mme.ip_addresses[management_network_id]}")
+
+    host = "compute01.etit.tu-chemnitz.de"
     domain = "tu-chemnitz.de"
     docker_pass = "c3360058-8abf-4091-b178-d3d94bc18636"
-    server = vm.create_virtual_machine(name, image, flavor=2, security_groups=security_groups,
-                                       userdata=HSSDocker.USERDATA.format(domain=domain, docker_pass=docker_pass),
-                                       key_pair=None, networks=networks, host=host)
-    print("Created HSS Server: {}".format(server))
+    mme_fqdn_hostname = mme_hostname + "." + domain
+    hss_user_data = HSSDocker.USERDATA.replace("{domain}", domain, 10).replace("{docker_pass}", docker_pass, 10).\
+        replace("{mme_ip}", mme.ip_addresses[management_network_id]).replace("{mme_hostname}", mme_hostname).\
+        replace("{mme_fqdn_hostname}", mme_fqdn_hostname)
+
+    mme_user_data = MMEDocker.USERDATA.replace("{domain}", domain, 10).replace("{docker_pass}", docker_pass, 10). \
+        replace("{hss_ip}", hss.ip_addresses[management_network_id]).replace("{hss_hostname}", hss_hostname). \
+        replace("{mcc}", "265").replace("{mnc}", "82").replace("{mme_gid}", "32768").replace("{mme_code}", "3"). \
+        replace("{sgwc_ip_address}", "10.10.1.241")
+
+    hss_server = vm.create_virtual_machine(hss.get_vm_name(), hss.get_image_id(), flavor=hss.get_flavour(),
+                                           security_groups=security_groups, userdata=hss_user_data, key_pair=key_pair,
+                                           networks=hss.networks, host=host)
+    print("Created HSS Server: {}".format(hss_server))
+
+    mme_server = vm.create_virtual_machine(mme.get_vm_name(), mme.get_image_id(), flavor=mme.get_flavour(),
+                                           security_groups=security_groups, userdata=mme_user_data, key_pair=key_pair,
+                                           networks=mme.networks, host=host)
+
+    print("Created MME Server: {}".format(mme_server))
+    """
+    """
 
 
 if __name__ == "__main__":

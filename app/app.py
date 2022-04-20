@@ -75,7 +75,6 @@ def create_service_chain():
     service_chain = ServiceChain(input_request)
     # service_chain.create_service_chain()
     return jsonify({"service-creation": "success"})
-    # service_chain.create_service_chain())
 
 
 @app.route('/', methods=['GET'])

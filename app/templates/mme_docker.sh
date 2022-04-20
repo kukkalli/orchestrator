@@ -10,8 +10,36 @@ ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAEBCbxZ
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAHLT0AS5MHwwJ6hX1Up5stfz361+IWA/8/MhZBH+mYA32h/Bp5hSWkQDXow4aDiHRlxVV1WLlHHup+GPBBA9XLTRwHP8gAjbP5EM4EVxR9EbDh5Hz13xcN0/n9J9rasefHS8UgTJUgRrWeNRCSAhkbNfDfSeQzk8NWlzhiwwCIUacKnzg== hanif@kukkalli
 EOF
 
+DOMAIN={domain}
+DOCKER_PASS={docker_pass}
+HSS_IP={hss_ip}
+HSS_HOSTNAME={hss_hostname}
+MCC={mcc}
+MNC={mnc}
+MME_GID={mme_gid} # 32768
+MME_CODE={mme_code} # 3
+SGWC_IP_ADDRESS={sgwc_ip_address}
 
-DOMAIN="tu-chemnitz.de"
+export DOMAIN="$DOMAIN"
+export REALM="$REALM"
+echo "REALM is: $REALM"
+export HSS_IP="$HSS_IP"
+echo "HSS IP is: $HSS_IP"
+export HSS_HOSTNAME="$HSS_HOSTNAME"
+echo "HSS HOSTNAME is:" $HSS_HOSTNAME
+export HSS_FQDN="$HSS_HOSTNAME"."$REALM"
+echo "HSS FQDN is: $HSS_FQDN"
+export MCC="$MCC"
+echo "MCC is: $MCC"
+export MNC="$MNC"
+echo "MNC is: $MNC"
+export MME_GID="$MME_GID"
+echo "MME GID is: $MME_GID"
+export MME_CODE="$MME_CODE"
+echo "MME CODE is: $MME_CODE"
+export SGWC_IP_ADDRESS="$SGWC_IP_ADDRESS"
+echo "SGWC IP is: $SGWC_IP_ADDRESS"
+
 
 INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
 
@@ -118,9 +146,9 @@ for i in $IP_ADDR; do
 done
 
 export MME_MANAGEMENT_IP="$MANAGEMENT_IP"
-export MME_FABRIC_IP="$FABRIC_IP"
+export MME_FABRIC_IP="$MANAGEMENT_IP"  # "$FABRIC_IP"
 
-docker login -u kukkalli -p c3360058-8abf-4091-b178-d3d94bc18636
+docker login -u kukkalli -p ${DOCKER_PASS}
 
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
@@ -136,34 +164,38 @@ git clone https://github.com/kukkalli/oai-docker-compose.git
 
 chown ubuntu:ubuntu -R oai-docker-compose
 
-cd oai-docker-compose/4g/hss/ || exit
+cd oai-docker-compose/4g/mme/ || exit
 
-docker-compose up -d db_init
+# Update mme.conf file before pushing it to docker
+echo "Update mme.conf file before pushing it to docker"
+./update_mme_conf.sh
 
-docker-compose up -d cassandra_web
+# Wait for HSS to be up and running
+echo "Waiting for HSS at IP: $HSS_IP to be up and running"
+./wait-for-hss.sh "$HSS_IP"
+echo "HSS at IP: $HSS_IP is up and running"
 
-export HSS_FQDN="$FQDN_HOSTNAME"
+MME_HOSTNAME="$(hostname -s)"
+export MME_HOSTNAME="$MME_HOSTNAME"
+echo "MME hostname is $MME_HOSTNAME"
 
-echo "$HSS_FQDN"
+export TZ="Europe/Berlin"
+echo "Timezone is $TZ"
 
-export REALM="$DOMAIN"
 
-echo "$REALM"
+export HSS_REALM="$DOMAIN"
+echo "HSS Realm is $HSS_REALM"
 
-export HSS_HOSTNAME="$FQDN_HOSTNAME"
+export MME_FQDN="$FQDN_HOSTNAME"
+echo "MME FQDN is $MME_FQDN"
 
-echo "$HSS_HOSTNAME"
+echo "Sleeping for 120 seconds to check database if any updates there"
+sleep 120
 
-sleep 5
+echo "Sleeping for 120 seconds complete"
 
-docker-compose up -d oai_hss
+docker-compose up -d magma_mme
 
 docker ps
 
 exit 0
-
-# sudo apt-get upgrade -y
-
-# sudo apt-get auto-remove -y
-# END
-

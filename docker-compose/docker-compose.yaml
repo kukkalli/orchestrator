@@ -44,9 +44,9 @@ services:
     image: kukkalli/orchestrator:latest
     container_name: kn_orchestrator
     hostname: kn-orchestrator
-    depends_on: [mariadb]
+    depends_on: [phpmyadmin]
     ports:
-      - "8080:80"
+      - "80:80"
     environment:
       ODL_IP: "10.10.0.10"
       OPENSTACK_IP: "10.10.0.21"

@@ -12,6 +12,10 @@ EOF
 
 
 DOMAIN={domain}
+DOCKER_PASS={docker_pass}
+MME_IP={mme_ip}
+MME_HOSTNAME={mme_hostname}
+MME_FQDN_HOSTNAME={mme_fqdn_hostname}
 
 INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
 
@@ -44,10 +48,6 @@ sudo -- sh -c "echo 'network: {config: disabled}' >> /etc/cloud/cloud.cfg.d/99-d
 
 sudo netplan apply
 
-sudo netplan apply
-
-sleep 10
-
 HOSTNAME=$(hostname -s)
 
 sudo hostnamectl set-hostname "$HOSTNAME"."$DOMAIN"
@@ -69,7 +69,6 @@ ff02::3 ip6-allhosts
 
 EOF
 
-# : <<'END'
 sudo apt-get update
 
 sudo apt-get install ca-certificates curl gnupg lsb-release
@@ -121,10 +120,14 @@ for i in $IP_ADDR; do
     fi
 done
 
+sudo -- sh -c "echo $MME_IP $MME_HOSTNAME $MME_HOSTNAME.$DOMAIN >> /etc/hosts"
+
 export HSS_MANAGEMENT_IP="$MANAGEMENT_IP"
 export HSS_FABRIC_IP="$FABRIC_IP"
 
-docker login -u kukkalli -p {docker_pass}
+export HSS_FABRIC_IP="$MANAGEMENT_IP"
+
+docker login -u kukkalli -p ${DOCKER_PASS}
 
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
@@ -142,27 +145,29 @@ chown ubuntu:ubuntu -R oai-docker-compose
 
 cd oai-docker-compose/4g/hss/ || exit
 
-docker-compose up -d db_init
-
-docker-compose up -d cassandra_web
-
 export HSS_FQDN="$FQDN_HOSTNAME"
 
-echo "$HSS_FQDN"
+echo "The HSS FQDN is $HSS_FQDN"
 
 export REALM="$DOMAIN"
 
-echo "$REALM"
+echo "The REALM is $REALM"
 
-export HSS_HOSTNAME="$FQDN_HOSTNAME"
+export HSS_HOSTNAME="$HOSTNAME"
 
-echo "$HSS_HOSTNAME"
+echo "The HSS HOSTNAME is $HSS_HOSTNAME"
+
+docker-compose up -d db_init
+
+docker-compose up -d cassandra_web
 
 sleep 5
 
 docker-compose up -d oai_hss
 
-docker ps
+docker rm db-init
+
+docker ps -a
 
 exit 0
 

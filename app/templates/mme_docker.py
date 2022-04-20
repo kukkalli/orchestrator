@@ -3,7 +3,7 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-class HSSDocker:
+class MMEDocker:
     USERDATA = """#!/bin/bash
 
 cat > /home/ubuntu/.ssh/authorized_keys << EOF
@@ -16,12 +16,28 @@ ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAEBCbxZ
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAHLT0AS5MHwwJ6hX1Up5stfz361+IWA/8/MhZBH+mYA32h/Bp5hSWkQDXow4aDiHRlxVV1WLlHHup+GPBBA9XLTRwHP8gAjbP5EM4EVxR9EbDh5Hz13xcN0/n9J9rasefHS8UgTJUgRrWeNRCSAhkbNfDfSeQzk8NWlzhiwwCIUacKnzg== hanif@kukkalli
 EOF
 
-
 DOMAIN={domain}
 DOCKER_PASS={docker_pass}
-MME_IP={mme_ip}
-MME_HOSTNAME={mme_hostname}
-MME_FQDN_HOSTNAME={mme_fqdn_hostname}
+HSS_IP={hss_ip}
+HSS_HOSTNAME={hss_hostname}
+MCC={mcc}
+MNC={mnc}
+MME_GID={mme_gid} # 32768
+MME_CODE={mme_code} # 3
+SGWC_IP_ADDRESS={sgwc_ip_address}
+
+export DOMAIN="$DOMAIN" # "tu-chemnitz.de"
+export HSS_IP="$HSS_IP" # "10.10.1.130"
+export HSS_HOSTNAME="$HSS_HOSTNAME"
+export HSS_FQDN="$HSS_HOSTNAME"."$DOMAIN"
+echo "HSS FQDN is:" $HSS_FQDN
+export MCC="$MCC"
+export MNC="$MNC"
+export MME_GID="$MME_GID"
+export MME_CODE="$MME_CODE"
+export SGWC_IP_ADDRESS="$SGWC_IP_ADDRESS"
+
+
 
 INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
 
@@ -75,6 +91,7 @@ ff02::3 ip6-allhosts
 
 EOF
 
+# : <<'END'
 sudo apt-get update
 
 sudo apt-get install ca-certificates curl gnupg lsb-release
@@ -118,7 +135,7 @@ for i in $IP_ADDR; do
     sudo -- sh -c "echo $i $HOSTNAME $FQDN_HOSTNAME >> /etc/hosts"
     if [[ $i == "10.10"* ]];
     then
-      export MANAGEMENT_IP=$i
+      MANAGEMENT_IP=$i
     fi
     if [[ $i == "10.11"* ]];
     then
@@ -126,12 +143,8 @@ for i in $IP_ADDR; do
     fi
 done
 
-sudo -- sh -c "echo $MME_IP $MME_HOSTNAME $MME_FQDN_HOSTNAME >> /etc/hosts"
-
-export HSS_MANAGEMENT_IP="$MANAGEMENT_IP"
-export HSS_FABRIC_IP="$FABRIC_IP"
-
-export HSS_FABRIC_IP="$MANAGEMENT_IP"
+export MME_MANAGEMENT_IP="$MANAGEMENT_IP"
+export MME_FABRIC_IP="$MANAGEMENT_IP"  # "$FABRIC_IP"
 
 docker login -u kukkalli -p ${DOCKER_PASS}
 
@@ -149,31 +162,43 @@ git clone https://github.com/kukkalli/oai-docker-compose.git
 
 chown ubuntu:ubuntu -R oai-docker-compose
 
-cd oai-docker-compose/4g/hss/ || exit
+cd oai-docker-compose/4g/mme/ || exit
 
-export HSS_FQDN="$FQDN_HOSTNAME"
+# Update mme.conf file before pushing it to docker
+echo "Update mme.conf file before pushing it to docker"
+./update_mme_conf.sh
 
-echo "The HSS FQDN is $HSS_FQDN"
+# Wait for HSS to be up and running
+echo "Waiting for HSS at IP: $HSS_IP to be up and running"
+./wait-for-hss.sh "$HSS_IP"
+echo "HSS at IP: $HSS_IP is up and running"
+
+MME_HOSTNAME="$(hostname -s)"
+export MME_HOSTNAME="$MME_HOSTNAME"
+export TZ="Europe/Berlin"
+
+echo "$MME_HOSTNAME"
 
 export REALM="$DOMAIN"
 
-echo "The REALM is $REALM"
+echo "$REALM"
+
+export HSS_REALM="$DOMAIN"
+
+export MME_FQDN="$FQDN_HOSTNAME"
 
 export HSS_HOSTNAME="$FQDN_HOSTNAME"
 
-echo "The HSS HOSTNAME is $HSS_HOSTNAME"
+echo "$HSS_HOSTNAME"
 
-docker-compose up -d db_init
+echo "Sleeping for 120 seconds to check database if any updates there"
+sleep 120
 
-docker-compose up -d cassandra_web
+echo "Sleeping for 120 seconds complete"
 
-sleep 5
+docker-compose up -d magma_mme
 
-docker-compose up -d oai_hss
-
-docker rm db-init
-
-docker ps -a
+docker ps
 
 exit 0
 

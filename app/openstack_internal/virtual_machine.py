@@ -2,19 +2,16 @@ import logging
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.clients.clients import Clients
-from openstack_internal.glance.glance_details import Glance
-from openstack_internal.nova.keypair_details import KeyPair
 from openstack_internal.neutron.neutron_details import Neutron
-from openstack_internal.nova.nova_details import Nova
-from openstack_internal.keystone.project_details import Project
-from openstack_internal.keystone.user_details import User
 
 from novaclient.v2.client import Client as NovaV2Client
 
-from templates.hss_docker import HSSDocker
-from templates.hss_template import HSSTemplate
-from templates.mme_docker import MMEDocker
-from templates.mme_template import MMETemplate
+from templates.four_g_core.hss_template import HSSTemplate
+from templates.four_g_core.hss_user_data import HSSUserData
+from templates.four_g_core.mme_template import MMETemplate
+from templates.four_g_core.mme_user_data import MMEUserData
+from templates.four_g_core.spgwc_user_data import SPGWCUserData
+from templates.four_g_core.spgwc_template import SPGWCTemplate
 
 LOG = logging.getLogger(__name__)
 
@@ -93,10 +90,10 @@ class VirtualMachine(object):
 
 
 def main():
-    service_chain_name = "etit-kn"
+    service_chain_name = "test002-kn"
     hss = HSSTemplate(service_chain_name)
     mme = MMETemplate(service_chain_name)
-    vm = VirtualMachine(mme.get_vm_name())
+    spgw_c = SPGWCTemplate(service_chain_name)
     security_groups = ["default"]
     key_pair = "compute01"
     neutron = Neutron(AuthenticateConnection().get_connection())
@@ -105,40 +102,77 @@ def main():
     print(f"hss hostname: {hss_hostname}")
     mme_hostname = mme.get_vm_name()
     print(f"mme hostname: {mme_hostname}")
+    spgw_c_hostname = spgw_c.get_vm_name()
+    print(f"spgw-c hostname: {spgw_c_hostname}")
 
     for network in hss.networks:
         network["v4-fixed-ip"] = neutron.get_available_ip(network["net-id"])
         hss.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
     print(f"networks: {hss.networks}")
     print(f"HSS management network IP: {hss.ip_addresses[management_network_id]}")
+    """
 
+    """
     for network in mme.networks:
         network["v4-fixed-ip"] = neutron.get_available_ip(network["net-id"])
         mme.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
     print(f"networks: {mme.networks}")
     print(f"MME management network IP: {mme.ip_addresses[management_network_id]}")
+    """
+
+    """
+    for network in spgw_c.networks:
+        network["v4-fixed-ip"] = neutron.get_available_ip(network["net-id"])
+        spgw_c.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
+    print(f"networks: {spgw_c.networks}")
+    print(f"SPGW-C management network IP: {spgw_c.ip_addresses[management_network_id]}")
 
     host = "compute01.etit.tu-chemnitz.de"
     domain = "tu-chemnitz.de"
     docker_pass = "c3360058-8abf-4091-b178-d3d94bc18636"
-    hss_user_data = HSSDocker.USERDATA.replace("{domain}", domain, 10).replace("{docker_pass}", docker_pass, 10).\
-        replace("{mme_ip}", mme.ip_addresses[management_network_id]).replace("{mme_hostname}", mme_hostname)
+    """
 
-    mme_user_data = MMEDocker.USERDATA.replace("{domain}", domain, 10).replace("{docker_pass}", docker_pass, 10). \
-        replace("{hss_ip}", hss.ip_addresses[management_network_id]).replace("{hss_hostname}", hss_hostname). \
-        replace("{mcc}", "265").replace("{mnc}", "82").replace("{mme_gid}", "32768").replace("{mme_code}", "3"). \
-        replace("{sgwc_ip_address}", "10.10.1.241")
+    """
+    hss_user_data = HSSUserData.USERDATA.replace("@@domain@@", domain, 10).replace("@@docker_pass@@", docker_pass, 10). \
+        replace("@@mme_ip@@", mme.ip_addresses[management_network_id]).replace("@@mme_hostname@@", mme_hostname)
 
-    hss_server = vm.create_virtual_machine(hss.get_vm_name(), hss.get_image_id(), flavor=hss.get_flavour(),
-                                           security_groups=security_groups, userdata=hss_user_data, key_pair=key_pair,
-                                           networks=hss.networks, host=host)
+    vm_hss = VirtualMachine(hss.get_vm_name())
+    hss_server = vm_hss.create_virtual_machine(hss.get_vm_name(), hss.get_image_id(), flavor=hss.get_flavour(),
+                                               security_groups=security_groups, userdata=hss_user_data,
+                                               key_pair=key_pair,
+                                               networks=hss.networks, host=host)
+    vm_hss.close_connection()
     print("Created HSS Server: {}".format(hss_server))
+    """
 
-    mme_server = vm.create_virtual_machine(mme.get_vm_name(), mme.get_image_id(), flavor=mme.get_flavour(),
-                                           security_groups=security_groups, userdata=mme_user_data, key_pair=key_pair,
-                                           networks=mme.networks, host=host)
+    """
+    mme_user_data = MMEUserData.USERDATA.replace("@@domain@@", domain, 10).replace("@@docker_pass@@", docker_pass, 10). \
+        replace("@@hss_ip@@", hss.ip_addresses[management_network_id]).replace("@@hss_hostname@@", hss_hostname). \
+        replace("@@mcc@@", "265").replace("@@mnc@@", "82").replace("@@mme_gid@@", "32768"). \
+        replace("@@mme_code@@", "3").replace("@@sgwc_ip_address@@", spgw_c.ip_addresses[management_network_id])
 
+    vm_mme = VirtualMachine(mme.get_vm_name())
+    mme_server = vm_mme.create_virtual_machine(mme.get_vm_name(), mme.get_image_id(), flavor=mme.get_flavour(),
+                                               security_groups=security_groups, userdata=mme_user_data,
+                                               key_pair=key_pair,
+                                               networks=mme.networks, host=host)
+    vm_mme.close_connection()
     print("Created MME Server: {}".format(mme_server))
+    """
+
+    """
+    spgw_c_user_data = SPGWCUserData.USERDATA.replace("@@domain@@", domain, 10). \
+        replace("@@docker_pass@@", docker_pass, 10).replace("@@mcc@@", "265").replace("@@mnc@@", "82").\
+        replace("@@gw_id@@", "1").replace("@@apn-1@@", "tuckn").replace("@@apn-2@@", "tuckn2"). \
+        replace("@@mme_ip@@", mme.ip_addresses[management_network_id]).replace("@@mme_hostname@@", mme_hostname)
+
+    vm_spgw_c = VirtualMachine(spgw_c.get_vm_name())
+    spgw_c_server = vm_spgw_c.create_virtual_machine(spgw_c.get_vm_name(), spgw_c.get_image_id(),
+                                                     flavor=spgw_c.get_flavour(), security_groups=security_groups,
+                                                     userdata=spgw_c_user_data, key_pair=key_pair,
+                                                     networks=spgw_c.networks, host=host)
+    vm_spgw_c.close_connection()
+    print("Created SPGW-C Server: {}".format(spgw_c_server))
     """
     """
 

@@ -1,11 +1,11 @@
 import logging
 import time
 
-from templates.hss_template import HSSTemplate
-from templates.mme_template import MMETemplate
+from templates.four_g_core.hss_template import HSSTemplate
+from templates.four_g_core.mme_template import MMETemplate
 from templates.service_profile_template import ServiceProfileTemplate
-from templates.spgwc_template import SPGWCTemplate
-from templates.spgwu_template import SPGWUTemplate
+from templates.four_g_core.spgwc_template import SPGWCTemplate
+from templates.four_g_core.spgwu_template import SPGWUTemplate
 from tosca.virtual_link import VirtualLink
 from tosca.vm_requirement import VMRequirement
 

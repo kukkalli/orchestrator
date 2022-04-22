@@ -11,10 +11,7 @@ ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAHLT0AS
 EOF
 
 
-DOMAIN={domain}
-DOCKER_PASS={docker_pass}
-MME_IP={mme_ip}
-MME_HOSTNAME={mme_hostname}
+DOMAIN="@@domain@@"
 
 INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
 
@@ -119,22 +116,25 @@ for i in $IP_ADDR; do
     fi
 done
 
+MME_IP="@@mme_ip@@"
+MME_HOSTNAME="@@mme_hostname@@"
+
 sudo -- sh -c "echo $MME_IP $MME_HOSTNAME $MME_HOSTNAME.$DOMAIN >> /etc/hosts"
 
-export HSS_MANAGEMENT_IP="$MANAGEMENT_IP"
-export HSS_FABRIC_IP="$FABRIC_IP"
+# DOCKER_PASS="@@docker_pass@@"
 
-export HSS_FABRIC_IP="$MANAGEMENT_IP"
-
-docker login -u kukkalli -p ${DOCKER_PASS}
+# docker login -u kukkalli -p ${DOCKER_PASS}
 
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
 sudo chmod +x /usr/local/bin/docker-compose
 
-docker-compose --version
-
+# Change user to ubuntu
+echo "Changing user to ubuntu"
 su - ubuntu
+echo "Changed user to $USER"
+
+docker-compose --version
 
 cd /home/ubuntu/ || exit
 
@@ -143,6 +143,13 @@ git clone https://github.com/kukkalli/oai-docker-compose.git
 chown ubuntu:ubuntu -R oai-docker-compose
 
 cd oai-docker-compose/4g/hss/ || exit
+
+export HSS_MANAGEMENT_IP="$MANAGEMENT_IP"
+echo "The HSS_MANAGEMENT_IP is $HSS_MANAGEMENT_IP"
+
+export HSS_FABRIC_IP="$FABRIC_IP"
+export HSS_FABRIC_IP="$MANAGEMENT_IP"
+echo "The HSS_FABRIC_IP is $HSS_FABRIC_IP"
 
 export HSS_FQDN="$FQDN_HOSTNAME"
 

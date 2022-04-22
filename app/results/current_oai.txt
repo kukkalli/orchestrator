@@ -1,0 +1,8 @@
+hss hostname: test002-kn-hss
+mme hostname: test002-kn-mme
+networks: [{'net-id': 'a0ebb620-d0e6-44d9-b584-489e841bc796', 'v4-fixed-ip': '10.10.2.171'}, {'net-id': '9e373e2c-0372-4a06-81a1-bc1cb4c62b85', 'v4-fixed-ip': '10.11.2.205'}]
+HSS management network IP: 10.10.2.171
+networks: [{'net-id': 'a0ebb620-d0e6-44d9-b584-489e841bc796', 'v4-fixed-ip': '10.10.2.137'}, {'net-id': '9e373e2c-0372-4a06-81a1-bc1cb4c62b85', 'v4-fixed-ip': '10.11.1.136'}]
+MME management network IP: 10.10.2.137
+Created HSS Server: <Server: test002-kn-hss>
+Created MME Server: <Server: test002-kn-mme>

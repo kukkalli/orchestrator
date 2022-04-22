@@ -211,7 +211,7 @@ def main():
                                                      userdata=spgw_u_user_data, key_pair=key_pair,
                                                      networks=spgw_u.networks, host=host)
     vm_spgw_u.close_connection()
-    print("Created SPGW-C Server: {}".format(spgw_u_server))
+    print("Created SPGW-U Server: {}".format(spgw_u_server))
     """
     """
 

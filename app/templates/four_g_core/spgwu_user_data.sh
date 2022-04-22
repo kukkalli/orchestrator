@@ -1,10 +1,4 @@
-import logging
-
-LOG = logging.getLogger(__name__)
-
-
-class HSSUserData:
-    USERDATA = """#!/bin/bash
+#!/bin/bash
 
 cat > /home/ubuntu/.ssh/authorized_keys << EOF
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGxlZsduAGeKqz3UhzHeXiJOsRlBQTZIyOxA0DrXso9ncDveooDqUr+Xw5XZx44nHFNjWocoQowDdaA8jj0DYEs9wF5ELGj/rm4n6a1b6tXVAlb3Vojb5C0mZfx2gUA6i5GNnNXONRttaW53XeOoD/VDM9tlgBnpa04bBQ1naTiLbQsQg== os@controller
@@ -15,7 +9,6 @@ ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBACU7DSt
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAEBCbxZcyGw+PD3S/HoPx/WKhfGOz4Mos3OGQ4Q2rvh7UpNBE4UVp/xOBcFoL0WveHI+WskQV0jKa7TnErjVwEsOAAX6O4DxaskATGq6XioPv2XmRGKb5UZ28NUCE+VLhUvnFLLn2IMiCSiNzCU8hX0rjsU6/hHjDyV01Iahq2gAY6E7Q== hanif@openstack
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAHLT0AS5MHwwJ6hX1Up5stfz361+IWA/8/MhZBH+mYA32h/Bp5hSWkQDXow4aDiHRlxVV1WLlHHup+GPBBA9XLTRwHP8gAjbP5EM4EVxR9EbDh5Hz13xcN0/n9J9rasefHS8UgTJUgRrWeNRCSAhkbNfDfSeQzk8NWlzhiwwCIUacKnzg== hanif@kukkalli
 EOF
-
 
 DOMAIN="@@domain@@"
 
@@ -106,15 +99,13 @@ sudo systemctl restart docker
 
 IP_ADDR=$(ip address |grep ens|grep inet|awk '{print $2}'| awk -F / '{print $1}')
 
-echo "$FQDN_HOSTNAME"
-
 sudo -- sh -c "echo '' >>  /etc/hosts"
 
 for i in $IP_ADDR; do
     sudo -- sh -c "echo $i $HOSTNAME $FQDN_HOSTNAME >> /etc/hosts"
     if [[ $i == "10.10"* ]];
     then
-      export MANAGEMENT_IP=$i
+      MANAGEMENT_IP=$i
     fi
     if [[ $i == "10.11"* ]];
     then
@@ -122,25 +113,31 @@ for i in $IP_ADDR; do
     fi
 done
 
-MME_IP="@@mme_ip@@"
-MME_HOSTNAME="@@mme_hostname@@"
-
-sudo -- sh -c "echo $MME_IP $MME_HOSTNAME $MME_HOSTNAME.$DOMAIN >> /etc/hosts"
-
-# DOCKER_PASS="@@docker_pass@@"
-
-# docker login -u kukkalli -p ${DOCKER_PASS}
-
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
 sudo chmod +x /usr/local/bin/docker-compose
 
-# Change user to ubuntu
-echo "Changing user to ubuntu"
-su - ubuntu
-echo "Changed user to $USER"
-
+echo "--------------- docker-compose version is: ---------------"
 docker-compose --version
+echo "--------------- docker-compose version is: ---------------"
+
+
+echo "--------------- SPGW-U FQDN is: ---------------"
+echo "SPGW-U FQDN $FQDN_HOSTNAME"
+echo "--------------- SPGW-U FQDN is: ---------------"
+
+SGWC_IP_ADDRESS="@@sgwc_ip_address@@"
+SGWC_HOSTNAME="@@sgwc_hostname@@"
+sudo -- sh -c "echo $SGWC_IP_ADDRESS $SGWC_HOSTNAME $SGWC_HOSTNAME.$DOMAIN >> /etc/hosts"
+
+su - ubuntu
+
+export MANAGEMENT_IP="$MANAGEMENT_IP"
+export FABRIC_IP="$FABRIC_IP"
+export FABRIC_IP="$MANAGEMENT_IP"
+
+# DOCKER_PASS="@@docker_pass@@"
+# docker login -u kukkalli -p ${DOCKER_PASS}
 
 cd /home/ubuntu/ || exit
 
@@ -148,39 +145,52 @@ git clone https://github.com/kukkalli/oai-docker-compose.git
 
 chown ubuntu:ubuntu -R oai-docker-compose
 
-cd oai-docker-compose/4g/hss/ || exit
+cd oai-docker-compose/4g/spgw-u/ || exit
 
-export MANAGEMENT_IP="$MANAGEMENT_IP"
-echo "The HSS_MANAGEMENT_IP is $HSS_MANAGEMENT_IP"
-
-export FABRIC_IP="$FABRIC_IP"
-export FABRIC_IP="$MANAGEMENT_IP"
-echo "The HSS_FABRIC_IP is $HSS_FABRIC_IP"
-
-export HSS_FQDN="$FQDN_HOSTNAME"
-
-echo "The HSS FQDN is $HSS_FQDN"
-
+export DOMAIN="$DOMAIN"
+echo "DOMAIN is: $DOMAIN"
 export REALM="$DOMAIN"
+echo "REALM is: $REALM"
 
-echo "The REALM is $REALM"
+MCC="@@mcc@@"
+export MCC="$MCC"
+echo "MCC is: $MCC"
+MNC="@@mnc@@"
+export MNC="$MNC"
+echo "MNC is: $MNC"
+GW_ID="@@gw_id@@" # 1
+export GW_ID="$GW_ID"
+echo "GW ID is: $GW_ID"
+APN1="@@apn-1@@.ipv4" # tuckn.ipv4
+export APN1="$APN1"
+echo "APN 1 is: $APN1"
+APN2="@@apn-2@@.ipv4" # tuckn2.ipv4
+export APN2="$APN2"
+echo "APN 2 is: $APN2"
+INSTANCE="@@instance@@"
+export INSTANCE="$INSTANCE"
+echo "INSTANCE is: $INSTANCE"
+NETWORK_UE_IP="@@network_ue_ip@@"
+export NETWORK_UE_IP="$NETWORK_UE_IP"
+echo "NETWORK_UE_IP is: $NETWORK_UE_IP"
 
-export HSS_HOSTNAME="$HOSTNAME"
+SPGW_U_HOSTNAME="$(hostname -s)"
+export SPGW_U_HOSTNAME="$SPGW_U_HOSTNAME"
+echo "SPGW-U hostname is $SPGW_U_HOSTNAME"
 
-echo "The HSS HOSTNAME is $HSS_HOSTNAME"
+export SGWC_IP_ADDRESS="$SGWC_IP_ADDRESS"
+echo "SGWC_IP_ADDRESS is: $SGWC_IP_ADDRESS"
 
-docker-compose up -d db_init
+export TZ="Europe/Berlin"
+echo "Timezone is $TZ"
 
-docker-compose up -d cassandra_web
+# Wait for SPGW-C to be up and running
+echo "Waiting for SPGW-C at IP: $SGWC_IP_ADDRESS to be up and running"
+./wait-for-sgw-c.sh "$SGWC_IP_ADDRESS"
+echo "SPGW-C at IP: $SGWC_IP_ADDRESS is up and running"
 
-sleep 5
+docker-compose up -d oai_spgwu
 
-docker-compose up -d oai_hss
-
-docker rm db-init
-
-docker ps -a
+docker ps
 
 exit 0
-
-    """

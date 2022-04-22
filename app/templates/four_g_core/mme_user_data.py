@@ -136,9 +136,9 @@ sudo -- sh -c "echo $HSS_IP $HSS_HOSTNAME $HSS_FQDN >> /etc/hosts"
 
 su - ubuntu
 
-export MME_MANAGEMENT_IP="$MANAGEMENT_IP"
-export MME_FABRIC_IP="$FABRIC_IP"
-export MME_FABRIC_IP="$MANAGEMENT_IP"
+export MANAGEMENT_IP="$MANAGEMENT_IP"
+export FABRIC_IP="$FABRIC_IP"
+export FABRIC_IP="$MANAGEMENT_IP"
 
 # DOCKER_PASS="@@docker_pass@@"
 # docker login -u kukkalli -p ${DOCKER_PASS}

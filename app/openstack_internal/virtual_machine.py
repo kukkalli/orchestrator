@@ -12,6 +12,8 @@ from templates.four_g_core.mme_template import MMETemplate
 from templates.four_g_core.mme_user_data import MMEUserData
 from templates.four_g_core.spgwc_user_data import SPGWCUserData
 from templates.four_g_core.spgwc_template import SPGWCTemplate
+from templates.four_g_core.spgwu_template import SPGWUTemplate
+from templates.four_g_core.spgwu_user_data import SPGWUUserData
 
 LOG = logging.getLogger(__name__)
 
@@ -90,10 +92,11 @@ class VirtualMachine(object):
 
 
 def main():
-    service_chain_name = "test002-kn"
+    service_chain_name = "kn"
     hss = HSSTemplate(service_chain_name)
     mme = MMETemplate(service_chain_name)
     spgw_c = SPGWCTemplate(service_chain_name)
+    spgw_u = SPGWUTemplate(service_chain_name)
     security_groups = ["default"]
     key_pair = "compute01"
     neutron = Neutron(AuthenticateConnection().get_connection())
@@ -104,7 +107,10 @@ def main():
     print(f"mme hostname: {mme_hostname}")
     spgw_c_hostname = spgw_c.get_vm_name()
     print(f"spgw-c hostname: {spgw_c_hostname}")
+    spgw_u_hostname = spgw_u.get_vm_name()
+    print(f"spgw-u hostname: {spgw_u_hostname}")
 
+    """
     for network in hss.networks:
         network["v4-fixed-ip"] = neutron.get_available_ip(network["net-id"])
         hss.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
@@ -126,14 +132,26 @@ def main():
         spgw_c.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
     print(f"networks: {spgw_c.networks}")
     print(f"SPGW-C management network IP: {spgw_c.ip_addresses[management_network_id]}")
+    """
 
+    """
+    """
+    for network in spgw_u.networks:
+        network["v4-fixed-ip"] = neutron.get_available_ip(network["net-id"])
+        spgw_u.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
+    print(f"networks: {spgw_c.networks}")
+    print(f"SPGW-U management network IP: {spgw_u.ip_addresses[management_network_id]}")
+    """
+
+    """
     host = "compute01.etit.tu-chemnitz.de"
     domain = "tu-chemnitz.de"
     docker_pass = "c3360058-8abf-4091-b178-d3d94bc18636"
     """
 
     """
-    hss_user_data = HSSUserData.USERDATA.replace("@@domain@@", domain, 10).replace("@@docker_pass@@", docker_pass, 10). \
+    """
+    hss_user_data = HSSUserData.USERDATA.replace("@@domain@@", domain).replace("@@docker_pass@@", docker_pass). \
         replace("@@mme_ip@@", mme.ip_addresses[management_network_id]).replace("@@mme_hostname@@", mme_hostname)
 
     vm_hss = VirtualMachine(hss.get_vm_name())
@@ -146,7 +164,7 @@ def main():
     """
 
     """
-    mme_user_data = MMEUserData.USERDATA.replace("@@domain@@", domain, 10).replace("@@docker_pass@@", docker_pass, 10). \
+    mme_user_data = MMEUserData.USERDATA.replace("@@domain@@", domain).replace("@@docker_pass@@", docker_pass). \
         replace("@@hss_ip@@", hss.ip_addresses[management_network_id]).replace("@@hss_hostname@@", hss_hostname). \
         replace("@@mcc@@", "265").replace("@@mnc@@", "82").replace("@@mme_gid@@", "32768"). \
         replace("@@mme_code@@", "3").replace("@@sgwc_ip_address@@", spgw_c.ip_addresses[management_network_id])
@@ -161,8 +179,8 @@ def main():
     """
 
     """
-    spgw_c_user_data = SPGWCUserData.USERDATA.replace("@@domain@@", domain, 10). \
-        replace("@@docker_pass@@", docker_pass, 10).replace("@@mcc@@", "265").replace("@@mnc@@", "82").\
+    spgw_c_user_data = SPGWCUserData.USERDATA.replace("@@domain@@", domain). \
+        replace("@@docker_pass@@", docker_pass).replace("@@mcc@@", "265").replace("@@mnc@@", "82").\
         replace("@@gw_id@@", "1").replace("@@apn-1@@", "tuckn").replace("@@apn-2@@", "tuckn2"). \
         replace("@@mme_ip@@", mme.ip_addresses[management_network_id]).replace("@@mme_hostname@@", mme_hostname)
 
@@ -173,6 +191,27 @@ def main():
                                                      networks=spgw_c.networks, host=host)
     vm_spgw_c.close_connection()
     print("Created SPGW-C Server: {}".format(spgw_c_server))
+    """
+
+    """
+    """
+    spgw_c_hostname = "kn-spgw-c"
+    spgw_c_hostname_ip = "10.10.2.108"
+    domain = "tu-chemnitz.de"
+    spgw_u_user_data = SPGWUUserData.USERDATA.replace("@@domain@@", domain).\
+        replace("@@docker_pass@@", docker_pass).replace("@@mcc@@", "265").replace("@@mnc@@", "82").\
+        replace("@@gw_id@@", "1").replace("@@apn-1@@", "tuckn").replace("@@apn-2@@", "tuckn2").\
+        replace("@@sgwc_ip_address@@", spgw_c_hostname_ip).\
+        replace("@@sgwc_hostname@@", spgw_c_hostname).replace("@@instance@@", "1").\
+        replace("@@network_ue_ip@@", "12.1.1.0/24")
+
+    vm_spgw_u = VirtualMachine(spgw_u.get_vm_name())
+    spgw_u_server = vm_spgw_u.create_virtual_machine(spgw_u.get_vm_name(), spgw_u.get_image_id(),
+                                                     flavor=spgw_u.get_flavour(), security_groups=security_groups,
+                                                     userdata=spgw_u_user_data, key_pair=key_pair,
+                                                     networks=spgw_u.networks, host=host)
+    vm_spgw_u.close_connection()
+    print("Created SPGW-C Server: {}".format(spgw_u_server))
     """
     """
 

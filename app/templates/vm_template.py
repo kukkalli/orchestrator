@@ -10,8 +10,8 @@ class VMTemplate:
         self.flavor = "2"
         self.image_id = "af8b3413-3d71-429e-83e1-de279bc2f4ea"
         self.ip_addresses: Dict[str, str] = {}
-        self.networks: List[Dict[str, str]] = [{"net-id": "a0ebb620-d0e6-44d9-b584-489e841bc796"},
-                                               {"net-id": "9e373e2c-0372-4a06-81a1-bc1cb4c62b85"}]
+        self.networks: List[Dict[str, str]] = [{"net-id": "d2a49c41-6f42-486d-b96a-212b0b933273"},
+                                               {"net-id": "200cd190-6171-4b26-aa83-e42f447ba90a"}]
         self.vm_name = "template"
 
     def get_flavour(self):

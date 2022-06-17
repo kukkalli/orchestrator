@@ -6,6 +6,8 @@ LOG = logging.getLogger(__name__)
 class MMEUserData:
     USERDATA = """#!/bin/bash
 
+echo "Start MME: $(date +"%T")"
+
 cat > /home/ubuntu/.ssh/authorized_keys << EOF
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGxlZsduAGeKqz3UhzHeXiJOsRlBQTZIyOxA0DrXso9ncDveooDqUr+Xw5XZx44nHFNjWocoQowDdaA8jj0DYEs9wF5ELGj/rm4n6a1b6tXVAlb3Vojb5C0mZfx2gUA6i5GNnNXONRttaW53XeOoD/VDM9tlgBnpa04bBQ1naTiLbQsQg== os@controller
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAFJ/TSfJegktNbVbCF2L1hte8qfDtgk/zArlNq4vgEAKRePSEYnoFldlGVn5zDqnvLP2xy6WrcFUjO2TOeTnmqQ1gEzcBOjUXeYdA7LO1J8yARvvAMOk4IiuVTvGUdCIW8uDpXwfqCxqeKbSudo3LVLgt/ZcRg1QENyRLP/zqixIJoEsA== os@compute01
@@ -198,10 +200,14 @@ echo "Update mme.conf file before pushing it to docker"
 echo "Waiting for HSS at IP: $HSS_IP to be up and running"
 ./wait-for-hss.sh "$HSS_IP"
 echo "HSS at IP: $HSS_IP is up and running"
+echo "-----------------------------------------------------------"
+echo "HSS is responding: $(date +"%T")"
 
 docker-compose up -d magma_mme
 
 docker ps
+
+echo "MME started $(date +"%T")"
 
 exit 0
 

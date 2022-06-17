@@ -1,0 +1,20 @@
+Service Chain Creation Start time: 17:17:29
+hss hostname: kn-hss
+mme hostname: kn-mme
+spgw-c hostname: kn-spgw-c
+spgw-u hostname: kn-spgw-u
+networks: [{'net-id': 'd2a49c41-6f42-486d-b96a-212b0b933273', 'v4-fixed-ip': '10.10.2.144'}, {'net-id': '200cd190-6171-4b26-aa83-e42f447ba90a', 'v4-fixed-ip': '10.11.2.14'}]
+HSS management network IP: 10.10.2.144
+networks: [{'net-id': 'd2a49c41-6f42-486d-b96a-212b0b933273', 'v4-fixed-ip': '10.10.2.37'}, {'net-id': '200cd190-6171-4b26-aa83-e42f447ba90a', 'v4-fixed-ip': '10.11.1.100'}]
+MME management network IP: 10.10.2.37
+networks: [{'net-id': 'd2a49c41-6f42-486d-b96a-212b0b933273', 'v4-fixed-ip': '10.10.2.222'}, {'net-id': '200cd190-6171-4b26-aa83-e42f447ba90a', 'v4-fixed-ip': '10.11.1.143'}]
+SPGW-C management network IP: 10.10.2.222
+networks: [{'net-id': 'd2a49c41-6f42-486d-b96a-212b0b933273', 'v4-fixed-ip': '10.10.2.211'}, {'net-id': '200cd190-6171-4b26-aa83-e42f447ba90a', 'v4-fixed-ip': '10.11.2.153'}]
+SPGW-U management network IP: 10.10.2.211
+Created HSS Server: <Server: kn-hss>
+Created MME Server: <Server: kn-mme>
+Created SPGW-C Server: <Server: kn-spgw-c>
+Created SPGW-U Server: <Server: kn-spgw-u>
+Service Chain Creation End time: 17:18:01
+
+Process finished with exit code 0

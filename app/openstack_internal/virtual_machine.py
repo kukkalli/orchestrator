@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.clients.clients import Clients
@@ -40,8 +41,8 @@ class VirtualMachine(object):
         if security_groups is None:
             security_groups = ["default"]
         if networks is None:
-            networks = [{"net-id": "a0ebb620-d0e6-44d9-b584-489e841bc796", "v4-fixed-ip": "10.10.2.50"},
-                        {"net-id": "9e373e2c-0372-4a06-81a1-bc1cb4c62b85", "v4-fixed-ip": "10.11.2.50"}]
+            networks = [{"net-id": "d2a49c41-6f42-486d-b96a-212b0b933273", "v4-fixed-ip": "10.10.2.50"},
+                        {"net-id": "200cd190-6171-4b26-aa83-e42f447ba90a", "v4-fixed-ip": "10.11.2.50"}]
         nova_client: NovaV2Client = self.__clients.get_nova_client()
         return nova_client.servers.create(name=name, image=image, flavor=flavor, min_count=vm_count, max_count=vm_count,
                                           security_groups=security_groups, userdata=userdata, key_name=key_pair,
@@ -92,6 +93,10 @@ class VirtualMachine(object):
 
 
 def main():
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print(f"Service Chain Creation Start time: {current_time}")
+
     service_chain_name = "kn"
     hss = HSSTemplate(service_chain_name)
     mme = MMETemplate(service_chain_name)
@@ -100,7 +105,7 @@ def main():
     security_groups = ["default"]
     key_pair = "compute01"
     neutron = Neutron(AuthenticateConnection().get_connection())
-    management_network_id = "a0ebb620-d0e6-44d9-b584-489e841bc796"
+    management_network_id = "d2a49c41-6f42-486d-b96a-212b0b933273"
     hss_hostname = hss.get_vm_name()
     print(f"hss hostname: {hss_hostname}")
     mme_hostname = mme.get_vm_name()
@@ -110,7 +115,6 @@ def main():
     spgw_u_hostname = spgw_u.get_vm_name()
     print(f"spgw-u hostname: {spgw_u_hostname}")
 
-    """
     for network in hss.networks:
         network["v4-fixed-ip"] = neutron.get_available_ip(network["net-id"])
         hss.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
@@ -135,21 +139,21 @@ def main():
     """
 
     """
-    """
     for network in spgw_u.networks:
         network["v4-fixed-ip"] = neutron.get_available_ip(network["net-id"])
         spgw_u.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
-    print(f"networks: {spgw_c.networks}")
+    print(f"networks: {spgw_u.networks}")
     print(f"SPGW-U management network IP: {spgw_u.ip_addresses[management_network_id]}")
     """
 
     """
-    host = "compute01.etit.tu-chemnitz.de"
+    host1 = "compute01.etit.tu-chemnitz.de"
+    host2 = "compute02.etit.tu-chemnitz.de"
+    host3 = "compute03.etit.tu-chemnitz.de"
     domain = "tu-chemnitz.de"
     docker_pass = "c3360058-8abf-4091-b178-d3d94bc18636"
     """
 
-    """
     """
     hss_user_data = HSSUserData.USERDATA.replace("@@domain@@", domain).replace("@@docker_pass@@", docker_pass). \
         replace("@@mme_ip@@", mme.ip_addresses[management_network_id]).replace("@@mme_hostname@@", mme_hostname)
@@ -158,7 +162,7 @@ def main():
     hss_server = vm_hss.create_virtual_machine(hss.get_vm_name(), hss.get_image_id(), flavor=hss.get_flavour(),
                                                security_groups=security_groups, userdata=hss_user_data,
                                                key_pair=key_pair,
-                                               networks=hss.networks, host=host)
+                                               networks=hss.networks, host=host1)
     vm_hss.close_connection()
     print("Created HSS Server: {}".format(hss_server))
     """
@@ -173,7 +177,7 @@ def main():
     mme_server = vm_mme.create_virtual_machine(mme.get_vm_name(), mme.get_image_id(), flavor=mme.get_flavour(),
                                                security_groups=security_groups, userdata=mme_user_data,
                                                key_pair=key_pair,
-                                               networks=mme.networks, host=host)
+                                               networks=mme.networks, host=host2)
     vm_mme.close_connection()
     print("Created MME Server: {}".format(mme_server))
     """
@@ -188,16 +192,15 @@ def main():
     spgw_c_server = vm_spgw_c.create_virtual_machine(spgw_c.get_vm_name(), spgw_c.get_image_id(),
                                                      flavor=spgw_c.get_flavour(), security_groups=security_groups,
                                                      userdata=spgw_c_user_data, key_pair=key_pair,
-                                                     networks=spgw_c.networks, host=host)
+                                                     networks=spgw_c.networks, host=host3)
     vm_spgw_c.close_connection()
     print("Created SPGW-C Server: {}".format(spgw_c_server))
     """
 
     """
-    """
     spgw_c_hostname = "kn-spgw-c"
-    spgw_c_hostname_ip = "10.10.2.108"
-    domain = "tu-chemnitz.de"
+    spgw_c_hostname_ip = spgw_c.ip_addresses[management_network_id]
+    """ domain = "tu-chemnitz.de" """
     spgw_u_user_data = SPGWUUserData.USERDATA.replace("@@domain@@", domain).\
         replace("@@docker_pass@@", docker_pass).replace("@@mcc@@", "265").replace("@@mnc@@", "82").\
         replace("@@gw_id@@", "1").replace("@@apn-1@@", "tuckn").replace("@@apn-2@@", "tuckn2").\
@@ -209,9 +212,15 @@ def main():
     spgw_u_server = vm_spgw_u.create_virtual_machine(spgw_u.get_vm_name(), spgw_u.get_image_id(),
                                                      flavor=spgw_u.get_flavour(), security_groups=security_groups,
                                                      userdata=spgw_u_user_data, key_pair=key_pair,
-                                                     networks=spgw_u.networks, host=host)
+                                                     networks=spgw_u.networks, host=host3)
+
     vm_spgw_u.close_connection()
     print("Created SPGW-U Server: {}".format(spgw_u_server))
+
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print(f"Service Chain Creation End time: {current_time}")
+
     """
     """
 

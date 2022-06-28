@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Start HSS: $(date +"%T")"
+
 cat > /home/ubuntu/.ssh/authorized_keys << EOF
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGxlZsduAGeKqz3UhzHeXiJOsRlBQTZIyOxA0DrXso9ncDveooDqUr+Xw5XZx44nHFNjWocoQowDdaA8jj0DYEs9wF5ELGj/rm4n6a1b6tXVAlb3Vojb5C0mZfx2gUA6i5GNnNXONRttaW53XeOoD/VDM9tlgBnpa04bBQ1naTiLbQsQg== os@controller
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAFJ/TSfJegktNbVbCF2L1hte8qfDtgk/zArlNq4vgEAKRePSEYnoFldlGVn5zDqnvLP2xy6WrcFUjO2TOeTnmqQ1gEzcBOjUXeYdA7LO1J8yARvvAMOk4IiuVTvGUdCIW8uDpXwfqCxqeKbSudo3LVLgt/ZcRg1QENyRLP/zqixIJoEsA== os@compute01
@@ -144,22 +146,44 @@ chown ubuntu:ubuntu -R oai-docker-compose
 
 cd oai-docker-compose/4g/hss/ || exit
 
-export HSS_MANAGEMENT_IP="$MANAGEMENT_IP"
-echo "The HSS_MANAGEMENT_IP is $HSS_MANAGEMENT_IP"
+export MANAGEMENT_IP="$MANAGEMENT_IP"
+sed -i -e "s@_domain_@$DOMAIN@" .env
+echo "The HSS_MANAGEMENT_IP is $MANAGEMENT_IP"
+sed -i -e "s@_management_ip_@$MANAGEMENT_IP@" .env
 
-export HSS_FABRIC_IP="$FABRIC_IP"
-export HSS_FABRIC_IP="$MANAGEMENT_IP"
-echo "The HSS_FABRIC_IP is $HSS_FABRIC_IP"
-
+export FABRIC_IP="$FABRIC_IP"
+export FABRIC_IP="$MANAGEMENT_IP"
+echo "The HSS_FABRIC_IP is $FABRIC_IP"
+sed -i -e "s@_fabric_ip_@$FABRIC_IP@" .env
 export HSS_FQDN="$FQDN_HOSTNAME"
+sed -i -e "s@_hss_fqdn_@$HSS_FQDN@" .env
+
+export OP_KEY="@@op_key@@"
+sed -i -e "s@_op_key_@$OP_KEY@" .env
+export LTE_K="@@lte_k@@"
+sed -i -e "s@_lte_k_@$LTE_K@" .env
+APN1="@@apn-1@@.ipv4" # tuckn.ipv4
+export APN1="$APN1"
+sed -i -e "s@_apn_1_@$APN1@" .env
+echo "APN 1 is: $APN1"
+APN2="@@apn-2@@.ipv4" # tuckn2.ipv4
+export APN2="$APN2"
+sed -i -e "s@_apn_2_@$APN2@" .env
+echo "APN 2 is: $APN2"
+
+export FIRST_IMSI=@@first_imsi@@
+sed -i -e "s@_first_imsi_@$FIRST_IMSI@" .env
 
 echo "The HSS FQDN is $HSS_FQDN"
 
 export REALM="$DOMAIN"
+sed -i -e "s@_realm_@$DOMAIN@" .env
+
 
 echo "The REALM is $REALM"
 
 export HSS_HOSTNAME="$HOSTNAME"
+sed -i -e "s@_hss_hostname_@$HSS_HOSTNAME@" .env
 
 echo "The HSS HOSTNAME is $HSS_HOSTNAME"
 
@@ -174,5 +198,7 @@ docker-compose up -d oai_hss
 docker rm db-init
 
 docker ps -a
+
+echo "HSS started $(date +"%T")"
 
 exit 0

@@ -156,7 +156,10 @@ def main():
 
     """
     hss_user_data = HSSUserData.USERDATA.replace("@@domain@@", domain).replace("@@docker_pass@@", docker_pass). \
-        replace("@@mme_ip@@", mme.ip_addresses[management_network_id]).replace("@@mme_hostname@@", mme_hostname)
+        replace("@@mme_ip@@", mme.ip_addresses[management_network_id]).replace("@@mme_hostname@@", mme_hostname).\
+        replace("@@op_key@@", "0123456789ABCDEF0123456789ABCDEF").\
+        replace("@@lte_k@@", "0123456789ABCDEF0123456789ABCDEF").replace("@@apn-1@@", "tuckn").\
+        replace("@@apn-2@@", "tuckn2").replace("@@first_imsi@@", "265820000038021")
 
     vm_hss = VirtualMachine(hss.get_vm_name())
     hss_server = vm_hss.create_virtual_machine(hss.get_vm_name(), hss.get_image_id(), flavor=hss.get_flavour(),

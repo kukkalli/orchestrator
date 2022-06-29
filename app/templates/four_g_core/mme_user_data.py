@@ -134,7 +134,7 @@ docker-compose --version
 
 HSS_IP="@@hss_ip@@"
 HSS_HOSTNAME="@@hss_hostname@@"
-sudo -- sh -c "echo $HSS_IP $HSS_HOSTNAME $HSS_FQDN >> /etc/hosts"
+sudo -- sh -c "echo $HSS_IP $HSS_HOSTNAME $HSS_HOSTNAME.$DOMAIN >> /etc/hosts"
 
 su - ubuntu
 
@@ -197,11 +197,15 @@ echo "Update mme.conf file before pushing it to docker"
 ./update_mme_conf.sh
 
 # Wait for HSS to be up and running
+echo "-----------------------------------------------------------"
 echo "Waiting for HSS at IP: $HSS_IP to be up and running"
+echo "-----------------------------------------------------------"
 ./wait-for-hss.sh "$HSS_IP"
+echo "-----------------------------------------------------------"
 echo "HSS at IP: $HSS_IP is up and running"
 echo "-----------------------------------------------------------"
 echo "HSS is responding: $(date +"%T")"
+echo "-----------------------------------------------------------"
 
 docker-compose up -d magma_mme
 

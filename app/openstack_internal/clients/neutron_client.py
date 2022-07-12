@@ -11,6 +11,7 @@ class Neutron:
         self.__conn = session.get_connection()
         # self.__client = Clients(session).get_neutron_client()
 
+    """
     def get_networks_list(self):
         networks_list = []
         for _network in self.__conn.list_networks():
@@ -19,6 +20,7 @@ class Neutron:
             LOG.debug("Get Network dir: {}".format(dir(_network)))
             LOG.debug("Get Network id: {} and name: {}".format(_network.get('id'), _network.get('name')))
         return networks_list
+    """
 
     def get_network_by_id(self, network_id: str):
         LOG.debug(f"Network by Id: {self.__conn.get_network_by_id(network_id)}")
@@ -44,6 +46,7 @@ class Neutron:
 
 
 def main():
+    """
     auth = AuthenticateConnection()
     neutron = Neutron(auth)
 
@@ -55,6 +58,7 @@ def main():
     ip_list = neutron.get_available_ip_list("9e373e2c-0372-4a06-81a1-bc1cb4c62b85", 4)
     for ip in ip_list:
         print(f"Returned IP is: {ip}")
+    """
 
 
 if __name__ == "__main__":

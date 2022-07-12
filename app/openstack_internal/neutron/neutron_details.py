@@ -56,6 +56,21 @@ class Neutron:
     def get_ip_address(self, network_id: str, name: str):
         return self.connection.create_port(network_id, name)
 
+    def create_port(self, network_id: str):
+        port = self.connection.create_port(network_id)
+        LOG.debug(f"Port details: {port}")
+        LOG.debug(f"Port id: {port['id']}")
+        print(f"Port details: {port}")
+        print(f"Port id: {port['id']}")
+        self.ports_list.append(port)
+        return port
+
+    def create_port_list(self, network_id: str, count: int = 1):
+        self.ports_list = []
+        for i in range(0, count):
+            self.create_port(network_id=network_id)
+        return self.ports_list
+
     def get_available_ip(self, network_id: str, is_delete: bool = True):
         port = self.connection.create_port(network_id)
         LOG.debug(f"Port details: {port}")
@@ -66,7 +81,6 @@ class Neutron:
             self.connection.delete_port(port)
         else:
             self.ports_list.append(port)
-
         return ip_address
 
     def get_available_ip_list(self, network_id: str, count: int = 1):
@@ -77,10 +91,24 @@ class Neutron:
             self.ports_list.remove(self.ports_list[i])
         return ip_list
 
+    def delete_ports(self):
+        count = len(self.ports_list)
+        for i in range(0, count):
+            self.connection.delete_port(self.ports_list[i].id)
+        self.ports_list = []
+
 
 def main():
-    auth = AuthenticateConnection()
-    neutron = Neutron(auth.get_connection())
+    neutron = Neutron(AuthenticateConnection().get_connection())
+    # neutron.create_port_list("d2a49c41-6f42-486d-b96a-212b0b933273", 2)
+    neutron.create_port("200cd190-6171-4b26-aa83-e42f447ba90a")
+    for port in neutron.ports_list:
+        print(f"Port Network id: {port['network_id']}, Port Id: {port['id']}, port-ip: {port.fixed_ips[0]['ip_address']}")
+        for fixed_ip in port.fixed_ips:
+            print(f"Port Network id: {port['network_id']}, Port Id: {port['id']},"
+                  f" port-ip: {fixed_ip['ip_address']}")
+
+    """
     # project id '6b5e1b91ce6d40a082004e7b60b614c4'
     for network in neutron.get_networks_list():
         print("Get Network name: {}, network id: {}".format(network.get("name"), network.get("id")))
@@ -97,11 +125,14 @@ def main():
     for network in neutron.get_networks_list():
         print("Get Network name: {}".format(network))
 
-    neutron.get_network_by_id("9e373e2c-0372-4a06-81a1-bc1cb4c62b85")
-    neutron.get_available_ip("9e373e2c-0372-4a06-81a1-bc1cb4c62b85")
-    ip_list = neutron.get_available_ip_list("9e373e2c-0372-4a06-81a1-bc1cb4c62b85", 4)
-    for ip in ip_list:
-        print(f"Returned IP is: {ip}")
+    print(f"{neutron.get_network_by_id('d2a49c41-6f42-486d-b96a-212b0b933273')}")
+    ip_address = neutron.get_available_ip("d2a49c41-6f42-486d-b96a-212b0b933273")
+
+    print(f"ip_address: {ip_address}")
+    ip_list = neutron.get_available_ip_list("d2a49c41-6f42-486d-b96a-212b0b933273", 4)
+#    for ip in ip_list:
+#        print(f"Returned IP is: {ip}")
+    """
 
 
 if __name__ == "__main__":

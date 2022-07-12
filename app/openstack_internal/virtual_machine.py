@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from typing import Dict, List
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.clients.clients import Clients
@@ -15,6 +16,7 @@ from templates.four_g_core.spgwc_user_data import SPGWCUserData
 from templates.four_g_core.spgwc_template import SPGWCTemplate
 from templates.four_g_core.spgwu_template import SPGWUTemplate
 from templates.four_g_core.spgwu_user_data import SPGWUUserData
+from templates.four_g_lte_core import FourGLTECore
 
 LOG = logging.getLogger(__name__)
 
@@ -49,6 +51,22 @@ class VirtualMachine(object):
                                           admin_pass=None,
                                           nics=networks, access_ip_v4=None, access_ip_v6=None, host=host,
                                           hypervisor_hostname=None)
+
+    def create_virtual_machine_with_port(self, name, image, flavor="2", vm_count=1, security_groups: list = None,
+                                         userdata: str = "", key_pair=None, ports: list = None, host=None):
+        if security_groups is None:
+            security_groups = ["default"]
+        if ports is None:
+            self.create_virtual_machine(name, image, flavor, vm_count, security_groups, userdata, key_pair, None, host)
+            return
+        nova_client: NovaV2Client = self.__clients.get_nova_client()
+        return nova_client.servers.create(name=name, image=image, flavor=flavor, min_count=vm_count, max_count=vm_count,
+                                          security_groups=security_groups, userdata=userdata, key_name=key_pair,
+                                          admin_pass=None,
+                                          nics=ports, access_ip_v4=None, access_ip_v6=None, host=host,
+                                          hypervisor_hostname=None)
+
+        return
 
     """
     def get_vm_info(self):
@@ -98,28 +116,42 @@ def main():
     print(f"Service Chain Creation Start time: {current_time}")
 
     service_chain_name = "kn1"
-    hss = HSSTemplate(service_chain_name)
-    mme = MMETemplate(service_chain_name)
-    spgw_c = SPGWCTemplate(service_chain_name)
-    spgw_u = SPGWUTemplate(service_chain_name)
     security_groups = ["default"]
     key_pair = "controller"
     neutron = Neutron(AuthenticateConnection().get_connection())
     management_network_id = "d2a49c41-6f42-486d-b96a-212b0b933273"
+    fabric_network_id = "200cd190-6171-4b26-aa83-e42f447ba90a"
+
+    service = FourGLTECore(service_chain_name, "tu-chemnitz.de", 1000)
+    service.build()
+    hostnames_list: List[Dict] = []
+    for vnf in service.get_network_functions():
+        print(f"VNF name: {vnf.get_name()}")
+        hostnames_list.append({vnf.get_name(): vnf.get_vm_name()})
+
+        for network in vnf.networks:
+            # network["v4-fixed-ip"] = neutron.get_available_ip(network_id=network["net-id"], is_delete=False)
+            network["port-id"] = neutron.create_port(network_id=network["net-id"])
+            vnf.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
+        print(f"networks: {vnf.networks}")
+        print(f"{vnf.get_name()} management network IP: {vnf.ip_addresses[management_network_id]}")
+        print(f"{vnf.get_name()} management network IP: {vnf.ip_addresses[fabric_network_id]}")
+
+    for hostname in hostnames_list:
+        print(f"VNF name: {hostname['hss']}")
+    hss = HSSTemplate(service_chain_name)
+    #    mme = MMETemplate(service_chain_name)
+    #    spgw_c = SPGWCTemplate(service_chain_name)
+    #    spgw_u = SPGWUTemplate(service_chain_name)
     hss_hostname = hss.get_vm_name()
     print(f"hss hostname: {hss_hostname}")
+    """
     mme_hostname = mme.get_vm_name()
     print(f"mme hostname: {mme_hostname}")
     spgw_c_hostname = spgw_c.get_vm_name()
     print(f"spgw-c hostname: {spgw_c_hostname}")
     spgw_u_hostname = spgw_u.get_vm_name()
     print(f"spgw-u hostname: {spgw_u_hostname}")
-
-    for network in hss.networks:
-        network["v4-fixed-ip"] = neutron.get_available_ip(network["net-id"])
-        hss.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
-    print(f"networks: {hss.networks}")
-    print(f"HSS management network IP: {hss.ip_addresses[management_network_id]}")
     """
 
     """
@@ -203,7 +235,9 @@ def main():
     """
     # spgw_c_hostname = "kn-spgw-c"
     spgw_c_hostname_ip = spgw_c.ip_addresses[management_network_id]
-    """ domain = "tu-chemnitz.de" """
+    """
+    domain = "tu-chemnitz.de"
+    """
     spgw_u_user_data = SPGWUUserData.USERDATA.replace("@@domain@@", domain).\
         replace("@@docker_pass@@", docker_pass).replace("@@mcc@@", "265").replace("@@mnc@@", "82").\
         replace("@@gw_id@@", "1").replace("@@apn-1@@", "tuckn").replace("@@apn-2@@", "tuckn2").\
@@ -224,6 +258,7 @@ def main():
     current_time = now.strftime("%H:%M:%S")
     print(f"Service Chain Creation End time: {current_time}")
 
+    """
     """
     """
 

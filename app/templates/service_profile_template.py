@@ -30,6 +30,9 @@ class ServiceProfileTemplate:
     def get_v_links_list(self):
         return self.v_links
 
+    def get_network_functions(self):
+        return self.network_functions
+
     def build(self):
         LOG.info(f"Build FourGLTECore: {time.time()}")
         for index, network_function in enumerate(self.network_functions):

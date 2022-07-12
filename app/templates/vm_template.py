@@ -37,5 +37,8 @@ class VMTemplate:
     def get_vm_name(self):
         return self.vm_name
 
+    def get_name(self):
+        return self.name
+
     def get_user_data(self):
         return self.user_data

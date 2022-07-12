@@ -97,13 +97,13 @@ def main():
     current_time = now.strftime("%H:%M:%S")
     print(f"Service Chain Creation Start time: {current_time}")
 
-    service_chain_name = "kn"
+    service_chain_name = "kn1"
     hss = HSSTemplate(service_chain_name)
     mme = MMETemplate(service_chain_name)
     spgw_c = SPGWCTemplate(service_chain_name)
     spgw_u = SPGWUTemplate(service_chain_name)
     security_groups = ["default"]
-    key_pair = "compute01"
+    key_pair = "controller"
     neutron = Neutron(AuthenticateConnection().get_connection())
     management_network_id = "d2a49c41-6f42-486d-b96a-212b0b933273"
     hss_hostname = hss.get_vm_name()
@@ -180,7 +180,7 @@ def main():
     mme_server = vm_mme.create_virtual_machine(mme.get_vm_name(), mme.get_image_id(), flavor=mme.get_flavour(),
                                                security_groups=security_groups, userdata=mme_user_data,
                                                key_pair=key_pair,
-                                               networks=mme.networks, host=host2)
+                                               networks=mme.networks, host=host1)
     vm_mme.close_connection()
     print("Created MME Server: {}".format(mme_server))
     """
@@ -201,7 +201,7 @@ def main():
     """
 
     """
-    spgw_c_hostname = "kn-spgw-c"
+    # spgw_c_hostname = "kn-spgw-c"
     spgw_c_hostname_ip = spgw_c.ip_addresses[management_network_id]
     """ domain = "tu-chemnitz.de" """
     spgw_u_user_data = SPGWUUserData.USERDATA.replace("@@domain@@", domain).\

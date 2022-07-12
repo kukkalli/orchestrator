@@ -14,7 +14,7 @@ services:
       MARIADB_DATABASE: "orchestrator"
     volumes:
       - /docker-data/db:/var/lib/mysql
-      - ./init_db/kn.sql:/docker-entrypoint-initdb.d/kn.sql
+      - ./init_db/orchestrator.sql:/docker-entrypoint-initdb.d/orchestrator.sql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -55,4 +55,5 @@ services:
       MARIADB_PASSWORD: "TUC-2018"
       MARIADB_DATABASE: "orchestrator"
     volumes:
-      - ./orchestrator.log:/app/orchestrator.log
+      - ./logs/:/app/logs/
+#      - ./var-logs/:/var/log/

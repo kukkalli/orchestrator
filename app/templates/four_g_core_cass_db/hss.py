@@ -1,12 +1,12 @@
 import logging
 
-from templates.four_g_core.hss_user_data import HSSUserData
+from templates.four_g_core_cass_db.hss_user_data import HSSUserData
 from templates.vm_template import VMTemplate
 
 LOG = logging.getLogger(__name__)
 
 
-class HSSTemplate(VMTemplate):
+class HSS(VMTemplate):
 
     def __init__(self, name: str):
         super().__init__()

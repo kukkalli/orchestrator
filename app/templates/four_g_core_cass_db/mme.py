@@ -1,12 +1,12 @@
 import logging
 
-from templates.four_g_core.mme_user_data import MMEUserData
+from templates.four_g_core_cass_db.mme_user_data import MMEUserData
 from templates.vm_template import VMTemplate
 
 LOG = logging.getLogger(__name__)
 
 
-class MMETemplate(VMTemplate):
+class MME(VMTemplate):
 
     def __init__(self, name: str):
         super().__init__()

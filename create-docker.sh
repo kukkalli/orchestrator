@@ -1,18 +1,30 @@
 #! /usr/bin/env sh
 
-old_version=0.1.2
-version=0.1.3
+OLD_VERSION=0.1.5
+VERSION=0.1.6
+
+docker-compose -f docker-compose/docker-compose.yaml down
 
 docker rmi orchestrator
 docker rmi kukkalli/orchestrator
-docker rmi kukkalli/orchestrator:$old_version
-docker rmi kukkalli/orchestrator:$version
+docker rmi kukkalli/orchestrator:$OLD_VERSION
+docker rmi kukkalli/orchestrator:$VERSION
 
 docker build -t orchestrator --no-cache -f docker/Dockerfile .
 
 docker image tag orchestrator kukkalli/orchestrator:latest
-docker image tag orchestrator kukkalli/orchestrator:$version
+docker image tag orchestrator kukkalli/orchestrator:$VERSION
 
-# docker login -u kukkalli -p c3360058-8abf-4091-b178-d3d94bc18636
-# docker image push kukkalli/orchestrator:latest
-# docker image push kukkalli/orchestrator:$version
+REGEX='^([0-9]+\.){0,2}(\*|[0]+)$'
+
+# shellcheck disable=SC2039
+if [[ $VERSION =~ $REGEX ]]; then
+  echo "INFO:<--> Uploading image to Docker Hub with Version: $VERSION"
+  docker login -u kukkalli -p c3360058-8abf-4091-b178-d3d94bc18636
+  docker image push kukkalli/orchestrator:latest
+  docker image push kukkalli/orchestrator:$VERSION
+  echo "INFO:<--> Uploaded image to Docker Hub with Version: $VERSION"
+fi
+
+docker-compose -f docker-compose/docker-compose.yaml up -d
+

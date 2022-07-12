@@ -13,11 +13,13 @@ USE_NGINX_WORKER_PROCESSES=${NGINX_WORKER_PROCESSES:-1}
 NGINX_WORKER_CONNECTIONS=${NGINX_WORKER_CONNECTIONS:-1024}
 
 # Get the listen port for Nginx, default to 80
-USE_LISTEN_PORT=${LISTEN_PORT:-80}
+# USE_LISTEN_PORT=${LISTEN_PORT:-80}
 
 # Get the URL for static files from the environment variable
+# shellcheck disable=SC2034
 USE_STATIC_URL=${STATIC_URL:-'/static'}
 # Get the absolute path of the static files from the environment variable
+# shellcheck disable=SC2034
 USE_STATIC_PATH=${STATIC_PATH:-'/app/static'}
 # Get the listen port for Nginx, default to 80
 USE_LISTEN_PORT=${LISTEN_PORT:-80}
@@ -50,6 +52,7 @@ else
         content=$content"worker_rlimit_nofile ${NGINX_WORKER_OPEN_FILES};\n"
     fi
     # Save generated /etc/nginx/nginx.conf
+    # shellcheck disable=SC2059
     printf "$content" > /etc/nginx/nginx.conf
 
     content_server='server {\n'
@@ -60,9 +63,11 @@ else
     content_server=$content_server'    }\n'
     content_server=$content_server'}\n'
     # Save generated server /etc/nginx/conf.d/nginx.conf
+    # shellcheck disable=SC2059
     printf "$content_server" > /etc/nginx/conf.d/nginx.conf
 
     # Generate Nginx config for maximum upload file size
+    # shellcheck disable=SC2059
     printf "client_max_body_size $USE_NGINX_MAX_UPLOAD;\n" > /etc/nginx/conf.d/upload.conf
 
     # Remove default Nginx config from Alpine

@@ -1,4 +1,4 @@
-class HSSUserData:
+class CassandraDBUserData:
     USERDATA = """
 
 MME_IP="@@mme_ip@@"

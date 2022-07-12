@@ -1,10 +1,7 @@
 import logging
-import time
 
 from templates.four_g_lte_core import FourGLTECore
-from templates.rcc_template import RCCTemplate
-from tosca.virtual_link import VirtualLink
-from tosca.vm_requirement import VMRequirement
+from templates.vm_template import VMTemplate
 
 LOG = logging.getLogger(__name__)
 
@@ -13,23 +10,28 @@ class FourGLTECoreRCC(FourGLTECore):
 
     def __init__(self, name: str, domain_name: str, bandwidth: int):
         super().__init__(name, domain_name, bandwidth)
-        self.rcc = RCCTemplate(name)
-        self.__build()
+        rcc = VMTemplate(self.name, "rcc", "3")
+        self.network_functions.append(rcc)
 
-    def __build(self):
-        LOG.info(f"Build FourGLTECoreRCC: {time.time()}")
-        rcc = VMRequirement(3, self.rcc.vm_name, self.nova.get_flavor_by_id(self.rcc.flavor),
-                            image_id=self.rcc.image_id, network_id=self.rcc.network_id, ip_address=self.rcc.ip_address)
-        self.vm_requirements.append(rcc)
+        self.nfv_v_links_list.append({"out": "mme", "in": "rcc", "delay": 30})
+        self.nfv_v_links_list.append({"out": "rcc", "in": "mme", "delay": 30})
+        self.nfv_v_links_list.append({"out": "spgw-u", "in": "rcc", "delay": 30})
+        self.nfv_v_links_list.append({"out": "rcc", "in": "spgw-u", "delay": 30})
 
-        mme_rcc = VirtualLink("mme-rcc", 4, 3, 1, self.bandwidth, 10)
-        self.v_links.append(mme_rcc)
-        rcc_mme = VirtualLink("rcc-mme", 5, 1, 3, self.bandwidth, 10)
-        self.v_links.append(rcc_mme)
 
-        spgw_rcc = VirtualLink("spgw-rcc", 7, 1, 2, self.bandwidth, 10)
-        self.v_links.append(spgw_rcc)
-        rcc_spgw = VirtualLink("rcc-spgw", 6, 2, 1, self.bandwidth, 10)
-        self.v_links.append(rcc_spgw)
-        LOG.info(f"Built FourGLTECoreRCC: {time.time()}")
+def main():
+    service = FourGLTECoreRCC("test-rcc", "kukkalli.com", 1000)
+    service.build()
+    for vm_request in service.get_vm_requirements_list():
+        print(f"VM Requirement: {vm_request.hostname}, int_id: {vm_request.int_id}")
+        for link in vm_request.out_v_links:
+            print(f"out link: {link.id}, int_id: {link.int_id}")
+        for link in vm_request.in_v_links:
+            print(f"in link: {link.id}, int_id: {link.int_id}")
 
+    for link in service.get_v_links_list():
+        print(f"link name: {link.id}, int_id: {link.int_id}")
+
+
+if __name__ == "__main__":
+    main()

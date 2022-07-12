@@ -7,7 +7,9 @@ LOG = logging.getLogger(__name__)
 @unique
 class ServiceProfiles(Enum):
     FOUR_G_LTE_CORE = "FOUR_G_LTE_CORE"
+    FOUR_G_LTE_CORE_CASS_DB = "FOUR_G_LTE_CORE_CASS_DB"
     FOUR_G_LTE_CORE_BBU = "FOUR_G_LTE_CORE_BBU"
+    FOUR_G_LTE_CORE_BBU_CASS_DB = "FOUR_G_LTE_CORE_BBU_CASS_DB"
     FIVE_G_CORE = "FIVE_G_CORE"
     FIVE_G_CORE_DU = "FIVE_G_CORE_DU"
 

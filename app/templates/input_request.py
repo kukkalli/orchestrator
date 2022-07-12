@@ -18,7 +18,7 @@ class InputRequest:
     def __init__(self, name: str, service_profile: str, domain_name: str = "tu-chemnitz.de", bandwidth: int = 100,
                  max_link_delay: int = 100):
         self.name = name
-        prefix = re.sub('[^a-zA-Z0-9 \n\.]', '', name)
+        prefix = re.sub('[^a-zA-Z\d \n\.]', '', name)
         prefix = prefix.replace(" ", "-").lower()
         self.hostname_prefix = (prefix[:20]) if len(prefix) > 20 else prefix
         self.service_uuid = uuid.uuid4().hex
@@ -55,27 +55,24 @@ class InputRequest:
         try:
             connection = self.mariadb.get_db_connection()
             if len(self.domain_name) > 0:
-                parameter_id = uuid.uuid4().hex
-                LOG.debug(f"parameter_id UUID: {parameter_id}")
-                values_tuple = (parameter_id, self.service_uuid, "domain_name", self.domain_name)
-                sql_query = """INSERT INTO `sc_parameters` (`parameter_id`, `service_uuid`, `key`, `value`)
-                  VALUES (%s, %s, %s, %s)"""
+                LOG.debug(f"service_uuid: {self.service_uuid}, domain_name: {self.domain_name}")
+                values_tuple = (self.service_uuid, "domain_name", self.domain_name)
+                sql_query = """INSERT INTO `sc_parameters` (`service_uuid`, `key`, `value`)
+                  VALUES (%s, %s, %s)"""
                 cursor = connection.cursor(prepared=True)
                 cursor.execute(sql_query, values_tuple)
             if self.bandwidth > 0:
-                parameter_id = uuid.uuid4().hex
-                LOG.debug(f"parameter_id UUID: {parameter_id}")
-                values_tuple = (parameter_id, self.service_uuid, "bandwidth", self.bandwidth)
-                sql_query = """INSERT INTO `sc_parameters` (`parameter_id`, `service_uuid`, `key`, `value`)
-                  VALUES (%s, %s, %s, %s)"""
+                LOG.debug(f"service_uuid: {self.service_uuid}, bandwidth: {self.bandwidth}")
+                values_tuple = (self.service_uuid, "bandwidth", self.bandwidth)
+                sql_query = """INSERT INTO `sc_parameters` (`service_uuid`, `key`, `value`)
+                  VALUES (%s, %s, %s)"""
                 cursor = connection.cursor(prepared=True)
                 cursor.execute(sql_query, values_tuple)
             if self.max_link_delay > 0:
-                parameter_id = uuid.uuid4().hex
-                LOG.debug(f"parameter_id UUID: {parameter_id}")
-                values_tuple = (parameter_id, self.service_uuid, "max_link_delay", self.max_link_delay)
-                sql_query = """INSERT INTO `sc_parameters` (`parameter_id`, `service_uuid`, `key`, `value`)
-                  VALUES (%s, %s, %s, %s)"""
+                LOG.debug(f"service_uuid: {self.service_uuid}, max_link_delay: {self.max_link_delay}")
+                values_tuple = (self.service_uuid, "max_link_delay", self.max_link_delay)
+                sql_query = """INSERT INTO `sc_parameters` (`service_uuid`, `key`, `value`)
+                  VALUES (%s, %s, %s)"""
                 cursor = connection.cursor(prepared=True)
                 cursor.execute(sql_query, values_tuple)
 
@@ -108,7 +105,15 @@ class InputRequest:
             four_g_lte_core = FourGLTECore(self.service_uuid, self.domain_name, self.bandwidth)
             four_g_lte_core.nova.close_connection()
             return four_g_lte_core
+        elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_CASS_DB:
+            four_g_lte_core_rcc = FourGLTECoreRCC(self.service_uuid, self.domain_name, self.bandwidth)
+            four_g_lte_core_rcc.nova.close_connection()
+            return four_g_lte_core_rcc
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_BBU:
+            four_g_lte_core_rcc = FourGLTECoreRCC(self.service_uuid, self.domain_name, self.bandwidth)
+            four_g_lte_core_rcc.nova.close_connection()
+            return four_g_lte_core_rcc
+        elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_BBU_CASS_DB:
             four_g_lte_core_rcc = FourGLTECoreRCC(self.service_uuid, self.domain_name, self.bandwidth)
             four_g_lte_core_rcc.nova.close_connection()
             return four_g_lte_core_rcc
@@ -117,6 +122,7 @@ class InputRequest:
         elif self.service_profile == ServiceProfiles.FIVE_G_CORE_DU:
             return None
         else:
+            LOG.error(f"Service Profile Template Not Found: {time.time()}")
             abort(404)
         LOG.info(f"Service Profile Template Fetched: {time.time()}")
 

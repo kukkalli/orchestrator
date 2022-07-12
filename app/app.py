@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.debug = True
 LOG_FORMATTER = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(funcName)s - (%(lineno)d) - %(message)s')
 LOG_FILE = "./logs/orchestrator.log"
-LOG_HANDLER = RotatingFileHandler(LOG_FILE, mode='a', maxBytes=1024*1024,
+LOG_HANDLER = RotatingFileHandler(filename=LOG_FILE, mode='a', maxBytes=1048576,
                                   backupCount=9, encoding=None, delay=False)
 LOG_HANDLER.setFormatter(LOG_FORMATTER)
 LOG_HANDLER.setLevel(logging.DEBUG)
@@ -39,7 +39,7 @@ def hello():
     return message
 
 
-@app.route('/getSquare', methods=['POST'])
+@app.route('/get-square', methods=['POST'])
 def get_square():
     if not request.json or 'number' not in request.json:
         abort(400)

@@ -5,7 +5,8 @@ LABEL maintainer="Hanif Kukkalli <hanif@kukkalli.com>"
 RUN DEBIAN_FRONTEND=noninteractive apt update
 RUN DEBIAN_FRONTEND=noninteractive apt -y dist-upgrade
 RUN DEBIAN_FRONTEND=noninteractive apt -yq install net-tools nginx python3-pip
-RUN DEBIAN_FRONTEND=noninteractive apt install openssl
+RUN DEBIAN_FRONTEND=noninteractive apt -yq install libpcre3 libpcre3-dev
+RUN DEBIAN_FRONTEND=noninteractive apt -y install openssl
 RUN pip install --upgrade pip
 
 # RUN openssl ecparam -name sect571r1 -genkey -noout -out kukkalli.com.pem
@@ -18,6 +19,7 @@ COPY app/requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 RUN useradd -ms /bin/bash hanif
+
 RUN useradd -ms /bin/bash nginx
 
 # Expose basic http port
@@ -79,12 +81,6 @@ ENV STATIC_INDEX 0
 # Copy start.sh script that will check for a /app/prestart.sh script and run it before starting the app
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
-
-# Copy the entrypoint that will generate Nginx additional configs
-# COPY orchestrator/docker/entrypoint.sh /entrypoint.sh
-# RUN chmod +x /entrypoint.sh
-
-# ENTRYPOINT ["/entrypoint.sh"]
 
 # Add demo app
 COPY /app /app

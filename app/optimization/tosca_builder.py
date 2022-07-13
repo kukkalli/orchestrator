@@ -12,7 +12,7 @@ LOG = logging.getLogger(__name__)
 class TOSCABuilder:
 
     def __init__(self, input_request: InputRequest):
-        self.name = input_request.get_name()
+        self.name = input_request.get_service_chain_name()
         self.service_template = input_request.get_service_template()
         self.vm_requirements: List[VMRequirement] = self.service_template.vm_requirements_list
         self.v_links: List[VirtualLink] = self.service_template.v_links

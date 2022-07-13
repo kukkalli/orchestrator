@@ -9,6 +9,7 @@ import json
 from configuration_constants import ConfigurationConstants
 from odl.odl_constants import ODLConstants
 from topology.link import Link
+from topology.port_state import PortState
 from topology.port_stats import PortStats
 from topology.switch import Switch
 from topology.switch_port import SwitchPort
@@ -45,11 +46,15 @@ class ODLHelperFunctions:
         number = port.get('flow-node-inventory:port-number')
         capacity = port.get('flow-node-inventory:maximum-speed')
 
-        port_stats = port_info['node-connector'][0][
-            'opendaylight-port-statistics:flow-capable-node-connector-statistics']
-        _port_stats = PortStats(port_stats)
+        # print(f"port info: {port_info}")
+        # port_stats = port['opendaylight-port-statistics:flow-capable-node-connector-statistics']
+        port_stats = PortStats(port['opendaylight-port-statistics:flow-capable-node-connector-statistics'])
+        # print(f"port stats: {port_stats.get_packet_transmitted()}")
+        port_state = PortState(port["flow-node-inventory:state"])
+        # print(f"is port state link down: {port_state.is_link_down()}")
+
         switch_port = SwitchPort(_id=port_id, name=name, port_number=number, switch_id=switch_id, capacity=capacity,
-                                 port_stats=_port_stats)
+                                 port_stats=port_stats, port_state=port_state)
         switch_port.set_mac(port.get('flow-node-inventory:hardware-address'))
         return switch_port
 
@@ -67,11 +72,13 @@ class ODLHelperFunctions:
             # print(f"switch_name_split: {switch_name_split}")
             LOG.debug(f"switch_name_split: {switch_name_split}")
             switch = Switch(n, node['node-id'], "switch"+switch_name_split[1])
-            # print(f"switch: {switch.name}")
+            print(f"switch: {switch.name}")
             LOG.debug(f"switch: {switch.name}")
             for port in node['termination-point']:
                 if "LOCAL" not in port['tp-id']:
-                    switch.add_port(self.get_switch_port_data(switch.id, port['tp-id']))
+                    port_data = self.get_switch_port_data(switch.id, port['tp-id'])
+                    if port_data.get_port_state().is_link_down() is False:
+                        switch.add_port(port_data)
             switch_list.append(switch)
             n = n + 1
         return switch_list
@@ -81,6 +88,7 @@ class ODLHelperFunctions:
         links: List[Link] = []
         n = 0
         for link in topology["network-topology"]["topology"][0]["link"]:
+            print(f'link: {link}')
             _id = link['link-id']
             int_id = n
             dst_node_id = link['destination']['dest-node']
@@ -108,6 +116,11 @@ def main():
     odl = ODLHelperFunctions()
     switches = odl.get_topology_switches()
     print(f'switches: {switches}')
+    for switch in switches:
+        print(f"switch id: {switch.id}")
+        for port in switch.get_ports():
+            print(f"port id: {port.id}")
+            print(f"is port link down: {port.get_port_state().is_link_down()}")
     """
     node = odl.get_nodes_from_inventory().get_node_by_id("openflow:2")
     print(f'Node: {node.id}')

@@ -28,7 +28,7 @@ class TOSCAInput:
         try:
             return self.vm_requirements_dict[_id]
         except RuntimeError:
-            print("Invalid VM id")
+            LOG.error("Invalid VM id")
 
     def build(self):
         for v_link in self.v_links:
@@ -36,4 +36,4 @@ class TOSCAInput:
                 self.vm_requirements_dict[v_link.dst_node_id].add_in_v_link(v_link)
                 self.vm_requirements_dict[v_link.src_node_id].add_out_v_link(v_link)
             except RuntimeError:
-                print("Invalid link and VM mapping")
+                LOG.error("Invalid link and VM mapping")

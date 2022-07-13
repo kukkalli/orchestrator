@@ -7,6 +7,7 @@ from flask import abort
 
 from db.maria_database import MariaDB
 from templates.four_g_lte_core import FourGLTECore
+from templates.four_g_lte_core_cass_db import FourGLTECoreCassDB
 from templates.four_g_lte_core_rcc import FourGLTECoreRCC
 from templates.serviceprofiles import ServiceProfiles
 
@@ -103,18 +104,22 @@ class InputRequest:
         LOG.info(f"Fetch Service Profile Template: {time.time()}")
         if self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE:
             four_g_lte_core = FourGLTECore(self.service_uuid, self.domain_name, self.bandwidth)
+            four_g_lte_core.build()
             four_g_lte_core.nova.close_connection()
             return four_g_lte_core
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_CASS_DB:
-            four_g_lte_core_rcc = FourGLTECoreRCC(self.service_uuid, self.domain_name, self.bandwidth)
+            four_g_lte_core_rcc = FourGLTECoreCassDB(self.service_uuid, self.domain_name, self.bandwidth)
+            four_g_lte_core_rcc.build()
             four_g_lte_core_rcc.nova.close_connection()
             return four_g_lte_core_rcc
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_BBU:
             four_g_lte_core_rcc = FourGLTECoreRCC(self.service_uuid, self.domain_name, self.bandwidth)
+            four_g_lte_core_rcc.build()
             four_g_lte_core_rcc.nova.close_connection()
             return four_g_lte_core_rcc
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_BBU_CASS_DB:
             four_g_lte_core_rcc = FourGLTECoreRCC(self.service_uuid, self.domain_name, self.bandwidth)
+            four_g_lte_core_rcc.build()
             four_g_lte_core_rcc.nova.close_connection()
             return four_g_lte_core_rcc
         elif self.service_profile == ServiceProfiles.FIVE_G_CORE:

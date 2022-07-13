@@ -46,8 +46,8 @@ class ServiceProfileTemplate:
         for index, link in enumerate(self.nfv_v_links_list):
             v_link = VirtualLink(link['out'] + "-" + link['in'], index, self.vnf_vm_map.get(link['in']).int_id,
                                  self.vnf_vm_map.get(link['out']).int_id, self.bandwidth, link['delay'])
-            self.vnf_vm_map.get(link['out']).out_v_links.append(v_link)
-            self.vnf_vm_map.get(link['in']).in_v_links.append(v_link)
+            # self.vnf_vm_map.get(link['out']).out_v_links.append(v_link)
+            # self.vnf_vm_map.get(link['in']).in_v_links.append(v_link)
             self.v_links.append(v_link)
 
         LOG.info(f"Built FourGLTECore: {time.time()}")

@@ -9,8 +9,8 @@ LOG = logging.getLogger(__name__)
 
 class Switch(Node):
 
-    def __init__(self, int_id: int, _id: str, name: str):
-        super().__init__(int_id, _id, name)
+    def __init__(self, int_id: int, str_id: str, name: str):
+        super().__init__(int_id, str_id, name)
 
         self.ports: List[SwitchPort] = []
         self.ports_dict: Dict[str, SwitchPort] = {}

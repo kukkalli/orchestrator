@@ -18,8 +18,8 @@ class ServiceChain:
         self.tosca: TOSCAInput = TOSCABuilder(input_request).build_tosca()
 
     def create_service_chain(self) -> {}:
-        _optimize = Optimize(self.topology, self.tosca)
-        _optimize.optimize()
+        optimize = Optimize(self.topology, self.tosca)
+        optimize.optimize()
         """
         virtual_machine = VirtualMachine()
 

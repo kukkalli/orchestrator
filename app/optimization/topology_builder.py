@@ -6,15 +6,16 @@ from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.nova.nova_details import Nova
 from topology.link import Link
 from topology.node import Node
+from topology.compute_server import ComputeServer
 from topology.server import Server
 from topology.topology import Topology
 
 LOG = logging.getLogger(__name__)
 
 
-class ComputeToSwitchLinks:
-    def __init__(self, compute: str, switch: str, port: str):
-        self.compute = compute
+class ServerToSwitchLinks:
+    def __init__(self, server: str, switch: str, port: str):
+        self.server = server
         self.switch = switch
         self.port = port
 
@@ -26,13 +27,15 @@ class TopologyBuilder:
         self.odl = ODLHelperFunctions()
         self.switches = self.odl.get_topology_switches()
         self.links = self.odl.get_topology_links(self.switches)
-        self.servers: List[Server] = []
+        self.compute_servers: List[ComputeServer] = []
+        self.other_servers: List[Server] = []
         self.hypervisors = Nova(AuthenticateConnection().get_connection()).get_hypervisor_list()
-        n = len(self.switches)
+        int_id = len(self.switches)
         for hypervisor in self.hypervisors:
-            server = Server(n, hypervisor)
-            self.servers.append(server)
-            n = n + 1
+            server = ComputeServer(int_id, hypervisor)
+            self.compute_servers.append(server)
+            int_id = int_id + 1
+        self.add_external_servers(int_id)
         self.hardcoded_links()
 
     @property
@@ -40,8 +43,12 @@ class TopologyBuilder:
         return self.__id
 
     def build_topology(self) -> Topology:
-        topology = Topology(self.__id, self.links, self.servers, self.switches)
+        topology = Topology(self.__id, self.links, self.compute_servers, self.switches, self.other_servers)
         topology.build()
+        LOG.debug("no of links: {}".format(len(topology.links)))
+        LOG.debug("no of servers: {}".format(len(topology.compute_servers)))
+        LOG.debug("no of switches: {}".format(len(topology.switches)))
+        """
         for link in topology.links:
             to_print = "link {}->{}"
             src = ""
@@ -55,7 +62,9 @@ class TopologyBuilder:
             else:
                 dst = link.dst_node_id
             LOG.debug(to_print.format(src, dst))
+            print(f"to print: {to_print.format(src, dst)}")
             LOG.debug("link id: {}".format(link.int_id))
+            print(f"link id: {link.int_id}")
 
         print("no of links: {}".format(len(topology.links)))
         print("no of servers: {}".format(len(topology.servers)))
@@ -73,17 +82,26 @@ class TopologyBuilder:
                     print("In link ID: {}".format(port.in_link.id))
                 if port.out_link is not None:
                     print("Out link ID: {}".format(port.out_link.id))
+        """
         return topology
 
+    def add_external_servers(self, int_id: int):
+        controller = Server(int_id, "controller", "controller")
+        self.other_servers.append(controller)
+
     def hardcoded_links(self):
-        mapped_physical_links: List[ComputeToSwitchLinks] = [ComputeToSwitchLinks(compute="compute01",
-                                                                                  switch="switch3", port="11"),
-                                                             ComputeToSwitchLinks(compute="compute02",
-                                                                                  switch="switch4", port="10"),
-                                                             ComputeToSwitchLinks(compute="compute03",
-                                                                                  switch="switch3", port="10")]
+        mapped_physical_links: List[ServerToSwitchLinks] = [ServerToSwitchLinks(server="compute01",
+                                                                                switch="switch3", port="11"),
+                                                            ServerToSwitchLinks(server="compute02",
+                                                                                switch="switch4", port="10"),
+                                                            ServerToSwitchLinks(server="compute03",
+                                                                                switch="switch3", port="10"),
+                                                            ServerToSwitchLinks(server="controller",
+                                                                                switch="switch3", port="9")
+                                                            ]
         for element in mapped_physical_links:
-            print(element.compute + " <=> " + element.switch + ":" + element.port)
+            LOG.info(element.server + " <=> " + element.switch + ":" + element.port)
+            print(element.server + " <=> " + element.switch + ":" + element.port)
             self.add_physical_link(element)
 
         """
@@ -123,24 +141,27 @@ class TopologyBuilder:
                                src_port_id="openflow:3:10"))
         """
 
-    def add_physical_link(self, element: ComputeToSwitchLinks):
+    def add_physical_link(self, element: ServerToSwitchLinks):
         links_length = len(self.links)
         LOG.debug("links_length: {}".format(links_length))
-        id_name = element.compute + "-" + element.switch
-        print(f"id_name: {id_name}, dst_node: {self.get_node_by_name(element.switch).name}, src_node: {self.get_node_by_name(element.compute).name}")
+        id_name = element.server + "-" + element.switch
+        print(f"id_name: {id_name}, dst_node: {self.get_node_by_name(element.switch).name},"
+              f" src_node: {self.get_node_by_name(element.server).name}")
+        LOG.debug(f"id_name: {id_name}, dst_node: {self.get_node_by_name(element.switch).name},"
+                  f" src_node: {self.get_node_by_name(element.server).name}")
         switch = self.get_node_by_name(element.switch)
         switch_id = switch.id
         switch_node_id = switch.int_id
         switch_port_id = switch_id + ":" + element.port
-        compute_node_id = self.get_node_by_name(element.compute).int_id
+        server_node_id = self.get_node_by_name(element.server).int_id
         self.links.append(Link(_id=id_name, int_id=links_length,
                                dst_node_id=switch_node_id,
-                               src_node_id=compute_node_id,
+                               src_node_id=server_node_id,
                                dst_port_id=switch_port_id))
         links_length = links_length + 1
-        id_name = element.switch + "-" + element.compute
+        id_name = element.switch + "-" + element.server
         self.links.append(Link(_id=id_name, int_id=links_length,
-                               dst_node_id=compute_node_id,
+                               dst_node_id=server_node_id,
                                src_node_id=switch_node_id,
                                src_port_id=switch_port_id))
 
@@ -149,16 +170,20 @@ class TopologyBuilder:
             if node_name == switch.name:
                 return switch
 
-        for server in self.servers:
+        for compute_server in self.compute_servers:
+            if node_name == compute_server.name:
+                return compute_server
+
+        for server in self.other_servers:
             if node_name == server.name:
                 return server
 
-    def get_node_by_id(self, node_id) -> int:
+    def get_node_int_id_by_node_id(self, node_id) -> int:
         for switch in self.switches:
             if node_id == switch.id:
                 return switch.int_id
 
-        for server in self.servers:
+        for server in self.compute_servers:
             if node_id == server.id:
                 return server.int_id
 

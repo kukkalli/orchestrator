@@ -63,15 +63,15 @@ class ODLHelperFunctions:
         LOG.debug("topology: {}".format(topology))
         nodes = topology["network-topology"]["topology"][0]["node"]
         # print(f"nodes:\n{json.dumps(nodes, indent=4, sort_keys=True)}")
-        LOG.debug(f"nodes:\n{json.dumps(nodes, indent=4, sort_keys=True)}")
+        # LOG.debug(f"nodes:\n{json.dumps(nodes, indent=4, sort_keys=True)}")
         switch_list: List[Switch] = []
         n = 0
         for node in nodes:
             node_id = node['node-id']
             switch_name_split = node_id.split(":")
-            # print(f"switch_name_split: {switch_name_split}")
+            print(f"switch_name_split: {switch_name_split}")
             LOG.debug(f"switch_name_split: {switch_name_split}")
-            switch = Switch(n, node['node-id'], "switch"+switch_name_split[1])
+            switch = Switch(n, node['node-id'], "switch" + switch_name_split[1])
             print(f"switch: {switch.name}")
             LOG.debug(f"switch: {switch.name}")
             for port in node['termination-point']:
@@ -95,6 +95,10 @@ class ODLHelperFunctions:
             dst_port_id = link['destination']['dest-tp']
             src_node_id = link['source']['source-node']
             src_port_id = link['source']['source-tp']
+            print(f'--------------------- link: ---------------------')
+            print(f"link  id: {_id}, int_id: {int_id}")
+            print(f"link: dst-nid: {dst_node_id}, dst-pid: {dst_port_id}")
+            print(f"link: src-nid: {src_node_id}, src-pid: {src_port_id}")
             _link = Link(_id, int_id, get_src_dst(switches, dst_node_id), get_src_dst(switches, src_node_id),
                          dst_port_id, src_port_id)
             links.append(_link)
@@ -115,12 +119,12 @@ class ODLHelperFunctions:
 def main():
     odl = ODLHelperFunctions()
     switches = odl.get_topology_switches()
-    print(f'switches: {switches}')
     for switch in switches:
         print(f"switch id: {switch.id}")
         for port in switch.get_ports():
             print(f"port id: {port.id}")
             print(f"is port link down: {port.get_port_state().is_link_down()}")
+            print(f"is port link down: {port.get_port_state().is_live()} {port.get_port_state().is_blocked()}")
     """
     node = odl.get_nodes_from_inventory().get_node_by_id("openflow:2")
     print(f'Node: {node.id}')

@@ -1,6 +1,5 @@
 import logging
-from typing import List
-
+from typing import List, Dict
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.nova.flavor import Flavor
@@ -31,6 +30,13 @@ class Nova:
         flavor = self.__connection.get_flavor_by_id(flavor_id)
         return Flavor(flavor)
 
+    def get_flavor_id_map(self) -> Dict[str, Flavor]:
+        flavor_dict: Dict[str, Flavor] = {}
+        for os_flavor in self.get_flavors_list():
+            flavor = Flavor(os_flavor)
+            flavor_dict[flavor.id] = flavor
+        return flavor_dict
+
     def get_hypervisor_list(self) -> List[OSHypervisor]:
         hypervisor_list: List[OSHypervisor] = []
         for hypervisor in self.__connection.list_hypervisors():
@@ -47,9 +53,20 @@ class Nova:
 def main():
     auth = AuthenticateConnection()
     nova = Nova(auth.get_connection())
+    flavor_id_map = nova.get_flavor_id_map()
+
+    """
     for flavor in nova.get_flavors_list():
         print("Get Flavor name: {}, Flavor id: {}, Flavor details: {}".format(flavor.name, flavor.id, flavor))
+        _flavor = Flavor(flavor)
+        print(f"Get Flavor name: {_flavor.name}, id: {_flavor.id}, vcpus: {_flavor.vcpus},"
+              f" ram: {_flavor.ram}, disk: {_flavor.disk}")
+    """
+
     flavor = nova.get_flavor_by_id("1")
+    print("Get Flavor name: {}, id: {}, vcpus: {}, ram: {}, disk: {}".format(flavor.name, flavor.id, flavor.vcpus,
+                                                                             flavor.ram, flavor.disk))
+    flavor = flavor_id_map["2"]
     print("Get Flavor name: {}, id: {}, vcpus: {}, ram: {}, disk: {}".format(flavor.name, flavor.id, flavor.vcpus,
                                                                              flavor.ram, flavor.disk))
     for hypervisor in nova.get_hypervisor_list():

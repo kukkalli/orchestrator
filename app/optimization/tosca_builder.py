@@ -2,6 +2,7 @@ import logging
 from typing import List
 
 from templates.input_request import InputRequest
+from templates.service_profile_template import ServiceProfileTemplate
 from tosca.tosca_input import TOSCAInput
 from tosca.virtual_link import VirtualLink
 from tosca.vm_requirement import VMRequirement
@@ -13,9 +14,9 @@ class TOSCABuilder:
 
     def __init__(self, input_request: InputRequest):
         self.name = input_request.get_service_chain_name()
-        self.service_template = input_request.get_service_template()
-        self.vm_requirements: List[VMRequirement] = self.service_template.vm_requirements_list
-        self.v_links: List[VirtualLink] = self.service_template.v_links
+        self.service_template: ServiceProfileTemplate = input_request.get_service_template()
+        # self.vm_requirements: List[VMRequirement] = self.service_template.get_vm_requirements_list()
+        # self.v_links: List[VirtualLink] = self.service_template.get_v_links_list()
 
     """
     def __create_test_server_requirements(self):
@@ -96,9 +97,14 @@ class TOSCABuilder:
         LOG.info("Build Tosca")
         # self.__create_test_server_requirements()
         # self.__create_test_virtual_links()
-        tosca = TOSCAInput(self.name, self.vm_requirements, self.v_links)
+        # tosca = TOSCAInput(self.name, self.vm_requirements, self.v_links)
+        # tosca = TOSCAInput(self.name, self.service_template.get_vm_requirements_list(),
+        #                    self.service_template.get_v_links_list())
+        tosca = TOSCAInput(self.name, self.service_template)
         tosca.build()
+        LOG.info("no of v_links: {}".format(len(tosca.v_links)))
         print("no of v_links: {}".format(len(tosca.v_links)))
+        LOG.info("no of VMs: {}".format(len(tosca.vm_requirements)))
         print("no of VMs: {}".format(len(tosca.vm_requirements)))
         for vm in tosca.vm_requirements:
             print("VM ID: {}, VM Name: {}, VM int_id: {}".format(vm.id, vm.hostname, vm.int_id))
@@ -110,7 +116,7 @@ class TOSCABuilder:
 
 
 def main():
-    input_request = InputRequest("kn hanif")
+    input_request = InputRequest("kn hanif", "FOUR_G_LTE_CORE")
     builder = TOSCABuilder(input_request)
     builder.build_tosca()
 

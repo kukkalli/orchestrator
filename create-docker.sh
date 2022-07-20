@@ -1,7 +1,10 @@
+#!/bin/bash
+
 #! /usr/bin/env sh
 
-OLD_VERSION=0.1.5
-VERSION=0.1.6
+
+OLD_VERSION=0.1.6
+VERSION=0.1.7
 
 docker-compose -f docker-compose/docker-compose.yaml down
 
@@ -26,5 +29,5 @@ if [[ $VERSION =~ $REGEX ]]; then
   echo "INFO:<--> Uploaded image to Docker Hub with Version: $VERSION"
 fi
 
-docker-compose -f docker-compose/docker-compose.yaml up -d
+# docker-compose -f docker-compose/docker-compose.yaml up -d
 

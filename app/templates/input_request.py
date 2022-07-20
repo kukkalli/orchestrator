@@ -28,7 +28,7 @@ class InputRequest:
         self.bandwidth = bandwidth
         self.max_link_delay = max_link_delay
         self.mariadb = MariaDB()
-        self.__add_service_chain()
+        # self.__add_service_chain()
 
     def __add_service_chain(self):
 
@@ -103,24 +103,24 @@ class InputRequest:
     def get_service_template(self):
         LOG.info(f"Fetch Service Profile Template: {time.time()}")
         if self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE:
-            four_g_lte_core = FourGLTECore(self.service_uuid, self.domain_name, self.bandwidth)
+            four_g_lte_core = FourGLTECore(self.hostname_prefix, self.domain_name, self.bandwidth)
             four_g_lte_core.build()
-            four_g_lte_core.nova.close_connection()
+            # four_g_lte_core.nova.close_connection()
             return four_g_lte_core
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_CASS_DB:
-            four_g_lte_core_rcc = FourGLTECoreCassDB(self.service_uuid, self.domain_name, self.bandwidth)
+            four_g_lte_core_rcc = FourGLTECoreCassDB(self.hostname_prefix, self.domain_name, self.bandwidth)
             four_g_lte_core_rcc.build()
-            four_g_lte_core_rcc.nova.close_connection()
+            # four_g_lte_core_rcc.nova.close_connection()
             return four_g_lte_core_rcc
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_BBU:
-            four_g_lte_core_rcc = FourGLTECoreRCC(self.service_uuid, self.domain_name, self.bandwidth)
+            four_g_lte_core_rcc = FourGLTECoreRCC(self.hostname_prefix, self.domain_name, self.bandwidth)
             four_g_lte_core_rcc.build()
-            four_g_lte_core_rcc.nova.close_connection()
+            # four_g_lte_core_rcc.nova.close_connection()
             return four_g_lte_core_rcc
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_BBU_CASS_DB:
-            four_g_lte_core_rcc = FourGLTECoreRCC(self.service_uuid, self.domain_name, self.bandwidth)
+            four_g_lte_core_rcc = FourGLTECoreRCC(self.hostname_prefix, self.domain_name, self.bandwidth)
             four_g_lte_core_rcc.build()
-            four_g_lte_core_rcc.nova.close_connection()
+            # four_g_lte_core_rcc.nova.close_connection()
             return four_g_lte_core_rcc
         elif self.service_profile == ServiceProfiles.FIVE_G_CORE:
             return None

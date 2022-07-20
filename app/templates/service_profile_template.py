@@ -3,6 +3,7 @@ import time
 from typing import List, Dict
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
+from openstack_internal.nova.flavor import Flavor
 from openstack_internal.nova.nova_details import Nova
 from templates.vm_template import VMTemplate
 from tosca.virtual_link import VirtualLink
@@ -22,7 +23,9 @@ class ServiceProfileTemplate:
         self.vnf_vm_map: Dict[str, VMRequirement] = {}
         self.nfv_v_links_list: List[Dict] = []
         self.v_links: List[VirtualLink] = []
-        self.nova = Nova(AuthenticateConnection().get_connection())
+        nova = Nova(AuthenticateConnection().get_connection())
+        self.flavor_id_map: Dict[str, Flavor] = nova.get_flavor_id_map()
+        nova.close_connection()
 
     def get_vm_requirements_list(self):
         return self.vm_requirements_list
@@ -35,6 +38,7 @@ class ServiceProfileTemplate:
 
     def build(self):
         LOG.info(f"Build FourGLTECore: {time.time()}")
+        print(f"Build FourGLTECore: {time.time()}")
         for index, network_function in enumerate(self.network_functions):
             LOG.info(f"Network Function Name: {network_function.name}, Index: {index}")
             vm_request = VMRequirement(int_id=index, hostname=network_function.vm_name, flavor=network_function.flavor,
@@ -51,3 +55,4 @@ class ServiceProfileTemplate:
             self.v_links.append(v_link)
 
         LOG.info(f"Built FourGLTECore: {time.time()}")
+        print(f"Built FourGLTECore: {time.time()}")

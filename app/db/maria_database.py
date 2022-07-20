@@ -8,10 +8,22 @@ LOG = logging.getLogger(__name__)
 class MariaDB:
 
     def __init__(self):
-        self.hostname = os.environ["MARIADB_HOSTNAME"]
-        self.username = os.environ["MARIADB_USERNAME"]
-        self.password = os.environ["MARIADB_PASSWORD"]
-        self.database = os.environ["MARIADB_DATABASE"]
+        if "MARIADB_HOSTNAME" in os.environ:
+            self.hostname = os.environ["MARIADB_HOSTNAME"]
+        else:
+            self.hostname = None
+        if "MARIADB_USERNAME" in os.environ:
+            self.username = os.environ["MARIADB_USERNAME"]
+        else:
+            self.username = None
+        if "MARIADB_PASSWORD" in os.environ:
+            self.password = os.environ["MARIADB_PASSWORD"]
+        else:
+            self.password = None
+        if "MARIADB_DATABASE" in os.environ:
+            self.database = os.environ["MARIADB_DATABASE"]
+        else:
+            self.database = None
         LOG.debug(f"MariaDB username: {self.username}, hostname: {self.hostname}, database: {self.database}")
         self.connection = None
 
@@ -22,7 +34,7 @@ class MariaDB:
                 user=self.username,
                 password=self.password,
                 host=self.hostname,
-                database='orchestrator'
+                database=self.database
             )
             return self.connection
         except database.Error as error:

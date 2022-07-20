@@ -36,6 +36,8 @@ class FourGLTECore(ServiceProfileTemplate):
 def main():
     service = FourGLTECore("test", "kukkalli.com", 1000)
     service.build()
+    flavor = service.flavor_id_map["2"]
+    print(f"Flavor: id: {flavor.id}, name: {flavor.name},, vcpus: {flavor.vcpus}, ram: {flavor.ram}")
     for vm_request in service.get_vm_requirements_list():
         print(f"VM Requirement: {vm_request.hostname}, int_id: {vm_request.int_id}")
 

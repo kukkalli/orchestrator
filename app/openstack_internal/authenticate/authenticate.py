@@ -11,10 +11,10 @@ LOG = logging.getLogger(__name__)
 
 
 class AuthenticateConnection:
+
     """
     Authentication and provide the OpenStack Connection object
     """
-
     def __init__(self):
         self.__connection: Connection = connect(auth_url=OpenStackConstants.KEYSTONE_URL,
                                                 project_name=ConfigurationConstants.OS_PROJECT_NAME,
@@ -27,14 +27,14 @@ class AuthenticateConnection:
                                                 glance_version=OpenStackConstants.GLANCE_VERSION,
                                                 nova_version=OpenStackConstants.NOVA_VERSION)
 
-        self.__auth: Password = Password(auth_url=OpenStackConstants.KEYSTONE_URL,
-                                         username=ConfigurationConstants.OS_USERNAME,
-                                         user_domain_name=ConfigurationConstants.OS_DOMAIN_NAME,
-                                         password=ConfigurationConstants.OS_PASSWORD,
-                                         project_name=ConfigurationConstants.OS_PROJECT_NAME,
-                                         project_domain_name=ConfigurationConstants.OS_DOMAIN_NAME)
+        self.__password_auth: Password = Password(auth_url=OpenStackConstants.KEYSTONE_URL,
+                                                  username=ConfigurationConstants.OS_USERNAME,
+                                                  user_domain_name=ConfigurationConstants.OS_DOMAIN_NAME,
+                                                  password=ConfigurationConstants.OS_PASSWORD,
+                                                  project_name=ConfigurationConstants.OS_PROJECT_NAME,
+                                                  project_domain_name=ConfigurationConstants.OS_DOMAIN_NAME)
 
-        self.__sess: Session = Session(auth=self.__auth)
+        self.__sess: Session = Session(auth=self.__password_auth)
 
     def get_session(self) -> Session:
         return self.__sess
@@ -56,23 +56,23 @@ def test_identity(conn):
 
 def test_glance(conn):
     for image in conn.image.images():
-        print("Get Image name: {}".format(image.name))
-        # print("Get Images: {}".format(image))
+        print(f"Get Image name: {image.name}")
+        print(f"Get Images: {image}")
 
 
 def test_nova(conn):
-    print("Compute: {}".format(dir(conn.compute)))
-    print("Compute Version: {}".format(conn.compute.version))
+    print(f"Compute: {dir(conn.compute)}")
+    print(f"Compute Version: {conn.compute.version}")
 
 
 def test_neutron(conn):
     for network in conn.list_networks():
-        print("Get Network name: {}".format(network.name))
+        print(f"Get Network name: {network.name}")
 
 
 def main():
     auth = AuthenticateConnection()
-    print("Get tokens: {}".format(auth.get_token()))
+    print(f"Get tokens: {auth.get_token()}")
     conn = auth.get_connection()
 
     test_identity(conn)

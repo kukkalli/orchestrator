@@ -27,6 +27,7 @@ class Optimize:
         self.flavor_id_map: Dict[str, Flavor] = tosca.service_template.flavor_id_map
 
     def build(self):
+        LOG.info("In Optimize.build")
 
         len_nodes, len_links = len(self.nodes), len(self.links)
         len_switches, len_servers = len(self.switches), len(self.compute_servers)
@@ -48,21 +49,25 @@ class Optimize:
         mu = self.problem_statement.addVar(0., 1., vtype=GRB.CONTINUOUS, name=f'mu')  # min max utilization
         request_status = self.problem_statement.addVar(0., 1., vtype=GRB.INTEGER, name=f'z')  # request accepted or not
 
+        LOG.info("Update problem statement: min max utilization")
         self.problem_statement.update()
 
         # --- Constraints ---#
+        LOG.info("Adding constraints about VMs")
         for v in range(len_vms):
             self.problem_statement.addConstr(quicksum(vm_placement[v, n] for n in range(len_servers)) == request_status)
 
         rho = 1.0  # parameter to balance utilization between nodes and edges
         for n in range(len_servers):
-            flavor = self.flavor_id_map[self.vm_requirements[v].flavor]
+            flavor = self.flavor_id_map[self.vm_requirements[n].flavor]
             self.problem_statement.addConstr(
                 quicksum(flavor.vcpus * vm_placement[v, n] for v in range(len_vms)) <= rho * mu * self.compute_servers[n].cpu)
             self.problem_statement.addConstr(
-                quicksum(flavor.disk * vm_placement[v, n] for v in range(len_vms)) <= rho * mu * self.compute_servers[n].hdd)
+                quicksum(flavor.disk * vm_placement[v, n] for v in range(len_vms)) <= rho * mu
+                * self.compute_servers[n].hdd)
             self.problem_statement.addConstr(
-                quicksum(flavor.ram * vm_placement[v, n] for v in range(len_vms)) <= rho * mu * self.compute_servers[n].ram)
+                quicksum(flavor.ram * vm_placement[v, n] for v in range(len_vms)) <= rho * mu
+                * self.compute_servers[n].ram)
             self.add_server_flow_constraint(vm_placement, n, len_v_links, flow)
 
         for n in range(len_switches):
@@ -97,16 +102,22 @@ class Optimize:
     def add_switch_flow_constraint(self, element, length, flow):
         for index in range(length):
             s = self.switches[element]
-            """
             for p in s.get_ports():
+                LOG.debug("----------------------------------------------------")
+                LOG.debug(f"s  id: {s.id}. name: {s.name}, int_id: {s.int_id}, port no: {p.port_number}")
                 print("----------------------------------------------------")
                 print(f"s  id: {s.id}. name: {s.name}, int_id: {s.int_id}, port no: {p.port_number}")
-                print(f"p out: {p.out_link.int_id}")
-                print(f"p  in: {p.in_link.int_id}")
+                print(f"p out: {p.out_link}")
+                print(f"p  in: {p.in_link}")
+                print(f"p out id: {p.out_link.int_id}")
+                print(f"p  in id: {p.in_link.int_id}")
+                LOG.debug(f"p out: {p.out_link.int_id}")
+                LOG.debug(f"p  in: {p.in_link.int_id}")
             """
             self.problem_statement.addConstr(
                 quicksum(flow[index, p.out_link.int_id] for p in s.get_ports())
                 - quicksum(flow[index, p.in_link.int_id] for p in s.get_ports()) == 0)
+            """
 
     def add_variables(self, problem_statement: Model):
         pass
@@ -115,7 +126,10 @@ class Optimize:
         pass
 
     def optimize(self):
+        LOG.info("In Optimize.optimize going to build")
         self.build()
+        LOG.info("In Optimize.optimize build complete")
+        LOG.info("In Optimize.optimize solve the model")
         # --- Solve the model ---#
         try:
             #        chronicler.info(f'Solving ... ')
@@ -126,6 +140,7 @@ class Optimize:
         except AttributeError:
             chronicler.error(f'Encountered an attribute error')
             return
+        LOG.debug("In Optimize.optimize model solved")
         # --- Status check ---#
         print(f'Solution status: {self.problem_statement.status}')
         LOG.info(f'Solution status: {self.problem_statement.status}')

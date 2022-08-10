@@ -23,7 +23,7 @@ class ServiceProfileTemplate:
         self.vnf_vm_map: Dict[str, VMRequirement] = {}
         self.nfv_v_links_list: List[Dict] = []
         self.v_links: List[VirtualLink] = []
-        nova = Nova(AuthenticateConnection().get_connection())
+        nova = Nova(AuthenticateConnection())
         self.flavor_id_map: Dict[str, Flavor] = nova.get_flavor_id_map()
         nova.close_connection()
 
@@ -37,8 +37,8 @@ class ServiceProfileTemplate:
         return self.network_functions
 
     def build(self):
-        LOG.info(f"Build FourGLTECore: {time.time()}")
-        print(f"Build FourGLTECore: {time.time()}")
+        LOG.info(f"Build ServiceProfileTemplate: {time.time()}")
+        print(f"Build ServiceProfileTemplate: {time.time()}")
         for index, network_function in enumerate(self.network_functions):
             LOG.info(f"Network Function Name: {network_function.name}, Index: {index}")
             vm_request = VMRequirement(int_id=index, hostname=network_function.vm_name, flavor=network_function.flavor,
@@ -54,5 +54,5 @@ class ServiceProfileTemplate:
             # self.vnf_vm_map.get(link['in']).in_v_links.append(v_link)
             self.v_links.append(v_link)
 
-        LOG.info(f"Built FourGLTECore: {time.time()}")
-        print(f"Built FourGLTECore: {time.time()}")
+        LOG.info(f"Built ServiceProfileTemplate: {time.time()}")
+        print(f"Built ServiceProfileTemplate: {time.time()}")

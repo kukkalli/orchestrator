@@ -29,13 +29,21 @@ class TopologyBuilder:
         self.links = self.odl.get_topology_links(self.switches)
         self.compute_servers: List[ComputeServer] = []
         self.other_servers: List[Server] = []
-        self.hypervisors = Nova(AuthenticateConnection().get_connection()).get_hypervisor_list()
+        self.hypervisors = Nova(AuthenticateConnection()).get_hypervisor_list()
         int_id = len(self.switches)
+        print("-----------------------------------------------------------------")
         for hypervisor in self.hypervisors:
+            print(f"hypervisor: {hypervisor.get_name()}, {hypervisor.vcpus}")
+        print("-----------------------------------------------------------------")
+
+        for hypervisor in self.hypervisors:
+            print(f"hypervisor: {hypervisor.get_name()}")
             server = ComputeServer(int_id, hypervisor)
             self.compute_servers.append(server)
             int_id = int_id + 1
-        self.add_external_servers(int_id)
+        self.add_external_servers(int_id, "controller", "controller")
+        int_id = int_id + 1
+        self.add_external_servers(int_id, "rrh", "rrh")
         self.hardcoded_links()
 
     @property
@@ -85,9 +93,9 @@ class TopologyBuilder:
         """
         return topology
 
-    def add_external_servers(self, int_id: int):
-        controller = Server(int_id, "controller", "controller")
-        self.other_servers.append(controller)
+    def add_external_servers(self, int_id: int, str_id: str, name: str):
+        server = Server(int_id, str_id, name)
+        self.other_servers.append(server)
 
     def hardcoded_links(self):
         mapped_physical_links: List[ServerToSwitchLinks] = [ServerToSwitchLinks(server="compute01",
@@ -97,7 +105,9 @@ class TopologyBuilder:
                                                             ServerToSwitchLinks(server="compute03",
                                                                                 switch="switch3", port="10"),
                                                             ServerToSwitchLinks(server="controller",
-                                                                                switch="switch3", port="9")
+                                                                                switch="switch3", port="9"),
+                                                            ServerToSwitchLinks(server="rrh",
+                                                                                switch="switch4", port="11")
                                                             ]
         for element in mapped_physical_links:
             LOG.info(element.server + " <=> " + element.switch + ":" + element.port)
@@ -145,6 +155,7 @@ class TopologyBuilder:
         links_length = len(self.links)
         LOG.debug("links_length: {}".format(links_length))
         id_name = element.server + "-" + element.switch
+        LOG.debug(f"element.server: {element.server}")
         print(f"id_name: {id_name}, dst_node: {self.get_node_by_name(element.switch).name},"
               f" src_node: {self.get_node_by_name(element.server).name}")
         LOG.debug(f"id_name: {id_name}, dst_node: {self.get_node_by_name(element.switch).name},"

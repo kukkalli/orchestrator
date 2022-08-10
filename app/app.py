@@ -71,9 +71,15 @@ def create_service_chain():
     if 'max_link_delay' in params:
         max_link_delay = params["max_link_delay"]
 
+    LOG.debug("Input Request Object Creating")
     input_request = InputRequest(params["name"], params["service_profile"], domain_name, bandwidth, max_link_delay)
+    LOG.debug("Input Request Object Created")
+    LOG.debug("Service Chain Object Creating")
     service_chain = ServiceChain(input_request)
-    # service_chain.create_service_chain()
+    LOG.debug("Service Chain Object Created")
+    LOG.debug("Calling Create Service Chain using Service Chain Object")
+    service_chain.create_service_chain()
+    LOG.info(f"Create Service Chain Response Time: {time.time()}")
     return jsonify({"service-creation": "success"})
 
 
@@ -84,4 +90,4 @@ def main():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)

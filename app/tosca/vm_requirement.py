@@ -9,7 +9,7 @@ LOG = logging.getLogger(__name__)
 class VMRequirement:
 
     def __init__(self, int_id: int, hostname: str, flavor: str, image_id: str, networks: List[Dict[str, str]],
-                 key_pair: str = None, ip_addresses: Dict[str, str] = [], subnet_mask: str = "/32",
+                 key_pair: str = None, ip_addresses: Dict[str, str] = {}, subnet_mask: str = "/32",
                  security_groups: [str] = ["default"]):
         self.__id = hostname
         self.hostname = hostname

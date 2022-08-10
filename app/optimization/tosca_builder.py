@@ -108,10 +108,13 @@ class TOSCABuilder:
         print("no of VMs: {}".format(len(tosca.vm_requirements)))
         for vm in tosca.vm_requirements:
             print("VM ID: {}, VM Name: {}, VM int_id: {}".format(vm.id, vm.hostname, vm.int_id))
+            LOG.debug("VM ID: {}, VM Name: {}, VM int_id: {}".format(vm.id, vm.hostname, vm.int_id))
             for v_link in vm.in_v_links:
                 print("In v_link ID: {}, int_id: {}".format(v_link.id, v_link.int_id))
+                LOG.debug("In v_link ID: {}, int_id: {}".format(v_link.id, v_link.int_id))
             for v_link in vm.out_v_links:
                 print("Out v_link ID: {}, int_id: {}".format(v_link.id, v_link.int_id))
+                LOG.debug("Out v_link ID: {}, int_id: {}".format(v_link.id, v_link.int_id))
         return tosca
 
 

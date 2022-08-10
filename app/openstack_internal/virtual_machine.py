@@ -9,6 +9,7 @@ from openstack_internal.neutron.neutron_details import Neutron
 from novaclient.v2.client import Client as NovaV2Client
 
 from templates.four_g_core.hss_template import HSSTemplate
+"""
 from templates.four_g_core.hss_user_data import HSSUserData
 from templates.four_g_core.mme_template import MMETemplate
 from templates.four_g_core.mme_user_data import MMEUserData
@@ -16,15 +17,15 @@ from templates.four_g_core.spgwc_user_data import SPGWCUserData
 from templates.four_g_core.spgwc_template import SPGWCTemplate
 from templates.four_g_core.spgwu_template import SPGWUTemplate
 from templates.four_g_core.spgwu_user_data import SPGWUUserData
+"""
 from templates.four_g_lte_core import FourGLTECore
 
 LOG = logging.getLogger(__name__)
 
 
-class VirtualMachine(object):
+class VirtualMachine:
 
-    def __init__(self, vm_id: str):
-        self.__id = vm_id
+    def __init__(self):
         self.authenticate = AuthenticateConnection()
         self.connection = self.authenticate.get_connection()
         self.__clients = Clients(self.authenticate)
@@ -35,16 +36,15 @@ class VirtualMachine(object):
         # self.__project = Project(self.connection)
         # self.__user = User(self.connection)
 
-    def get_id(self):
-        return self.__id
-
-    def create_virtual_machine(self, name, image, flavor="2", vm_count=1, security_groups: list = None,
+    def create_virtual_machine(self, name: str, image, flavor="2", vm_count=1, security_groups: list = None,
                                userdata: str = "", key_pair=None, networks: list = None, host=None):
         if security_groups is None:
             security_groups = ["default"]
+        """
         if networks is None:
-            networks = [{"net-id": "d2a49c41-6f42-486d-b96a-212b0b933273", "v4-fixed-ip": "10.10.2.50"},
-                        {"net-id": "200cd190-6171-4b26-aa83-e42f447ba90a", "v4-fixed-ip": "10.11.2.50"}]
+            networks = [{"net-id": "4200c22b-80d3-48ea-9586-2a98140f1616", "v4-fixed-ip": "10.10.2.50"},
+                        {"net-id": "ebe835d0-7c36-43fb-8c57-5b6b5872b0ce", "v4-fixed-ip": "10.11.2.50"}]
+        """
         nova_client: NovaV2Client = self.__clients.get_nova_client()
         return nova_client.servers.create(name=name, image=image, flavor=flavor, min_count=vm_count, max_count=vm_count,
                                           security_groups=security_groups, userdata=userdata, key_name=key_pair,
@@ -66,7 +66,7 @@ class VirtualMachine(object):
                                           nics=ports, access_ip_v4=None, access_ip_v6=None, host=host,
                                           hypervisor_hostname=None)
 
-        return
+        # return
 
     """
     def get_vm_info(self):
@@ -117,20 +117,22 @@ def main():
 
     service_chain_name = "kn1"
     security_groups = ["default"]
-    key_pair = "controller"
+    key_pair = "hanif-kukkalli"
     neutron = Neutron(AuthenticateConnection().get_connection())
-    management_network_id = "d2a49c41-6f42-486d-b96a-212b0b933273"
-    fabric_network_id = "200cd190-6171-4b26-aa83-e42f447ba90a"
+    management_network_id = "4200c22b-80d3-48ea-9586-2a98140f1616"
+    fabric_network_id = "ebe835d0-7c36-43fb-8c57-5b6b5872b0ce"
 
     service = FourGLTECore(service_chain_name, "tu-chemnitz.de", 1000)
     service.build()
     hostnames_list: List[Dict] = []
+    # for network in networks
     for vnf in service.get_network_functions():
         print(f"VNF name: {vnf.get_name()}")
         hostnames_list.append({vnf.get_name(): vnf.get_vm_name()})
-
         for network in vnf.networks:
-            # network["v4-fixed-ip"] = neutron.get_available_ip(network_id=network["net-id"], is_delete=False)
+
+            network["v4-fixed-ip"] = neutron.get_available_ip(network_id=network["net-id"], is_delete=True)
+
             network["port-id"] = neutron.create_port(network_id=network["net-id"])
             vnf.ip_addresses[network["net-id"]] = network["v4-fixed-ip"]
         print(f"networks: {vnf.networks}")
@@ -258,8 +260,6 @@ def main():
     current_time = now.strftime("%H:%M:%S")
     print(f"Service Chain Creation End time: {current_time}")
 
-    """
-    """
     """
 
 

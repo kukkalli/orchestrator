@@ -2,19 +2,22 @@ import logging
 from typing import List, Dict
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
+from openstack_internal.clients.clients import Clients
 from openstack_internal.nova.flavor import Flavor
 from openstack_internal.nova.hypervisor_details import OSHypervisor
-from openstack.connection import Connection
 
 LOG = logging.getLogger(__name__)
 
 
 class Nova:
-    def __init__(self, connection: Connection):
-        self.__connection = connection
+    def __init__(self, auth: AuthenticateConnection):
+        self.auth_connect = auth
+        self.__connection = auth.get_connection()
+        self.nova_client = Clients(self.auth_connect).get_nova_client()
 
     def close_connection(self) -> None:
         self.__connection.close()
+        self.auth_connect.close_connection()
 
     def create_virtual_machine(self, vm_name, image=None, flavor=None, auto_ip=True, ips=None, ip_pool=None,
                                wait=False, network=None, key_pair=None, security_groups=None,
@@ -38,8 +41,13 @@ class Nova:
         return flavor_dict
 
     def get_hypervisor_list(self) -> List[OSHypervisor]:
+        # auth = AuthenticateConnection()
+        # nova_client = Clients(auth).get_nova_client()
+
         hypervisor_list: List[OSHypervisor] = []
-        for hypervisor in self.__connection.list_hypervisors():
+        # self.__connection.list_hypervisors()
+        hypervisors_list = self.nova_client.hypervisors.list()
+        for hypervisor in hypervisors_list:
             hypervisor_list.append(OSHypervisor(hypervisor))
         return hypervisor_list
 
@@ -52,31 +60,43 @@ class Nova:
 
 def main():
     auth = AuthenticateConnection()
-    nova = Nova(auth.get_connection())
+    """
+    nova_client = Clients(auth).get_nova_client()
+    print(f"hypervisors: {dir(nova_client.hypervisors)}")
+    hypervisors_list = nova_client.hypervisors.list()
+    for hypervisor in hypervisors_list:
+        print(f"hypervisors: {dir(hypervisor)}")
+        print(f"hypervisors local_gb: {hypervisor.local_gb}")
+        print(f"hypervisors local_gb_used: {hypervisor.local_gb_used}")
+        print(f"hypervisors memory_mb: {hypervisor.memory_mb}")
+        print(f"hypervisors memory_mb_used: {hypervisor.memory_mb_used}")
+        print(f"hypervisors vcpus: {hypervisor.vcpus}")
+        print(f"hypervisors vcpus_used: {hypervisor.vcpus_used}")
+    """
+
+    nova = Nova(auth)
+    nova.get_hypervisor_list()
+    """
     flavor_id_map = nova.get_flavor_id_map()
 
-    """
     for flavor in nova.get_flavors_list():
         print("Get Flavor name: {}, Flavor id: {}, Flavor details: {}".format(flavor.name, flavor.id, flavor))
         _flavor = Flavor(flavor)
         print(f"Get Flavor name: {_flavor.name}, id: {_flavor.id}, vcpus: {_flavor.vcpus},"
               f" ram: {_flavor.ram}, disk: {_flavor.disk}")
-    """
 
-    flavor = nova.get_flavor_by_id("1")
-    print("Get Flavor name: {}, id: {}, vcpus: {}, ram: {}, disk: {}".format(flavor.name, flavor.id, flavor.vcpus,
-                                                                             flavor.ram, flavor.disk))
     flavor = flavor_id_map["2"]
-    print("Get Flavor name: {}, id: {}, vcpus: {}, ram: {}, disk: {}".format(flavor.name, flavor.id, flavor.vcpus,
-                                                                             flavor.ram, flavor.disk))
-    for hypervisor in nova.get_hypervisor_list():
-        print("name: {}, id: {}, available vcpus: {}, ip: {}"
-              .format(hypervisor.get_name(), hypervisor.get_id(), hypervisor.get_available_vcpus(),
-                      hypervisor.get_host_ip()))
+    print(f"Get Flavor name: {flavor.name}, id: {flavor.id}, vcpus: {flavor.vcpus},"
+          f" ram: {flavor.ram}, disk: {flavor.disk}")
 
-    hypervisor = nova.get_hypervisor_by_id('97582edb-4ab7-4190-ab14-243349e43c67')
-    print("Get hypervisor id details: {}".format(hypervisor.get_host_ip()))
-    auth.close_connection()
+    for hypervisor in nova.get_hypervisor_list():
+        print(f"Hypervisor name: {hypervisor.get_available_vcpus()}, id: {hypervisor.get_id()},")
+        # f" available vcpus: {hypervisor.get_available_vcpus()}, ip: {hypervisor.get_host_ip()}")
+
+    hypervisor = nova.get_hypervisor_by_id('12098ef6-4a2b-48de-be98-d4535bb5ffae')
+    print(f"Get hypervisor id details: {hypervisor.get_available_vcpus()}")
+    """
+    nova.close_connection()
 
 
 if __name__ == "__main__":

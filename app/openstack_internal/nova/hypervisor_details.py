@@ -1,132 +1,130 @@
 import logging
 
-from openstack.compute.v2.hypervisor import Hypervisor
-
 LOG = logging.getLogger(__name__)
 
 
 class OSHypervisor:
-    def __init__(self, hypervisor: Hypervisor):
-        self.__hypervisor = hypervisor
-        self.__id = hypervisor.id
-        self.__hypervisor_hostname = hypervisor.name
-        name: str = hypervisor.name
-        self.__name = name.split(".")[0]
-        self.__cpu_info = hypervisor.cpu_info
-        self.__host_ip = hypervisor.host_ip
-        self.__hypervisor_type = hypervisor.hypervisor_type
-        self.__hypervisor_version = hypervisor.hypervisor_version
-        self.__service_details = hypervisor.service_details
-        self.__servers = hypervisor.servers
-        self.__state = hypervisor.state
-        self.__status = hypervisor.status
-        self.__uptime = hypervisor.uptime
-        self.__current_workload = hypervisor.current_workload
 
-        self.__available_disk_gb = hypervisor.disk_available
-        self.__used_disk_gb = hypervisor.local_disk_used
-        self.__total_disk_gb = hypervisor.local_disk_size
-        self.__free_disk_gb = hypervisor.local_disk_free
+    def __init__(self, hypervisor):
+        LOG.info(f"In OSHypervisor: hypervisor: {hypervisor}")
+        self.hypervisor = hypervisor
+        self.id = hypervisor.id
+        # self._info = hypervisor._info
+        self.api_version = hypervisor.api_version
+        self.append_request_ids = hypervisor.append_request_ids
+        self.cpu_info = hypervisor.cpu_info
+        self.current_workload = hypervisor.current_workload
+        self.disk_available_least = hypervisor.disk_available_least
+        self.free_disk_gb = hypervisor.free_disk_gb
+        self.human_id = hypervisor.human_id
+        self.free_ram_mb = hypervisor.free_ram_mb
+        self.hypervisor_type = hypervisor.hypervisor_type
+        self.host_ip = hypervisor.host_ip
+        self.human_id = hypervisor.human_id
+        self.hypervisor_hostname = hypervisor.hypervisor_hostname
+        name: str = hypervisor.hypervisor_hostname
+        self.name = name.split(".")[0]
+        self.hypervisor_type = hypervisor.hypervisor_type
+        self.hypervisor_version = hypervisor.hypervisor_version
+        self.is_loaded = hypervisor.is_loaded()
+        self.local_gb = hypervisor.local_gb
+        self.local_gb_used = hypervisor.local_gb_used
+        self.manager = hypervisor.manager
+        self.memory_mb = hypervisor.memory_mb
+        self.memory_mb_used = hypervisor.memory_mb_used
+        self.request_ids = hypervisor.request_ids
+        self.request_ids_setup = hypervisor.request_ids_setup
+        self.running_vms = hypervisor.running_vms
+        self.service = hypervisor.service
+        self.state = hypervisor.state
+        self.status = hypervisor.status
+        self.vcpus = hypervisor.vcpus
+        self.vcpus_used = hypervisor.vcpus_used
+        self.x_openstack_request_ids = hypervisor.x_openstack_request_ids
 
-        self.__used_ram_mb = hypervisor.memory_used
-        self.__total_ram_mb = hypervisor.memory_size
-        self.__available_ram_mb = hypervisor.memory_free
+        LOG.debug(f"cpus: total: {hypervisor.vcpus}, used: {hypervisor.vcpus_used}")
+        LOG.debug(f'Hypervisor: {dir(hypervisor)}')
+        LOG.debug(f'Hypervisor ID: {hypervisor.id}')
+        LOG.debug(f'Hypervisor api_version: {hypervisor.api_version}')
+        LOG.debug(f'Hypervisor append_request_ids: {hypervisor.append_request_ids}')
+        LOG.debug(f'Hypervisor cpu_info: {hypervisor.cpu_info}')
+        LOG.debug(f'Hypervisor current_workload: {hypervisor.current_workload}')
+        LOG.debug(f'Hypervisor disk_available_least: {hypervisor.disk_available_least}')
+        LOG.debug(f'Hypervisor free_disk_gb: {hypervisor.free_disk_gb}')
+        LOG.debug(f'Hypervisor human_id: {hypervisor.human_id}')
+        LOG.debug(f'Hypervisor free_ram_mb: {hypervisor.free_ram_mb}')
+        LOG.debug(f'Hypervisor hypervisor_type: {hypervisor.hypervisor_type}')
+        LOG.debug(f'Hypervisor host_ip: {hypervisor.host_ip}')
+        LOG.debug(f'Hypervisor human_id: {hypervisor.human_id}')
+        LOG.debug(f'Hypervisor hypervisor_hostname: {hypervisor.hypervisor_hostname}')
+        LOG.debug(f'Hypervisor hypervisor_type: {hypervisor.hypervisor_type}')
+        LOG.debug(f'Hypervisor hypervisor_version: {hypervisor.hypervisor_version}')
+        LOG.debug(f'Hypervisor is_loaded(): {hypervisor.is_loaded()}')
+        LOG.debug(f'Hypervisor local_gb: {hypervisor.local_gb}')
+        LOG.debug(f'Hypervisor local_gb_used: {hypervisor.local_gb_used}')
+        LOG.debug(f'Hypervisor manager: {hypervisor.manager}')
+        LOG.debug(f'Hypervisor memory_mb: {hypervisor.memory_mb}')
+        LOG.debug(f'Hypervisor memory_mb_used: {hypervisor.memory_mb_used}')
+        LOG.debug(f'Hypervisor name: {self.name}')
+        LOG.debug(f'Hypervisor request_ids: {hypervisor.request_ids}')
+        LOG.debug(f'Hypervisor request_ids_setup: {hypervisor.request_ids_setup}')
+        LOG.debug(f'Hypervisor running_vms: {hypervisor.running_vms}')
+        LOG.debug(f'Hypervisor service: {hypervisor.service}')
+        LOG.debug(f'Hypervisor state: {hypervisor.state}')
+        LOG.debug(f'Hypervisor status: {hypervisor.status}')
+        LOG.debug(f'Hypervisor vcpus: {hypervisor.vcpus}')
+        LOG.debug(f'Hypervisor vcpus_used: {hypervisor.vcpus_used}')
+        LOG.debug(f'Hypervisor x_openstack_request_ids: {hypervisor.x_openstack_request_ids}')
+        LOG.debug(f"cpus: total: {hypervisor.vcpus}, used: {hypervisor.vcpus_used}")
 
-        self.__running_vms_count = hypervisor.running_vms
-
-        self.__used_vcpus = hypervisor.vcpus_used
-        self.__total_vcpus = hypervisor.vcpus
-
-        self.__disk_available_least = hypervisor.disk_available
-
-    def get_hypervisor(self):
-        return self.__hypervisor
+        print('Hypervisor: ', hypervisor)
+        print('Hypervisor ID: ', hypervisor.id)
+        print('Hypervisor api_version: ', hypervisor.api_version)
+        print('Hypervisor append_request_ids: ', hypervisor.append_request_ids)
+        print('Hypervisor cpu_info: ', hypervisor.cpu_info)
+        print('Hypervisor current_workload: ', hypervisor.current_workload)
+        print('Hypervisor disk_available_least: ', hypervisor.disk_available_least)
+        print('Hypervisor free_disk_gb: ', hypervisor.free_disk_gb)
+        print('Hypervisor human_id: ', hypervisor.human_id)
+        print('Hypervisor free_ram_mb: ', hypervisor.free_ram_mb)
+        print('Hypervisor hypervisor_type: ', hypervisor.hypervisor_type)
+        print('Hypervisor host_ip: ', hypervisor.host_ip)
+        print('Hypervisor human_id: ', hypervisor.human_id)
+        print('Hypervisor hypervisor_hostname: ', hypervisor.hypervisor_hostname)
+        print('Hypervisor hypervisor_type: ', hypervisor.hypervisor_type)
+        print('Hypervisor hypervisor_version: ', hypervisor.hypervisor_version)
+        print('Hypervisor is_loaded(): ', hypervisor.is_loaded())
+        print('Hypervisor local_gb: ', hypervisor.local_gb)
+        print('Hypervisor local_gb_used: ', hypervisor.local_gb_used)
+        print('Hypervisor manager: ', hypervisor.manager)
+        print('Hypervisor memory_mb: ', hypervisor.memory_mb)
+        print('Hypervisor memory_mb_used: ', hypervisor.memory_mb_used)
+        print('Hypervisor name: ', self.name)
+        print('Hypervisor request_ids: ', hypervisor.request_ids)
+        print('Hypervisor request_ids_setup: ', hypervisor.request_ids_setup)
+        print('Hypervisor running_vms: ', hypervisor.running_vms)
+        print('Hypervisor service: ', hypervisor.service)
+        print('Hypervisor state: ', hypervisor.state)
+        print('Hypervisor status: ', hypervisor.status)
+        print('Hypervisor vcpus: ', hypervisor.vcpus)
+        print('Hypervisor vcpus_used: ', hypervisor.vcpus_used)
+        print('Hypervisor x_openstack_request_ids: ', hypervisor.x_openstack_request_ids)
 
     def get_id(self):
-        return self.__id
-
-    def get_full_name(self):
-        return self.__hypervisor_hostname
+        return self.id
 
     def get_name(self):
-        return self.__name
-
-    def get_cpu_info(self):
-        return self.__cpu_info
-
-    def get_host_ip(self):
-        return self.__host_ip
-
-    def get_hypervisor_type(self):
-        return self.__hypervisor_type
-
-    def get_hypervisor_version(self):
-        return self.__hypervisor_version
-
-    def get_service_details(self):
-        return self.__service_details
-
-    def get_servers(self):
-        return self.__servers
-
-    def get_state(self):
-        return self.__state
-
-    def get_status(self):
-        return self.__status
-
-    def get_uptime(self):
-        return self.__uptime
-
-    def get_current_workload(self):
-        return self.__current_workload
+        return self.name
 
     def get_available_disk_gb(self):
-        return self.__available_disk_gb
-
-    def get_used_disk_gb(self):
-        return self.__used_disk_gb
-
-    def get_total_disk_gb(self):
-        return self.__total_disk_gb
-
-    def get_free_disk_gb(self):
-        return self.__free_disk_gb
-
-    def get_used_ram_mb(self):
-        return self.__used_ram_mb
-
-    def get_total_memory_mb(self):
-        return self.__total_ram_mb
+        LOG.info(f"In OSHypervisor.get_available_disk_gb: {self.free_disk_gb}")
+        return self.free_disk_gb
 
     def get_available_ram_mb(self):
-        return self.__available_ram_mb
-
-    def get_running_vms_count(self):
-        return self.__running_vms_count
-
-    def get_used_vcpus(self):
-        return self.__used_vcpus
-
-    def get_total_vcpus(self):
-        return self.__total_vcpus
+        LOG.info(f"In OSHypervisor.get_available_ram_mb: {self.free_ram_mb}")
+        return self.free_ram_mb
 
     def get_available_vcpus(self):
-        return self.__total_vcpus - self.__used_vcpus
-
-    def get_disk_available_least(self):
-        return self.__disk_available_least
-
-
-"""
-def main():
-    _nova = Nova(AuthenticateConnection().get_connection())
-    hypervisor = OSHypervisor(_nova.get_hypervisor_by_id('b755b8b1-363f-40dc-ba6e-8b55dd3a4767'))
-
-    print("Get hypervisor name: {}, hypervisor id: {}, total vcpus: {}".format(
-            hypervisor.get_name(), hypervisor.get_id(), hypervisor.get_cpu_info()))
-
-
-if __name__ == "__main__":
-    main()
-"""
+        free_vcpus = self.vcpus - self.vcpus_used
+        LOG.info(f"In OSHypervisor.get_available_vcpus: {free_vcpus}")
+        return free_vcpus

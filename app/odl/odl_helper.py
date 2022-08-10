@@ -89,6 +89,7 @@ class ODLHelperFunctions:
         n = 0
         for link in topology["network-topology"]["topology"][0]["link"]:
             print(f'link: {link}')
+            LOG.debug(f'link: {link}')
             _id = link['link-id']
             int_id = n
             dst_node_id = link['destination']['dest-node']

@@ -1,26 +1,32 @@
-import logging
+from typing import List
 
 from configuration_constants import ConfigurationConstants
 
-LOG = logging.getLogger(__name__)
-
 
 class OpenStackConstants(object):
-
     # OpenStack Constants
-    KEYSTONE_URL = ConfigurationConstants.OS_BASE_OS_URL + ":5000/v3/"
-    KEYSTONE_PORT = "5000"
-    KEYSTONE_VERSION = "v3"
+    KEYSTONE_URL: str = ConfigurationConstants.OS_BASE_OS_URL + ":5000/v3/"
+    KEYSTONE_PORT: str = "5000"
+    KEYSTONE_VERSION: str = "v3"
 
-    GLANCE_URL = ConfigurationConstants.OS_BASE_OS_URL + ":9292/v2"
-    GLANCE_PORT = "9292"
-    GLANCE_VERSION = "2"
+    GLANCE_URL: str = ConfigurationConstants.OS_BASE_OS_URL + ":9292/v2"
+    GLANCE_PORT: str = "9292"
+    GLANCE_VERSION: str = "2"
 
-    NOVA_URL = ConfigurationConstants.OS_BASE_OS_URL + ":8774/v2.79"
-    NOVA_PORT = "8774"
-    NOVA_VERSION = "2.79"
+    NOVA_URL: str = ConfigurationConstants.OS_BASE_OS_URL + ":8774/v2.79"
+    NOVA_PORT: str = "8774"
+    NOVA_VERSION: str = "2.79"
+    # 2.88
 
-    NEUTRON_URL = ConfigurationConstants.OS_BASE_OS_URL + ":9696"
-    NEUTRON_PORT = "9696"
-    NEUTRON_VERSION = ""
+    NEUTRON_URL: str = ConfigurationConstants.OS_BASE_OS_URL + ":9696"
+    NEUTRON_PORT: str = "9696"
+    NEUTRON_VERSION: str = ""
 
+    MANAGEMENT_NETWORK_NAME: str = "Management-Network"
+    PROVIDER_NETWORK_NAME: str = "TUC11-Network"
+
+    NETWORKS_LIST: List[str] = [MANAGEMENT_NETWORK_NAME, PROVIDER_NETWORK_NAME]
+
+    UBUNTU_20_04 = "focal-server-cloudimg-amd64"
+    UBUNTU_18_04 = "bionic-server-cloudimg-amd64"
+    CIRROS_0_5_2 = "cirros-0.5.2-x86_64"

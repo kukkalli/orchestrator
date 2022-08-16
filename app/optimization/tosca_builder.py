@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 from templates.input_request import InputRequest
 from templates.service_profile_template import ServiceProfileTemplate
@@ -15,6 +14,7 @@ class TOSCABuilder:
     def __init__(self, input_request: InputRequest):
         self.name = input_request.get_service_chain_name()
         self.service_template: ServiceProfileTemplate = input_request.get_service_template()
+        self.max_link_delay = input_request.max_link_delay
         # self.vm_requirements: List[VMRequirement] = self.service_template.get_vm_requirements_list()
         # self.v_links: List[VirtualLink] = self.service_template.get_v_links_list()
 
@@ -100,7 +100,7 @@ class TOSCABuilder:
         # tosca = TOSCAInput(self.name, self.vm_requirements, self.v_links)
         # tosca = TOSCAInput(self.name, self.service_template.get_vm_requirements_list(),
         #                    self.service_template.get_v_links_list())
-        tosca = TOSCAInput(self.name, self.service_template)
+        tosca = TOSCAInput(self.name, self.service_template, self.max_link_delay)
         tosca.build()
         LOG.info("no of v_links: {}".format(len(tosca.v_links)))
         print("no of v_links: {}".format(len(tosca.v_links)))

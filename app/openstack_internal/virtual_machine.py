@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from typing import Dict, List
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.clients.clients import Clients
@@ -66,8 +65,6 @@ class VirtualMachine:
                                           nics=ports, access_ip_v4=None, access_ip_v6=None, host=host,
                                           hypervisor_hostname=None)
 
-        # return
-
     """
     def get_vm_info(self):
         nova = self.__get_nova_api()
@@ -118,13 +115,14 @@ def main():
     service_chain_name = "kn1"
     security_groups = ["default"]
     key_pair = "hanif-kukkalli"
+
     neutron = Neutron(AuthenticateConnection().get_connection())
     management_network_id = "4200c22b-80d3-48ea-9586-2a98140f1616"
     fabric_network_id = "ebe835d0-7c36-43fb-8c57-5b6b5872b0ce"
 
     service = FourGLTECore(service_chain_name, "tu-chemnitz.de", 1000)
     service.build()
-    hostnames_list: List[Dict] = []
+    hostnames_list: list[dict] = []
     # for network in networks
     for vnf in service.get_network_functions():
         print(f"VNF name: {vnf.get_name()}")

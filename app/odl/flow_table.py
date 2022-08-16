@@ -1,5 +1,4 @@
 import logging
-from typing import List, Dict
 
 from odl.flow_entry import FlowEntry
 from odl.table_statistics import FlowTableStatistics
@@ -13,9 +12,9 @@ class FlowTable(object):
         self.__json = table
         self.__id = table["id"]
         self.statistics = FlowTableStatistics(table["opendaylight-flow-table-statistics:flow-table-statistics"])
-        self.list_flows: List[FlowEntry] = []
-        self.dict_flows_by_match: Dict[str, FlowEntry] = {}
-        self.dict_flows_by_id: Dict[str, FlowEntry] = {}
+        self.list_flows: list[FlowEntry] = []
+        self.dict_flows_by_match: dict[str, FlowEntry] = {}
+        self.dict_flows_by_id: dict[str, FlowEntry] = {}
         if "flow" in table:
             add_elements_with_type(self.list_flows, table["flow"], FlowEntry)
         for flow in self.list_flows:
@@ -40,7 +39,7 @@ class FlowTable(object):
     def to_string(self) -> str:
         return self.__json
 
-    def get_flow_by_src_ip_dest_ip(self, src_ip: str, dst_ip: str):
+    def get_flow_by_src_ip_dest_ip(self, src_ip: str, dst_ip: str) -> FlowEntry:
         key: str = ""
         if len(src_ip) > 0:
             src_ip = src_ip.split("/")
@@ -52,5 +51,5 @@ class FlowTable(object):
             key = key + "d:" + dst_ip[0]
         return self.dict_flows_by_match[key]
 
-    def get_flow_by_id(self, flow_id):
+    def get_flow_by_id(self, flow_id) -> FlowEntry:
         return self.dict_flows_by_id[flow_id]

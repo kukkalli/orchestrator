@@ -1,6 +1,5 @@
 import logging
 import time
-from typing import List, Dict
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.nova.flavor import Flavor
@@ -14,17 +13,18 @@ LOG = logging.getLogger(__name__)
 
 class ServiceProfileTemplate:
 
-    def __init__(self, name: str, domain_name: str, bandwidth: int):
+    def __init__(self, name: str, domain_name: str, bandwidth: int, max_delay: float = 50.0):
         self.name = name
         self.domain_name = domain_name
         self.bandwidth = bandwidth
-        self.network_functions: List[VMTemplate] = []
-        self.vm_requirements_list: List[VMRequirement] = []
-        self.vnf_vm_map: Dict[str, VMRequirement] = {}
-        self.nfv_v_links_list: List[Dict] = []
-        self.v_links: List[VirtualLink] = []
+        self.max_delay = max_delay
+        self.network_functions: list[VMTemplate] = []
+        self.vm_requirements_list: list[VMRequirement] = []
+        self.vnf_vm_map: dict[str, VMRequirement] = {}
+        self.nfv_v_links_list: list[dict] = []
+        self.v_links: list[VirtualLink] = []
         nova = Nova(AuthenticateConnection())
-        self.flavor_id_map: Dict[str, Flavor] = nova.get_flavor_id_map()
+        self.flavor_id_map: dict[str, Flavor] = nova.get_flavor_id_map()
         nova.close_connection()
 
     def get_vm_requirements_list(self):

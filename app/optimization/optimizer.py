@@ -81,6 +81,9 @@ class Optimize:
 
         # --- Optional delay constraints between VM pairs ---#
         for count in range(len_v_links):  # delay constraint
+            for e in range(len_links):
+                print("===============================================================================================")
+                print(f"links.delay:{self.links[e].delay}, vLinks.max_link_delay: {self.v_links[count].max_link_delay}")
             self.problem_statement.addConstr(
                 quicksum(self.links[e].delay * (flow[count, e]) for e in
                          range(len_links)) <= self.v_links[count].max_link_delay)
@@ -164,7 +167,7 @@ class Optimize:
                 vm_mapping[v, n] = self.problem_statement.getVarByName(f'x_{v}_{n}').X
                 if self.problem_statement.getVarByName(f'x_{v}_{n}').X == 1:
                     # print("Printing x_{}_{}:{}".format(v, n, vm_mapping[v, n]))
-                    self.vm_requirements[v].hypervisor_hostname = self.compute_servers[n].name
+                    self.vm_requirements[v].hypervisor_hostname = self.compute_servers[n].hostname
                     # print("VM Name: {}, Server Name: {}".format(self.vm_requirements[v].
                     #                                             hostname, self.servers[n].name))
 

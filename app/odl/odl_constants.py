@@ -8,9 +8,9 @@ LOG = logging.getLogger(__name__)
 class ODLConstants(object):
     # OpenDayLight Constants
     TOPOLOGY = ConfigurationConstants.ODL_URL + "/restconf/operational/network-topology:network-topology"
-    NODES = ConfigurationConstants.ODL_URL + "/restconf/operational/opendaylight-inventory:nodes"
-    NODE = NODES + "/node/{}"
-    PORT = NODE + '/node-connector/{}'
+    SWITCHES = ConfigurationConstants.ODL_URL + "/restconf/operational/opendaylight-inventory:nodes"
+    SWITCH = SWITCHES + "/node/{switch_id}"
+    PORT = SWITCH + '/node-connector/{port_id}'
 
     HEADER = {"Content-Type": "application/json", "Accept": "application/json"}
 
@@ -82,10 +82,10 @@ class ODLConstants(object):
     {"flow-node-inventory:flow": [
          {
              "id": "{flow_id}",
-             "table_id": {table_id},
-             "idle-timeout": {idle_timeout},
-             "priority": {priority},
-             "hard-timeout": {hard_timeout},
+             "table_id": "{table_id}",
+             "idle-timeout": "{idle_timeout}",
+             "priority": "{priority}",
+             "hard-timeout": "{hard_timeout}",
              "match": {
                  "ipv4-source": "{src_ip}",
                  "ipv4-destination": "{dst_ip}",

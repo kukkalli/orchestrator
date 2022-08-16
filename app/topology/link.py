@@ -6,7 +6,7 @@ LOG = logging.getLogger(__name__)
 class Link:
 
     def __init__(self, _id, int_id: int, dst_node_id: int, src_node_id: int, dst_port_id: str = None,
-                 src_port_id: str = None, capacity=10000, delay=1, length_of_link=0.001, delay_per_km=50,
+                 src_port_id: str = None, capacity=10000000, delay=1, length_of_link=0.001, delay_per_km=50,
                  bi_directional=False):
         self.__id = _id
         self.__int_id = int_id
@@ -16,10 +16,10 @@ class Link:
         self.dst_port_id = dst_port_id  # to port if it is a switch
         self.src_port_id = src_port_id  # from port if it is a switch
 
-        self.capacity = capacity  # in Mbps
-        self.delay = length_of_link * delay_per_km  # in milliseconds
+        self.capacity = capacity  # in kbps
+        self.delay = length_of_link * delay_per_km  # in microseconds
         self.length_of_link = length_of_link  # in kilometres
-        self.delay_per_km = delay_per_km  # in milliseconds
+        self.delay_per_km = delay_per_km  # in microseconds
         self.bi_directional = bi_directional  # true if bidirectional
 
     @property

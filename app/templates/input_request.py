@@ -17,14 +17,14 @@ LOG = logging.getLogger(__name__)
 class InputRequest:
 
     def __init__(self, name: str, service_profile: str, domain_name: str = "tu-chemnitz.de", bandwidth: int = 100,
-                 max_link_delay: int = 100):
+                 max_link_delay: float = 50.0):
         self.name = name
         prefix = re.sub('[^a-zA-Z\d \n\.]', '', name)
         prefix = prefix.replace(" ", "-").lower()
         self.hostname_prefix = (prefix[:20]) if len(prefix) > 20 else prefix
         self.service_uuid = uuid.uuid4().hex
-        self.domain_name = domain_name
         self.service_profile: ServiceProfiles = ServiceProfiles(service_profile)
+        self.domain_name = domain_name
         self.bandwidth = bandwidth
         self.max_link_delay = max_link_delay
         self.mariadb = MariaDB()
@@ -102,26 +102,17 @@ class InputRequest:
 
     def get_service_template(self):
         LOG.info(f"Fetch Service Profile Template: {time.time()}")
+        service_profile = None
         if self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE:
-            four_g_lte_core = FourGLTECore(self.hostname_prefix, self.domain_name, self.bandwidth)
-            four_g_lte_core.build()
-            # four_g_lte_core.nova.close_connection()
-            return four_g_lte_core
+            service_profile = FourGLTECore(self.hostname_prefix, self.domain_name,
+                                           self.bandwidth, self.max_link_delay)
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_CASS_DB:
-            four_g_lte_core_rcc = FourGLTECoreCassDB(self.hostname_prefix, self.domain_name, self.bandwidth)
-            four_g_lte_core_rcc.build()
-            # four_g_lte_core_rcc.nova.close_connection()
-            return four_g_lte_core_rcc
+            service_profile = FourGLTECoreCassDB(self.hostname_prefix, self.domain_name,
+                                                 self.bandwidth, self.max_link_delay)
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_BBU:
-            four_g_lte_core_rcc = FourGLTECoreRCC(self.hostname_prefix, self.domain_name, self.bandwidth)
-            four_g_lte_core_rcc.build()
-            # four_g_lte_core_rcc.nova.close_connection()
-            return four_g_lte_core_rcc
+            service_profile = FourGLTECoreRCC(self.hostname_prefix, self.domain_name, self.bandwidth)
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_BBU_CASS_DB:
-            four_g_lte_core_rcc = FourGLTECoreRCC(self.hostname_prefix, self.domain_name, self.bandwidth)
-            four_g_lte_core_rcc.build()
-            # four_g_lte_core_rcc.nova.close_connection()
-            return four_g_lte_core_rcc
+            service_profile = FourGLTECoreRCC(self.hostname_prefix, self.domain_name, self.bandwidth)
         elif self.service_profile == ServiceProfiles.FIVE_G_CORE:
             return None
         elif self.service_profile == ServiceProfiles.FIVE_G_CORE_DU:
@@ -129,7 +120,9 @@ class InputRequest:
         else:
             LOG.error(f"Service Profile Template Not Found: {time.time()}")
             abort(404)
+        service_profile.build()
         LOG.info(f"Service Profile Template Fetched: {time.time()}")
+        return service_profile
 
     def get_domain_name(self):
         return self.domain_name
@@ -143,7 +136,7 @@ class InputRequest:
 
 def main():
     input_request = InputRequest(name="Hanif testing orchestrator", service_profile="FOUR_G_LTE_CORE", bandwidth=150,
-                                 max_link_delay=200)
+                                 max_link_delay=0.001)
     print(f"name: {input_request.get_service_chain_name()}, service_profile: {input_request.get_service_profile()}", )
     print(f'service template: {input_request.get_service_template()}')
 

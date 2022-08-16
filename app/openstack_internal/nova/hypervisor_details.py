@@ -116,6 +116,9 @@ class OSHypervisor:
     def get_name(self):
         return self.name
 
+    def get_hostname(self):
+        return self.hypervisor_hostname
+
     def get_available_disk_gb(self):
         LOG.info(f"In OSHypervisor.get_available_disk_gb: {self.free_disk_gb}")
         return self.free_disk_gb

@@ -8,19 +8,19 @@ LOG = logging.getLogger(__name__)
 
 class FourGLTECoreRCC(FourGLTECore):
 
-    def __init__(self, name: str, domain_name: str, bandwidth: int):
+    def __init__(self, name: str, domain_name: str, bandwidth: int, max_link_delay: float = 1.0):
         super().__init__(name, domain_name, bandwidth)
         rcc = VMTemplate(self.name, "rcc", "3")
         self.network_functions.append(rcc)
 
-        self.nfv_v_links_list.append({"out": "mme", "in": "rcc", "delay": 30})
-        self.nfv_v_links_list.append({"out": "rcc", "in": "mme", "delay": 30})
-        self.nfv_v_links_list.append({"out": "spgw-u", "in": "rcc", "delay": 30})
-        self.nfv_v_links_list.append({"out": "rcc", "in": "spgw-u", "delay": 30})
+        self.nfv_v_links_list.append({"out": "mme", "in": "rcc", "delay": max_link_delay})
+        self.nfv_v_links_list.append({"out": "rcc", "in": "mme", "delay": max_link_delay})
+        self.nfv_v_links_list.append({"out": "spgw-u", "in": "rcc", "delay": max_link_delay})
+        self.nfv_v_links_list.append({"out": "rcc", "in": "spgw-u", "delay": max_link_delay})
 
 
 def main():
-    service = FourGLTECoreRCC("test-rcc", "kukkalli.com", 1000)
+    service = FourGLTECoreRCC("test-rcc", "kukkalli.com", 1000, 1.0)
     service.build()
     for vm_request in service.get_vm_requirements_list():
         print(f"VM Requirement: {vm_request.hostname}, int_id: {vm_request.int_id}")

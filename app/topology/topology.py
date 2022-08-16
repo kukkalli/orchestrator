@@ -1,5 +1,4 @@
 import logging
-from typing import List, Dict
 
 from topology.link import Link
 from topology.node import Node
@@ -12,23 +11,25 @@ LOG = logging.getLogger(__name__)
 
 class Topology:
 
-    def __init__(self, _id: str, links: List[Link], compute_servers: List[ComputeServer], switches: List[Switch],
-                 others_servers: List[Server]):
+    def __init__(self, _id: str, links: list[Link], compute_servers: list[ComputeServer], switches: list[Switch],
+                 others_servers: list[Server]):
         self.__id = _id
         self.links = links
-        self.nodes: List[Node] = []
+        self.nodes: list[Node] = []
+        for compute_server in compute_servers:
+            print(f"Compute Server: {compute_server.name}")
         self.compute_servers = compute_servers
-        self.compute_servers_dict: Dict[int, ComputeServer] = {}
+        self.compute_servers_dict: dict[int, ComputeServer] = {}
         for compute_server in compute_servers:
             self.compute_servers_dict[compute_server.int_id] = compute_server
             self.nodes.append(compute_server)
         self.switches = switches
-        self.switches_dict: Dict[int, Switch] = {}
+        self.switches_dict: dict[int, Switch] = {}
         for switch in switches:
             self.switches_dict[switch.int_id] = switch
             self.nodes.append(switch)
         self.other_servers = others_servers
-        self.other_servers_dict: Dict[int, Server] = {}
+        self.other_servers_dict: dict[int, Server] = {}
         for other_server in others_servers:
             self.other_servers_dict[other_server.int_id] = other_server
             self.nodes.append(other_server)

@@ -12,7 +12,7 @@ LOG = logging.getLogger(__name__)
 
 class FourGLTECore(ServiceProfileTemplate):
 
-    def __init__(self, name: str, domain_name: str, bandwidth: int):
+    def __init__(self, name: str, domain_name: str, bandwidth: int, max_delay: float = 50.0):
         super().__init__(name, domain_name, bandwidth)
         hss = VMTemplate(self.name, "hss", "2", HSSUserData.USERDATA)
         self.network_functions.append(hss)
@@ -23,14 +23,14 @@ class FourGLTECore(ServiceProfileTemplate):
         spgw_u = VMTemplate(self.name, "spgw-u", "3", SPGWUUserData.USERDATA)
         self.network_functions.append(spgw_u)
 
-        self.nfv_v_links_list.append({"out": "hss", "in": "mme", "delay": 50})
-        self.nfv_v_links_list.append({"out": "mme", "in": "hss", "delay": 50})
-        self.nfv_v_links_list.append({"out": "mme", "in": "spgw-c", "delay": 30})
-        self.nfv_v_links_list.append({"out": "spgw-c", "in": "mme", "delay": 30})
-        self.nfv_v_links_list.append({"out": "mme", "in": "spgw-u", "delay": 30})
-        self.nfv_v_links_list.append({"out": "spgw-u", "in": "mme", "delay": 30})
-        self.nfv_v_links_list.append({"out": "spgw-c", "in": "spgw-u", "delay": 30})
-        self.nfv_v_links_list.append({"out": "spgw-u", "in": "spgw-c", "delay": 30})
+        self.nfv_v_links_list.append({"out": "hss", "in": "mme", "delay": max_delay*0.4})
+        self.nfv_v_links_list.append({"out": "mme", "in": "hss", "delay": max_delay*0.4})
+        self.nfv_v_links_list.append({"out": "mme", "in": "spgw-c", "delay": max_delay*0.25})
+        self.nfv_v_links_list.append({"out": "spgw-c", "in": "mme", "delay": max_delay*0.25})
+        self.nfv_v_links_list.append({"out": "mme", "in": "spgw-u", "delay": max_delay*0.25})
+        self.nfv_v_links_list.append({"out": "spgw-u", "in": "mme", "delay": max_delay*0.25})
+        self.nfv_v_links_list.append({"out": "spgw-c", "in": "spgw-u", "delay": max_delay*0.1})
+        self.nfv_v_links_list.append({"out": "spgw-u", "in": "spgw-c", "delay": max_delay*0.1})
 
 
 def main():

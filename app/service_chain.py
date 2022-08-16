@@ -87,16 +87,19 @@ class ServiceChain:
                       f" dst_ip: {get_vm_ip_address(network_ip_dict_list, provider_network_name, dst_v_node)}")
                 if src_node.is_switch:
                     of.create_arp_flow(src_node.id, src_node.ports_dict[link.src_port_id].port_number, 1)
-                    of.create_traffic_forwarding(src_node.id, src_node.ports_dict[link.src_port_id].port_number,
-                                                 get_vm_ip_address(network_ip_dict_list, provider_network_name,
-                                                                   src_v_node),
-                                                 get_vm_ip_address(network_ip_dict_list, provider_network_name,
-                                                                   dst_v_node) + dst_v_node.subnet_mask)
+                    of.json_forwarding_flow_install(src_node.id, src_node.ports_dict[link.src_port_id].port_number,
+                                                    get_vm_ip_address(network_ip_dict_list, provider_network_name,
+                                                                      src_v_node) + src_v_node.subnet_mask,
+                                                    get_vm_ip_address(network_ip_dict_list, provider_network_name,
+                                                                      dst_v_node) + dst_v_node.subnet_mask)
+
                 if dst_node.is_switch:
                     of.create_arp_flow(dst_node.id, dst_node.ports_dict[link.dst_port_id].port_number, 2)
-                    of.create_traffic_forwarding(dst_node.id, dst_node.ports_dict[link.dst_port_id].port_number,
-                                                 get_vm_ip_address(network_ip_dict_list, provider_network_name,
-                                                                   src_v_node) + src_v_node.subnet_mask)
+                    of.json_forwarding_flow_install(dst_node.id, dst_node.ports_dict[link.dst_port_id].port_number,
+                                                    get_vm_ip_address(network_ip_dict_list, provider_network_name,
+                                                                      src_v_node) + src_v_node.subnet_mask,
+                                                    get_vm_ip_address(network_ip_dict_list, provider_network_name,
+                                                                      dst_v_node) + src_v_node.subnet_mask)
 
                 print("--------------------------------------------------------------------------------------------")
 
@@ -126,7 +129,7 @@ class ServiceChain:
 def main():
     # topology_builder = TopologyBuilder("hanif")
     # tosca_builder = TOSCABuilder("hanif")
-    input_request: InputRequest = InputRequest("KN 1st test", "FOUR_G_LTE_CORE_CASS_DB")
+    input_request: InputRequest = InputRequest("KN-Core", "FOUR_G_LTE_CORE_CASS_DB", max_link_delay=0.005)
     execute = ServiceChain(input_request)
     execute.create_service_chain()
     exit()

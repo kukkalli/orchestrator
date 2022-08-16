@@ -108,9 +108,10 @@ class OpenFlow:
 
         print("Create Data flow from switch {} on port {} with dst ip {}".format(node_id, output, dst_ip))
         flow_id = flow_id_generator()
+        print(f"ODLConstants.FLOW_JSON: {ODLConstants.FLOW_JSON}")
         flow_json_body = json.loads(ODLConstants.FLOW_JSON)
         # flow_json_body['flow-node-inventory:flow'][0]['flow-name']='json_test'
-        flow_json_body['flow-node-inventory:flow'][0]['id'] = 10
+        flow_json_body['flow-node-inventory:flow'][0]['id'] = flow_id
         flow_json_body['flow-node-inventory:flow'][0]['hard-timeout'] = hard_timeout
         flow_json_body['flow-node-inventory:flow'][0]['idle-timeout'] = idle_timeout
         flow_json_body['flow-node-inventory:flow'][0]['cookie'] = cookie
@@ -127,7 +128,7 @@ class OpenFlow:
         print(json.dumps(flow_json_body))
         # print((ODLConstants.HEADER))
         # create url for ip
-        ip_url = ODLConstants.PUT_FLOW_URL.format(node_id=node_id, table=table, flow_id=10)
+        ip_url = ODLConstants.PUT_FLOW_URL.format(node_id=node_id, table=table, flow_id=flow_id)
         print(f"ip_url: {ip_url}")
         print(f"Response: {self.http_put_request_json(ip_url, flow_json_body)}")
 
@@ -138,7 +139,7 @@ def main():
     # url, body = a.create_arp_flow('openflow:3', 77, 1)
     # print(url, '\n', body)
     a.json_forwarding_flow_install(node_id='openflow:2', output=77, src_ip='1.1.1.1/32', dst_ip="2.2.2.2/32")
-    a.create_traffic_forwarding(node_id='openflow:2', output=77, src_ip='1.1.1.1/32', dst_ip="10.10.0.10/32")
+    # a.create_traffic_forwarding(node_id='openflow:2', output=77, src_ip='1.1.1.1/32', dst_ip="10.10.0.10/32")
 
 
 if __name__ == "__main__":

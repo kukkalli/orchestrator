@@ -6,19 +6,38 @@ from openstack.connection import Connection
 LOG = logging.getLogger(__name__)
 
 
+def get_image_list(connection: Connection) -> list:
+    image_list = connection.image.images()
+    connection.close()
+    return image_list
+
+
 class Glance:
 
     def __init__(self, connection: Connection):
-        self.__connection = connection
+        self.image_list = get_image_list(connection)
+        self.image_name_id_dict: dict[str, str] = {}
+        self.create_image_name_id_map()
 
-    def get_image_list(self):
-        return self.__connection.image.images()
+    def create_image_name_id_map(self):
+        for image in self.image_list:
+            print(f"create map: image: id: {image.id}, name: {image.name}")
+            self.image_name_id_dict[image.name] = image.id
+
+    def get_image_list(self) -> list:
+        return self.image_list
 
     def get_image_by_id(self, image_id):
-        return self.__connection.get_image_by_id(image_id)
+        for image in self.image_list:
+            if image.id == image_id:
+                return image
+        return None
 
     def get_image_id(self, image_name):
-        return self.__connection.get_image_id(image_name)
+        return self.image_name_id_dict[image_name]
+
+    def get_image_map(self) -> dict[str, str]:
+        return self.image_name_id_dict
 
 
 def main():

@@ -1,4 +1,5 @@
 import logging
+from typing import List, Dict
 
 from odl.flow_table import FlowTable
 from odl.node_connector import NodeConnector
@@ -23,10 +24,10 @@ class InventoryNode(object):
         self.switch_features = SwitchFeatures(node["flow-node-inventory:switch-features"])
         self.software = node["flow-node-inventory:software"]
         self.ip_address = IPAddress(node["flow-node-inventory:ip-address"])
-        self.list_flow_tables: list[FlowTable] = []
-        self.list_node_connector: list[NodeConnector] = []
-        self.dict_flow_tables: dict[str, FlowTable] = {}
-        self.dict_node_connector: dict[str, NodeConnector] = {}
+        self.list_flow_tables: List[FlowTable] = []
+        self.list_node_connector: List[NodeConnector] = []
+        self.dict_flow_tables: Dict[str, FlowTable] = {}
+        self.dict_node_connector: Dict[str, NodeConnector] = {}
         add_elements_with_type(self.list_flow_tables, node["flow-node-inventory:table"], FlowTable)
         add_elements_with_type(self.list_node_connector, node["node-connector"], NodeConnector)
         for flow_table in self.list_flow_tables:

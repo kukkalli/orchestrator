@@ -1,4 +1,5 @@
 import logging
+from typing import List, Dict
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack.connection import Connection
@@ -6,7 +7,7 @@ from openstack.connection import Connection
 LOG = logging.getLogger(__name__)
 
 
-def get_image_list(connection: Connection) -> list:
+def get_image_list(connection: Connection) -> List:
     image_list = connection.image.images()
     connection.close()
     return image_list
@@ -16,7 +17,7 @@ class Glance:
 
     def __init__(self, connection: Connection):
         self.image_list = get_image_list(connection)
-        self.image_name_id_dict: dict[str, str] = {}
+        self.image_name_id_dict: Dict[str, str] = {}
         self.create_image_name_id_map()
 
     def create_image_name_id_map(self):
@@ -24,7 +25,7 @@ class Glance:
             print(f"create map: image: id: {image.id}, name: {image.name}")
             self.image_name_id_dict[image.name] = image.id
 
-    def get_image_list(self) -> list:
+    def get_image_list(self) -> List:
         return self.image_list
 
     def get_image_by_id(self, image_id):
@@ -36,7 +37,7 @@ class Glance:
     def get_image_id(self, image_name):
         return self.image_name_id_dict[image_name]
 
-    def get_image_map(self) -> dict[str, str]:
+    def get_image_map(self) -> Dict[str, str]:
         return self.image_name_id_dict
 
 

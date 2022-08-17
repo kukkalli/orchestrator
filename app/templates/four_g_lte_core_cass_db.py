@@ -2,6 +2,7 @@ import logging
 import time
 
 from templates.four_g_core_cass_db.cassandra_db import CassandraDB
+from templates.four_g_core_cass_db.cassandra_user_data import CassandraDBUserData
 from templates.four_g_core_cass_db.hss import HSS
 from templates.four_g_core_cass_db.hss_user_data import HSSUserData
 from templates.four_g_core_cass_db.mme import MME
@@ -30,7 +31,7 @@ class FourGLTECoreCassDB(ServiceProfileTemplate):
         self.spgw_u = SPGWCTemplate(self.name)
         self.__build()
         """
-        cass = VMTemplate(self.name, "cassandra", "2", HSSUserData.USERDATA)
+        cass = VMTemplate(self.name, "cassandra", "2", CassandraDBUserData.USERDATA)
         self.network_functions.append(cass)
         hss = VMTemplate(self.name, "hss", "2", HSSUserData.USERDATA)
         self.network_functions.append(hss)

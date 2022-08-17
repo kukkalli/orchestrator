@@ -3,8 +3,8 @@
 #! /usr/bin/env sh
 
 
-OLD_VERSION=0.2.1
-VERSION=0.2.2
+OLD_VERSION=0.3.1
+VERSION=0.4.0
 
 docker-compose -f docker-compose/docker-compose.yaml down
 

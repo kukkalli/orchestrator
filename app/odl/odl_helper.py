@@ -1,4 +1,5 @@
 import logging
+from typing import List
 
 # libraries should be installed
 from requests import get
@@ -16,7 +17,7 @@ from odl.inventory_nodes import InventoryNodes
 LOG = logging.getLogger(__name__)
 
 
-def get_src_dst(switches: list[Switch], node_id: str) -> int:
+def get_src_dst(switches: List[Switch], node_id: str) -> int:
     for switch in switches:
         if switch.id == node_id:
             return switch.int_id
@@ -26,10 +27,10 @@ class ODLHelperFunctions:
     def __init__(self):
         self.auth = HTTPBasicAuth(ConfigurationConstants.ODL_USERNAME, ConfigurationConstants.ODL_PASSWORD)
 
-    def http_get_request_json(self, query) -> dict:
+    def http_get_request_json(self, query):
         return dict(json.loads(get(query, headers=ODLConstants.HEADER, auth=self.auth).text))
 
-    def get_topology_info(self) -> dict:
+    def get_topology_info(self):
         return self.http_get_request_json(ODLConstants.TOPOLOGY)
 
     def get_switches_from_inventory(self) -> InventoryNodes:
@@ -44,12 +45,12 @@ class ODLHelperFunctions:
         root = self.http_get_request_json(ODLConstants.PORT.format(switch_id=switch_id, port_id=port_id))
         return SwitchPort(switch_id, root['node-connector'][0])
 
-    def get_topology_switches(self) -> list[Switch]:
+    def get_topology_switches(self) -> List[Switch]:
         topology = self.get_topology_info()
         LOG.debug("topology: {}".format(topology))
         nodes = topology["network-topology"]["topology"][0]["node"]
         LOG.debug(f"nodes:\n{json.dumps(nodes, indent=4, sort_keys=True)}")
-        switch_list: list[Switch] = []
+        switch_list: List[Switch] = []
         n = 0
         for node in nodes:
             node_id = node['node-id']
@@ -66,9 +67,9 @@ class ODLHelperFunctions:
             n = n + 1
         return switch_list
 
-    def get_topology_links(self, switches: list[Switch]) -> list[Link]:
+    def get_topology_links(self, switches: List[Switch]) -> List[Link]:
         topology = self.get_topology_info()
-        links: list[Link] = []
+        links: List[Link] = []
         n = 0
         for link in topology["network-topology"]["topology"][0]["link"]:
             LOG.debug(f'link: {link}')

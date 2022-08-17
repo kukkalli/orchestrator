@@ -44,7 +44,7 @@ export APN2="$APN2"
 sed -i -e "s@_apn_2_@$APN2@" .env
 echo "APN 2 is: $APN2"
 
-export FIRST_IMSI=@@first_imsi@@
+export FIRST_IMSI="@@first_imsi@@"
 sed -i -e "s@_first_imsi_@$FIRST_IMSI@" .env
 
 echo "The HSS FQDN is $HSS_FQDN"

@@ -1,5 +1,6 @@
 import logging
 import time
+from typing import Dict, List
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.nova.flavor import Flavor
@@ -18,13 +19,13 @@ class ServiceProfileTemplate:
         self.domain_name = domain_name
         self.bandwidth = bandwidth
         self.max_delay = max_delay
-        self.network_functions: list[VMTemplate] = []
-        self.vm_requirements_list: list[VMRequirement] = []
-        self.vnf_vm_map: dict[str, VMRequirement] = {}
-        self.nfv_v_links_list: list[dict] = []
-        self.v_links: list[VirtualLink] = []
+        self.network_functions: List[VMTemplate] = []
+        self.vm_requirements_list: List[VMRequirement] = []
+        self.vnf_vm_map: Dict[str, VMRequirement] = {}
+        self.nfv_v_links_list: List[Dict] = []
+        self.v_links: List[VirtualLink] = []
         nova = Nova(AuthenticateConnection())
-        self.flavor_id_map: dict[str, Flavor] = nova.get_flavor_id_map()
+        self.flavor_id_map: Dict[str, Flavor] = nova.get_flavor_id_map()
         nova.close_connection()
 
     def get_vm_requirements_list(self):
@@ -41,9 +42,11 @@ class ServiceProfileTemplate:
         print(f"Build ServiceProfileTemplate: {time.time()}")
         for index, network_function in enumerate(self.network_functions):
             LOG.info(f"Network Function Name: {network_function.name}, Index: {index}")
-            vm_request = VMRequirement(int_id=index, hostname=network_function.vm_name, flavor=network_function.flavor,
-                                       image_id=network_function.image_id, networks=network_function.networks,
-                                       ip_addresses=network_function.ip_addresses)
+            vm_request = VMRequirement(int_id=index, network_function=network_function)
+            # vm_request = VMRequirement(int_id=index, hostname=network_function.vm_name,
+            # flavor=network_function.flavor, image_id=network_function.image_id, networks=network_function.networks,
+            # ip_addresses=network_function.ip_addresses)
+
             self.vnf_vm_map[network_function.name] = vm_request
             self.vm_requirements_list.append(vm_request)
 
@@ -56,3 +59,7 @@ class ServiceProfileTemplate:
 
         LOG.info(f"Built ServiceProfileTemplate: {time.time()}")
         print(f"Built ServiceProfileTemplate: {time.time()}")
+
+    def populate_user_data(self, nf_ip_dict: Dict[str, str]) -> Dict[str, str]:
+        print(f"I am in service profile template, {self.domain_name}")
+        return {}

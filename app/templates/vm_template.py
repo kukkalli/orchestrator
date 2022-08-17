@@ -46,3 +46,6 @@ class VMTemplate:
 
     def get_user_data(self):
         return self.user_data
+
+    def create_vm(self):
+        pass

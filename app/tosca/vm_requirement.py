@@ -1,6 +1,7 @@
 import logging
-from typing import List, Dict
+from typing import List
 
+from templates.vm_template import VMTemplate
 from tosca.virtual_link import VirtualLink
 
 LOG = logging.getLogger(__name__)
@@ -8,6 +9,24 @@ LOG = logging.getLogger(__name__)
 
 class VMRequirement:
 
+    def __init__(self, int_id: int, network_function: VMTemplate, key_pair: str = None, subnet_mask: str = "/32",
+                 security_groups: List[str] = ["default"]):
+        self.__id = network_function.vm_name
+        self.name = network_function.name
+        self.hostname = network_function.vm_name
+        self.__int_id = int_id
+        self.flavor = network_function.flavor
+        self.image_id = network_function.image_id
+        self.networks = network_function.networks
+        self.key_pair = key_pair
+        self.ip_addresses = network_function.ip_addresses
+        self.subnet_mask = subnet_mask
+        self.security_groups = security_groups
+        self.hypervisor_hostname = ""
+        self.in_v_links: List[VirtualLink] = []
+        self.out_v_links: List[VirtualLink] = []
+
+    """
     def __init__(self, int_id: int, hostname: str, flavor: str, image_id: str, networks: List[Dict[str, str]],
                  key_pair: str = None, ip_addresses: Dict[str, str] = {}, subnet_mask: str = "/32",
                  security_groups: [str] = ["default"]):
@@ -24,6 +43,7 @@ class VMRequirement:
         self.hypervisor_hostname = ""
         self.in_v_links: List[VirtualLink] = []
         self.out_v_links: List[VirtualLink] = []
+    """
 
     @property
     def id(self):

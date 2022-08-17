@@ -1,4 +1,5 @@
 import logging
+from typing import List, Dict
 
 from odl.flow_entry import FlowEntry
 from odl.table_statistics import FlowTableStatistics
@@ -12,9 +13,9 @@ class FlowTable(object):
         self.__json = table
         self.__id = table["id"]
         self.statistics = FlowTableStatistics(table["opendaylight-flow-table-statistics:flow-table-statistics"])
-        self.list_flows: list[FlowEntry] = []
-        self.dict_flows_by_match: dict[str, FlowEntry] = {}
-        self.dict_flows_by_id: dict[str, FlowEntry] = {}
+        self.list_flows: List[FlowEntry] = []
+        self.dict_flows_by_match: Dict[str, FlowEntry] = {}
+        self.dict_flows_by_id: Dict[str, FlowEntry] = {}
         if "flow" in table:
             add_elements_with_type(self.list_flows, table["flow"], FlowEntry)
         for flow in self.list_flows:

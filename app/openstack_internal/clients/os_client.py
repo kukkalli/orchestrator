@@ -1,3 +1,5 @@
+"""
+
 import copy
 import fixtures
 import mock
@@ -8,3 +10,4 @@ from osc_lib import utils
 import six
 
 from openstackclient import shell
+"""

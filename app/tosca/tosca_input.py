@@ -1,5 +1,7 @@
 import logging
+from typing import List, Dict
 
+from templates.input_request import InputRequest
 from templates.service_profile_template import ServiceProfileTemplate
 from tosca.vm_requirement import VMRequirement
 from tosca.virtual_link import VirtualLink
@@ -9,27 +11,18 @@ LOG = logging.getLogger(__name__)
 
 class TOSCAInput:
 
-    def __init__(self, request_id: str, service_template: ServiceProfileTemplate, max_link_delay: float = 50):
-        self.request_id: str = request_id
-        self.service_template: ServiceProfileTemplate = service_template
-        self.vm_requirements: list[VMRequirement] = service_template.get_vm_requirements_list()
-        self.vm_requirements_dict: dict[int, VMRequirement] = {}
+    def __init__(self, input_request: InputRequest):
+        self.request_id: str = input_request.get_service_chain_name()
+        self.service_template: ServiceProfileTemplate = input_request.get_service_template()
+        self.vm_requirements: List[VMRequirement] = self.service_template.get_vm_requirements_list()
+        self.vm_requirements_dict: Dict[int, VMRequirement] = {}
         for vm_requirement in self.vm_requirements:
             self.vm_requirements_dict[vm_requirement.int_id] = vm_requirement
-        self.v_links = service_template.get_v_links_list()
-        self.delay = max_link_delay  # delay time in ms
-        self.vm_network_ip_dict: dict[str, str] = {}
-
-    """
-    def __init__(self, request_id, vm_requirements: List[VMRequirement], v_links: List[VirtualLink], delay: int = 50):
-        self.request_id = request_id
-        self.vm_requirements = vm_requirements
-        self.vm_requirements_dict: Dict[int, VMRequirement] = {}
-        for vm_requirement in vm_requirements:
-            self.vm_requirements_dict[vm_requirement.int_id] = vm_requirement
-        self.v_links = v_links
-        self.delay = delay  # delay time in ms
-    """
+        self.v_links = self.service_template.get_v_links_list()
+        # delay time in ms
+        self.delay = input_request.max_link_delay
+        # vm_name to fabric ip dictionary
+        self.vm_ip_dict: Dict[str, str] = {}
 
     def add_vm(self, vm_requirement: VMRequirement):
         self.vm_requirements.append(vm_requirement)

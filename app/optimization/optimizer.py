@@ -13,7 +13,7 @@ import numpy as np
 LOG = logging.getLogger(__name__)
 
 
-class Optimize:
+class Optimizer:
 
     def __init__(self, topology: Topology, tosca: TOSCAInput):
         self.topology = topology

@@ -43,7 +43,7 @@ class ServiceChain:
         self.create_network_dict()
         self.bind_ip_to_vm(provider_network_name)
 
-        # self.create_vlinks_flows(provider_network_name)
+        self.create_vlinks_flows(provider_network_name)
 
         self.create_vms()
 

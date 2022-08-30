@@ -10,16 +10,16 @@ from templates.input_request import InputRequest
 from templates.serviceprofiles import ServiceProfiles
 
 app = Flask(__name__)
-app.debug = False
+app.debug = True
 LOG_FORMATTER = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(funcName)s - (%(lineno)d) - %(message)s')
 LOG_FILE = "./logs/orchestrator.log"
 LOG_HANDLER = RotatingFileHandler(filename=LOG_FILE, mode='a', maxBytes=1048576,
                                   backupCount=9, encoding=None, delay=False)
 LOG_HANDLER.setFormatter(LOG_FORMATTER)
-LOG_HANDLER.setLevel(logging.INFO)
+LOG_HANDLER.setLevel(logging.DEBUG)
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(asctime)s - %(levelname)s - %(name)s - %(funcName)s - (%(lineno)d) - %(message)s",
     datefmt="%y-%m-%d %H:%M:%S",
     handlers=[
@@ -90,4 +90,4 @@ def main():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=False)
+    app.run(host='0.0.0.0', port=8080, debug=True)

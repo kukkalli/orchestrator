@@ -32,7 +32,7 @@ class ServiceChain:
         self.neutron = None
 
     def create_service_chain(self) -> {}:
-        provider_network_name = OpenStackConstants.MANAGEMENT_NETWORK_NAME
+        provider_network_name = OpenStackConstants.PROVIDER_NETWORK_NAME
         LOG.debug("Creating Optimizer object")
         optimizer = Optimizer(self.topology, self.tosca)
         LOG.debug("Created  Optimizer object")
@@ -43,7 +43,8 @@ class ServiceChain:
         self.create_network_dict()
         self.bind_ip_to_vm(provider_network_name)
 
-        self.create_vlinks_flows(provider_network_name)
+        # self.create_vlinks_flows(provider_network_name)
+
 
         self.create_vms()
 

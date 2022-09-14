@@ -18,7 +18,7 @@ class FourGLTECore(ServiceProfileTemplate):
     SPGW_C = "spgw-c"
     SPGW_U = "spgw-u"
 
-    def __init__(self, name: str, domain_name: str, bandwidth: int, max_delay: float = 50.0):
+    def __init__(self, name: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
         super().__init__(name, domain_name, bandwidth)
         hss = VMTemplate(self.name, "hss", "2", HSSUserData.USERDATA)
         self.network_functions.append(hss)
@@ -29,17 +29,17 @@ class FourGLTECore(ServiceProfileTemplate):
         spgw_u = VMTemplate(self.name, "spgw-u", "3", SPGWUUserData.USERDATA)
         self.network_functions.append(spgw_u)
 
-        self.nfv_v_links_list.append({"out": "hss", "in": "mme", "delay": max_delay * 0.4})
-        self.nfv_v_links_list.append({"out": "mme", "in": "hss", "delay": max_delay * 0.4})
-        self.nfv_v_links_list.append({"out": "mme", "in": "spgw-c", "delay": max_delay * 0.25})
-        self.nfv_v_links_list.append({"out": "spgw-c", "in": "mme", "delay": max_delay * 0.25})
-        self.nfv_v_links_list.append({"out": "mme", "in": "spgw-u", "delay": max_delay * 0.25})
-        self.nfv_v_links_list.append({"out": "spgw-u", "in": "mme", "delay": max_delay * 0.25})
-        self.nfv_v_links_list.append({"out": "spgw-c", "in": "spgw-u", "delay": max_delay * 0.1})
-        self.nfv_v_links_list.append({"out": "spgw-u", "in": "spgw-c", "delay": max_delay * 0.1})
+        self.nfv_v_links_list.append({"out": "hss", "in": "mme", "delay": max_delay })
+        self.nfv_v_links_list.append({"out": "mme", "in": "hss", "delay": max_delay})
+        self.nfv_v_links_list.append({"out": "mme", "in": "spgw-c", "delay": max_delay})
+        self.nfv_v_links_list.append({"out": "spgw-c", "in": "mme", "delay": max_delay})
+        self.nfv_v_links_list.append({"out": "mme", "in": "spgw-u", "delay": max_delay})
+        self.nfv_v_links_list.append({"out": "spgw-u", "in": "mme", "delay": max_delay})
+        self.nfv_v_links_list.append({"out": "spgw-c", "in": "spgw-u", "delay": max_delay})
+        self.nfv_v_links_list.append({"out": "spgw-u", "in": "spgw-c", "delay": max_delay})
 
     def populate_user_data(self, nf_ip_dict: Dict[str, str]) -> Dict[str, str]:
-        print(f"I am in 4G LTE Core, {self.domain_name}")
+        LOG.debug(f"I am in 4G LTE Core, {self.domain_name}")
         vm_user_data_dict: Dict[str, str] = {}
         for network_function in self.get_network_functions():
             if network_function.name == self.HSS:
@@ -55,8 +55,9 @@ class FourGLTECore(ServiceProfileTemplate):
                 user_data = user_data.replace("@@apn-2@@", "tuckn2")
                 user_data = user_data.replace("@@first_imsi@@", "265820000038021")
 
-                print(f"hss user data: {user_data}")
+                # print(f"hss user data: {user_data}")
                 vm_user_data_dict[self.HSS] = user_data
+
             elif network_function.name == self.MME:
                 hss_ip = nf_ip_dict[self.HSS]
                 hss = self.vnf_vm_map[self.HSS]
@@ -72,19 +73,23 @@ class FourGLTECore(ServiceProfileTemplate):
                 user_data = user_data.replace("@@mme_code@@", "3")
                 user_data = user_data.replace("@@sgwc_ip_address@@", spgw_c_ip)
                 vm_user_data_dict[self.MME] = user_data
+
             elif network_function.name == self.SPGW_C:
                 mme = self.vnf_vm_map[self.MME]
                 mme_ip = nf_ip_dict[self.MME]
                 user_data = network_function.user_data
+
                 user_data = user_data.replace("@@domain@@", self.domain_name). \
                     replace("@@mcc@@", "265").replace("@@mnc@@", "82"). \
                     replace("@@gw_id@@", "1").replace("@@apn-1@@", "tuckn").replace("@@apn-2@@", "tuckn2"). \
                     replace("@@mme_ip@@", mme_ip).replace("@@mme_hostname@@", mme.hostname)
                 vm_user_data_dict[self.SPGW_C] = user_data
+#
             elif network_function.name == self.SPGW_U:
                 spgw_c = self.vnf_vm_map[self.SPGW_C]
                 spgw_c_ip = nf_ip_dict[self.SPGW_C]
                 user_data = network_function.user_data
+
                 user_data = user_data.replace("@@domain@@", self.domain_name). \
                     replace("@@mcc@@", "265").replace("@@mnc@@", "82"). \
                     replace("@@gw_id@@", "1").replace("@@apn-1@@", "tuckn").replace("@@apn-2@@", "tuckn2"). \
@@ -98,7 +103,7 @@ class FourGLTECore(ServiceProfileTemplate):
 
 def main():
     domain_name = "tu-chemnitz.de"
-    user_data = CommonUserData.USERDATA  + HSSUserData.USERDATA
+    user_data = CommonUserData.USERDATA + HSSUserData.USERDATA
     user_data = user_data.replace("@@domain@@", domain_name)
     print(f'after: {user_data}')
     # print(f'user data: {user_data.replace("@@domain@@", domain_name)}')

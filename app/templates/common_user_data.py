@@ -16,7 +16,7 @@ done
 
 echo "-----------------------------------------------------------------------------------------------------"
 echo "-----------------------------------------------------------------------------------------------------"
-echo "Start User Data Script: $(date +"%T")"
+echo "Start User Data Script: $(date +"%T.%N")"
 
 cat > /home/ubuntu/.ssh/authorized_keys << EOF
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGxlZsduAGeKqz3UhzHeXiJOsRlBQTZIyOxA0DrXso9ncDveooDqUr+Xw5XZx44nHFNjWocoQowDdaA8jj0DYEs9wF5ELGj/rm4n6a1b6tXVAlb3Vojb5C0mZfx2gUA6i5GNnNXONRttaW53XeOoD/VDM9tlgBnpa04bBQ1naTiLbQsQg== os@controller

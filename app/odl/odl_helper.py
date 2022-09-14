@@ -70,12 +70,11 @@ class ODLHelperFunctions:
     def get_topology_links(self, switches: List[Switch]) -> List[Link]:
         topology = self.get_topology_info()
         links: List[Link] = []
-        n = 0
+        int_id = 0
         for link in topology["network-topology"]["topology"][0]["link"]:
             LOG.debug(f'link: {link}')
             LOG.debug(f'link: {link}')
             _id = link['link-id']
-            int_id = n
             dst_node_id = link['destination']['dest-node']
             dst_port_id = link['destination']['dest-tp']
             src_node_id = link['source']['source-node']
@@ -93,7 +92,7 @@ class ODLHelperFunctions:
             _link = Link(_id, int_id, get_src_dst(switches, dst_node_id), get_src_dst(switches, src_node_id),
                          dst_port_id, src_port_id, capacity)
             links.append(_link)
-            n = n + 1
+            int_id = int_id + 1
         return links
 
     """

@@ -120,8 +120,10 @@ class OSHypervisor:
         return self.hypervisor_hostname
 
     def get_available_disk_gb(self):
-        LOG.info(f"In OSHypervisor.get_available_disk_gb: {self.free_disk_gb}")
-        return self.free_disk_gb
+        # LOG.info(f"In OSHypervisor.get_available_disk_gb: {self.free_disk_gb}")
+        LOG.info(f"In OSHypervisor.get_available_disk_gb: {self.disk_available_least}")
+        # return self.free_disk_gb
+        return self.disk_available_least
 
     def get_available_ram_mb(self):
         LOG.info(f"In OSHypervisor.get_available_ram_mb: {self.free_ram_mb}")

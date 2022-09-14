@@ -72,7 +72,7 @@ docker rm db-init
 
 docker ps -a
 
-echo "HSS started $(date +"%T")"
+echo "HSS started $(date +"%T.%N")"
 
 exit 0
 

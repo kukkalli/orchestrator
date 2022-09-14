@@ -71,6 +71,7 @@ class VM:
         self.HDD = HDD
         self.RAM = RAM
 
+
 class vLink:
     def __init__(self, ID, tailname, tailID, headname, headID, traffic, delay):
         self.ID = ID

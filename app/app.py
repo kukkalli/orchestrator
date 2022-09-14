@@ -10,16 +10,17 @@ from templates.input_request import InputRequest
 from templates.serviceprofiles import ServiceProfiles
 
 app = Flask(__name__)
+log_level = logging.DEBUG
 app.debug = True
 LOG_FORMATTER = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(funcName)s - (%(lineno)d) - %(message)s')
-LOG_FILE = "./logs/orchestrator.log"
+LOG_FILE = "logs/orchestrator.log"
 LOG_HANDLER = RotatingFileHandler(filename=LOG_FILE, mode='a', maxBytes=1048576,
                                   backupCount=9, encoding=None, delay=False)
 LOG_HANDLER.setFormatter(LOG_FORMATTER)
-LOG_HANDLER.setLevel(logging.DEBUG)
+LOG_HANDLER.setLevel(log_level)
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=log_level,
     format="%(asctime)s - %(levelname)s - %(name)s - %(funcName)s - (%(lineno)d) - %(message)s",
     datefmt="%y-%m-%d %H:%M:%S",
     handlers=[
@@ -50,7 +51,8 @@ def get_square():
 
 @app.route('/create-service-chain', methods=['POST'])
 def create_service_chain():
-    LOG.info(f"Create Service Chain Input Time: {time.time()}")
+    start_time = time.time_ns()
+    LOG.info(f"Create Service Chain Input Time: {start_time}")
     params = request.json
     app.logger.debug(f"Create Service Chain {params}")
     bandwidth = 100
@@ -79,7 +81,9 @@ def create_service_chain():
     LOG.debug("Service Chain Object Created")
     LOG.debug("Calling Create Service Chain using Service Chain Object")
     service_chain.create_service_chain()
-    LOG.info(f"Create Service Chain Response Time: {time.time()}")
+    end_time = time.time_ns()
+    LOG.info(f"Create Service Chain Response Time: {end_time}")
+    LOG.info(f"Service Chain creation time: {(end_time - start_time) / 1000000000}s")
     return jsonify({"service-creation": "success"})
 
 

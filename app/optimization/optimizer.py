@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import Dict
 
 import chronicler as chronicler
@@ -30,48 +31,51 @@ class Optimizer:
         LOG.info("In Optimize.build")
 
         len_nodes, len_links = len(self.nodes), len(self.links)
-        len_switches, len_servers = len(self.switches), len(self.compute_servers)
+        len_switches, len_compute_servers = len(self.switches), len(self.compute_servers)
         len_vms, len_v_links = len(self.vm_requirements), len(self.v_links)
 
         # --- Primal variables ---#
         vm_placement = {}  # virtual machine placement variable
 
-        for n in range(len_servers):
-            for v in range(len_vms):
-                vm_placement[v, n] = self.problem_statement.addVar(0., 1., vtype=GRB.INTEGER, name=f'x_{v}_{n}')
+        for v in range(len_vms):
+            for nth_element in range(len_compute_servers):
+                vm_placement[v, nth_element] = self.problem_statement.addVar(
+                    0., 1., vtype=GRB.INTEGER, name=f'x_{v}_{nth_element}')
 
         flow = {}  # directed flow
 
-        for ll in range(len_links):
-            for lvl in range(len_v_links):
+        for lvl in range(len_v_links):
+            for ll in range(len_links):
                 flow[lvl, ll] = self.problem_statement.addVar(0., 1., vtype=GRB.INTEGER, name=f'flow_{lvl}_{ll}')
 
         mu = self.problem_statement.addVar(0., 1., vtype=GRB.CONTINUOUS, name=f'mu')  # min max utilization
         request_status = self.problem_statement.addVar(0., 1., vtype=GRB.INTEGER, name=f'z')  # request accepted or not
 
-        LOG.info("Update problem statement: min max utilization")
+        LOG.info(f"Update problem statement: min max utilization: {mu}")
         self.problem_statement.update()
 
         # --- Constraints ---#
-        LOG.info("Adding constraints about VMs")
+        LOG.info(f"Adding constraints about VMs")
         for v in range(len_vms):
-            self.problem_statement.addConstr(quicksum(vm_placement[v, n] for n in range(len_servers)) == request_status)
+            self.problem_statement.addConstr(
+                quicksum(vm_placement[v, n] for n in range(len_compute_servers)) == request_status)
 
         rho = 1.0  # parameter to balance utilization between nodes and edges
-        for n in range(len_servers):
-            flavor = self.flavor_id_map[self.vm_requirements[n].flavor]
+        for nth_element in range(len_compute_servers):
+            flavor = self.flavor_id_map[self.vm_requirements[nth_element].flavor]
             self.problem_statement.addConstr(
-                quicksum(flavor.vcpus * vm_placement[v, n] for v in range(len_vms)) <= rho * mu * self.compute_servers[n].cpu)
+                quicksum(flavor.vcpus * vm_placement[v, nth_element] for v in range(len_vms)) <= rho * mu
+                * self.compute_servers[nth_element].cpu)
             self.problem_statement.addConstr(
-                quicksum(flavor.disk * vm_placement[v, n] for v in range(len_vms)) <= rho * mu
-                * self.compute_servers[n].hdd)
+                quicksum(flavor.disk * vm_placement[v, nth_element] for v in range(len_vms)) <= rho * mu
+                * self.compute_servers[nth_element].hdd)
             self.problem_statement.addConstr(
-                quicksum(flavor.ram * vm_placement[v, n] for v in range(len_vms)) <= rho * mu
-                * self.compute_servers[n].ram)
-            self.add_server_flow_constraint(vm_placement, n, len_v_links, flow)
+                quicksum(flavor.ram * vm_placement[v, nth_element] for v in range(len_vms)) <= rho * mu
+                * self.compute_servers[nth_element].ram)
+            self.add_server_flow_constraint(vm_placement, nth_element, len_v_links, flow)
 
-        for n in range(len_switches):
-            self.add_switch_flow_constraint(n, len_v_links, flow)
+        for nth_element in range(len_switches):
+            self.add_switch_flow_constraint(nth_element, len_v_links, flow)
 
         vau = 1.0
         for e in range(len_links):  # capacity constraint on link
@@ -81,12 +85,14 @@ class Optimizer:
 
         # --- Optional delay constraints between VM pairs ---#
         for count in range(len_v_links):  # delay constraint
-            for e in range(len_links):
-                print("===============================================================================================")
-                print(f"links.delay:{self.links[e].delay}, vLinks.max_link_delay: {self.v_links[count].max_link_delay}")
             self.problem_statement.addConstr(
                 quicksum(self.links[e].delay * (flow[count, e]) for e in
                          range(len_links)) <= self.v_links[count].max_link_delay)
+            """
+            for e in range(len_links):
+                print("===============================================================================================")
+                print(f"links.delay:{self.links[e].delay}, vLinks.max_link_delay: {self.v_links[count].max_link_delay}")
+            """
 
         # --- Objective function ---#
         self.problem_statement.setObjective(request_status - mu, sense=GRB.MAXIMIZE)
@@ -94,17 +100,21 @@ class Optimizer:
         self.problem_statement.update()
         self.problem_statement.__data = vm_placement, flow, mu, request_status
 
-    def add_server_flow_constraint(self, vm_placement, element, length, flow):
-        serv = self.compute_servers[element]
-        for count in range(length):
+    def add_server_flow_constraint(self, vm_placement, nth_element, len_v_links, flow):
+        compute_server = self.compute_servers[nth_element]
+        for count in range(len_v_links):
             self.problem_statement.addConstr(
-                flow[count, serv.out_links.int_id] - flow[count, serv.in_links.int_id]
-                == vm_placement[self.v_links[count].src_node_id, element] - vm_placement[
-                    self.v_links[count].dst_node_id, element])
+                flow[count, compute_server.out_links.int_id] - flow[count, compute_server.in_links.int_id]
+                == vm_placement[self.v_links[count].src_node_id, nth_element] - vm_placement[
+                    self.v_links[count].dst_node_id, nth_element])
 
     def add_switch_flow_constraint(self, element, length, flow):
         for index in range(length):
             s = self.switches[element]
+            self.problem_statement.addConstr(
+                quicksum(flow[index, p.out_link.int_id] for p in s.get_ports())
+                - quicksum(flow[index, p.in_link.int_id] for p in s.get_ports()) == 0)
+            """
             for p in s.get_ports():
                 LOG.debug("----------------------------------------------------")
                 LOG.debug(f"s  id: {s.id}. name: {s.name}, int_id: {s.int_id}, port no: {p.port_number}")
@@ -117,10 +127,6 @@ class Optimizer:
                 LOG.debug(f"p out: {p.out_link.int_id}")
                 LOG.debug(f"p  in: {p.in_link.int_id}")
             """
-            self.problem_statement.addConstr(
-                quicksum(flow[index, p.out_link.int_id] for p in s.get_ports())
-                - quicksum(flow[index, p.in_link.int_id] for p in s.get_ports()) == 0)
-            """
 
     def add_variables(self, problem_statement: Model):
         pass
@@ -129,10 +135,10 @@ class Optimizer:
         pass
 
     def optimize(self):
-        LOG.info("In Optimize.optimize going to build")
+        LOG.info(f"In Optimize.optimize going to build: Start Time: {time.time_ns()}")
         self.build()
-        LOG.info("In Optimize.optimize build complete")
-        LOG.info("In Optimize.optimize solve the model")
+        LOG.info(f"In Optimize.optimize build complete: End Time: {time.time_ns()}")
+        LOG.info(f"In Optimize.optimize solve the model: Start Time: {time.time_ns()}")
         # --- Solve the model ---#
         try:
             #        chronicler.info(f'Solving ... ')
@@ -143,7 +149,7 @@ class Optimizer:
         except AttributeError:
             chronicler.error(f'Encountered an attribute error')
             return
-        LOG.debug("In Optimize.optimize model solved")
+        LOG.info(f"In Optimize.optimize model solved: End Time: {time.time_ns()}")
         # --- Status check ---#
         print(f'Solution status: {self.problem_statement.status}')
         LOG.info(f'Solution status: {self.problem_statement.status}')
@@ -155,14 +161,14 @@ class Optimizer:
         self.problem_statement.printAttr('X')
 
         len_nodes, len_links = len(self.nodes), len(self.links)
-        len_switches, len_servers = len(self.switches), len(self.compute_servers)
+        len_switches, len_compute_servers = len(self.switches), len(self.compute_servers)
         len_vms, len_v_links = len(self.vm_requirements), len(self.v_links)
 
         z_output = self.problem_statement.getVarByName(f'z').X
-        # print("z_output: {}".format(z_output))
+        LOG.info("z_output: {}".format(z_output))
 
-        vm_mapping = np.zeros([len_vms, len_nodes], dtype=float)
-        for n in range(len_servers):
+        vm_mapping = np.zeros([len_vms, len_compute_servers], dtype=float)
+        for n in range(len_compute_servers):
             for v in range(len_vms):
                 vm_mapping[v, n] = self.problem_statement.getVarByName(f'x_{v}_{n}').X
                 if self.problem_statement.getVarByName(f'x_{v}_{n}').X == 1:

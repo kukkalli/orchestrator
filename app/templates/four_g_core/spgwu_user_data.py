@@ -67,14 +67,14 @@ echo "Waiting for SPGW-C at IP: $SGWC_IP_ADDRESS to be up and running"
 ./wait-for-sgw-c.sh "$SGWC_IP_ADDRESS"
 echo "SPGW-C at IP: $SGWC_IP_ADDRESS is up and running"
 echo "-----------------------------------------------------------------------------------------------------"
-echo "SPGW-C responding : $(date +"%T")"
+echo "SPGW-C responding : $(date +"%T.%N")"
 
 docker-compose up -d oai_spgwu
 
 docker ps
 
 echo "-----------------------------------------------------------------------------------------------------"
-echo "Started SPGW-U : $(date +"%T")"
+echo "Started SPGW-U : $(date +"%T.%N")"
 
 exit 0
 

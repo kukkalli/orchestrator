@@ -1,8 +1,6 @@
 class HSSUserData:
     USERDATA = """
 
-echo "Start HSS Installation: $(date +"%T")"
-
 MME_IP="@@mme_ip@@"
 MME_HOSTNAME="@@mme_hostname@@"
 

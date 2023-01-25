@@ -4,6 +4,7 @@
 import argparse
 import logging
 import sys
+import time
 
 import numpy as np
 
@@ -14,7 +15,7 @@ from optimization import vm_prp_io
 LOG = logging.getLogger(__name__)
 
 
-def build_ILP(nodes, edges, VMs, vLinks):
+def build_ILP(nodes, edges, VMs, vLinks, rho):
     """
     Builds a MIP model of the VM placement
     and routing problem and returns the model
@@ -52,6 +53,8 @@ def build_ILP(nodes, edges, VMs, vLinks):
 
     for v in range(V):
         VMPRP.addConstr(quicksum(nodes[n].cFlag * x[v, n] for n in range(N)) == z)
+        for n in range(N):
+            VMPRP.addConstr(x[v, n] <= nodes[n].cFlag)
 
     for n in range(N):
         VMPRP.addConstr(quicksum(VMs[v].CPU * x[v, n] for v in range(V)) <= mu * nodes[n].CPU)
@@ -60,10 +63,11 @@ def build_ILP(nodes, edges, VMs, vLinks):
         for l in range(L):
             VMPRP.addConstr(quicksum(fI[l, e.ID] - fO[l, e.ID] for e in nodes[n].outEdges)
                             - quicksum(fI[l, e.ID] - fO[l, e.ID] for e in nodes[n].inEdges)
-                            == x[vLinks[l].tailID, n] - x[vLinks[l].headID, n])
+                            == nodes[n].cFlag * (x[vLinks[l].tailID, n] - x[vLinks[l].headID, n]))
 
     for e in range(E):
-        VMPRP.addConstr(quicksum(vLinks[l].traffic * (fI[l, e] + fO[l, e]) for l in range(L)) <= mu * edges[e].capacity)
+        VMPRP.addConstr(quicksum(vLinks[l].traffic * (fI[l, e] + fO[l, e]) for l in range(L))
+                        <= rho * mu * edges[e].capacity)
 
     # --- Optional delay constraints between VM pairs ---#
 
@@ -73,6 +77,7 @@ def build_ILP(nodes, edges, VMs, vLinks):
     # --- Objective function ---#
 
     VMPRP.setObjective(z - mu, sense=GRB.MAXIMIZE)
+#    VMPRP.setObjective(z, sense=GRB.MAXIMIZE)
 
     VMPRP.update()
     VMPRP.__data = x, fI, fO, mu, z
@@ -107,7 +112,13 @@ def main(argv):
     #        /       \    |     \
     #      (C3)     (C1) (RRH)  (C2)
 
-    names = ['C_1', 'C_2', 'C_3', 'OS', 'RRH', 'S_1', 'S_2', 'S_3', 'S_4']
+    """
+    names = ['C_1', 'C_2', 'OS', 'S_1', 'S_2', 'S_3', 'S_4']
+    conn = [('OS', 'S_3'), ('C_1', 'S_3'), ('C_2', 'S_4'), ('S_3', 'S_1'),
+            ('S_3', 'S_2'), ('S_4', 'S_1'), ('S_4', 'S_2')]
+    """
+
+    names = ['C_2', 'C_3', 'C_1', 'OS', 'RRH', 'S_1', 'S_2', 'S_3', 'S_4']
     conn = [('OS', 'S_3'), ('C_1', 'S_3'), ('C_2', 'S_4'), ('C_3', 'S_3'), ('RRH', 'S_4'), ('S_3', 'S_1'),
             ('S_3', 'S_2'), ('S_4', 'S_1'), ('S_4', 'S_2')]
 
@@ -145,6 +156,7 @@ def main(argv):
     for v in range(V):
         CPU, HDD, RAM = 5, 5, 5
         VMs.append(vm_prp_io.VM(v, f'VM_{v}', CPU, HDD, RAM))
+        print(f"VM ID: {VMs[len(VMs) - 1].name}")
 
     # conn = [('VM_0', 'VM_1'), ('VM_1', 'VM_2')]
     # vLinks.append(VMPRP_IO.vLink(v, f'VM_{v % V}', v % V, f'VM_{(v + 1) % V}', (v + 1) % V, traffic, delay))
@@ -167,7 +179,8 @@ def main(argv):
     # --- Build the model ---#
     VMPRP = build_ILP(nodes, edges, VMs, vLinks)
     x, fI, fO, mu, z = VMPRP.__data
-
+    time_ns = time.time()
+    VMPRP.write(f'model_{time_ns}.mps')
     # --- Read in the solver parameters ---#
     #    VMPRP.read(args.gurobi)
     #    VMPRP.setParam('LogFile', f'{args.logPath}/gurobi/{fileIO}.log')

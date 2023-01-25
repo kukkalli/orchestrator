@@ -1,22 +1,6 @@
-import logging
+#!/bin/bash
 
-LOG = logging.getLogger(__name__)
-
-
-class CommonUserData:
-    USERDATA = """#!/bin/bash
-
-echo "-----------------------------------------------------------------------------------------------------"
-echo "-----------------------------------------------------------------------------------------------------"
-echo "-----------------------------------------------------------------------------------------------------"
-while timedatectl | grep 'System clock synchronized: no' > /dev/null; do
-    sleep 1
-    echo "waiting for clock synchronization..."
-done 
-
-echo "-----------------------------------------------------------------------------------------------------"
-echo "-----------------------------------------------------------------------------------------------------"
-echo "Start User Data Script: $(date +"%T.%N")"
+echo "Start HSS: $(date +"%T")"
 
 cat > /home/ubuntu/.ssh/authorized_keys << EOF
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGxlZsduAGeKqz3UhzHeXiJOsRlBQTZIyOxA0DrXso9ncDveooDqUr+Xw5XZx44nHFNjWocoQowDdaA8jj0DYEs9wF5ELGj/rm4n6a1b6tXVAlb3Vojb5C0mZfx2gUA6i5GNnNXONRttaW53XeOoD/VDM9tlgBnpa04bBQ1naTiLbQsQg== os@controller
@@ -27,6 +11,7 @@ ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBACU7DSt
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAEBCbxZcyGw+PD3S/HoPx/WKhfGOz4Mos3OGQ4Q2rvh7UpNBE4UVp/xOBcFoL0WveHI+WskQV0jKa7TnErjVwEsOAAX6O4DxaskATGq6XioPv2XmRGKb5UZ28NUCE+VLhUvnFLLn2IMiCSiNzCU8hX0rjsU6/hHjDyV01Iahq2gAY6E7Q== hanif@openstack
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAHLT0AS5MHwwJ6hX1Up5stfz361+IWA/8/MhZBH+mYA32h/Bp5hSWkQDXow4aDiHRlxVV1WLlHHup+GPBBA9XLTRwHP8gAjbP5EM4EVxR9EbDh5Hz13xcN0/n9J9rasefHS8UgTJUgRrWeNRCSAhkbNfDfSeQzk8NWlzhiwwCIUacKnzg== hanif@kukkalli
 EOF
+
 
 DOMAIN="@@domain@@"
 
@@ -117,13 +102,15 @@ sudo systemctl restart docker
 
 IP_ADDR=$(ip address |grep ens|grep inet|awk '{print $2}'| awk -F / '{print $1}')
 
+echo "$FQDN_HOSTNAME"
+
 sudo -- sh -c "echo '' >>  /etc/hosts"
 
 for i in $IP_ADDR; do
     sudo -- sh -c "echo $i $HOSTNAME $FQDN_HOSTNAME >> /etc/hosts"
     if [[ $i == "10.10"* ]];
     then
-      MANAGEMENT_IP=$i
+      export MANAGEMENT_IP=$i
     fi
     if [[ $i == "10.11"* ]];
     then
@@ -131,12 +118,87 @@ for i in $IP_ADDR; do
     fi
 done
 
+MME_IP="@@mme_ip@@"
+MME_HOSTNAME="@@mme_hostname@@"
+
+sudo -- sh -c "echo $MME_IP $MME_HOSTNAME $MME_HOSTNAME.$DOMAIN >> /etc/hosts"
+
+# DOCKER_PASS="@@docker_pass@@"
+
+# docker login -u kukkalli -p ${DOCKER_PASS}
+
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
 sudo chmod +x /usr/local/bin/docker-compose
 
-echo "--------------- docker-compose version is: ---------------"
-docker-compose --version
-echo "--------------- docker-compose version is: ---------------"
+# Change user to ubuntu
+echo "Changing user to ubuntu"
+su - ubuntu
+echo "Changed user to $USER"
 
-    """
+docker-compose --version
+
+cd /home/ubuntu/ || exit
+
+git clone https://github.com/kukkalli/oai-docker-compose.git
+
+chown ubuntu:ubuntu -R oai-docker-compose
+
+cd oai-docker-compose/4g/hss/ || exit
+
+export MANAGEMENT_IP="$MANAGEMENT_IP"
+sed -i -e "s@_domain_@$DOMAIN@" .env
+echo "The HSS_MANAGEMENT_IP is $MANAGEMENT_IP"
+sed -i -e "s@_management_ip_@$MANAGEMENT_IP@" .env
+
+export FABRIC_IP="$FABRIC_IP"
+export FABRIC_IP="$MANAGEMENT_IP"
+echo "The HSS_FABRIC_IP is $FABRIC_IP"
+sed -i -e "s@_fabric_ip_@$FABRIC_IP@" .env
+export HSS_FQDN="$FQDN_HOSTNAME"
+sed -i -e "s@_hss_fqdn_@$HSS_FQDN@" .env
+
+export OP_KEY="@@op_key@@"
+sed -i -e "s@_op_key_@$OP_KEY@" .env
+export LTE_K="@@lte_k@@"
+sed -i -e "s@_lte_k_@$LTE_K@" .env
+APN1="@@apn-1@@.ipv4" # tuckn.ipv4
+export APN1="$APN1"
+sed -i -e "s@_apn_1_@$APN1@" .env
+echo "APN 1 is: $APN1"
+APN2="@@apn-2@@.ipv4" # tuckn2.ipv4
+export APN2="$APN2"
+sed -i -e "s@_apn_2_@$APN2@" .env
+echo "APN 2 is: $APN2"
+
+export FIRST_IMSI=@@first_imsi@@
+sed -i -e "s@_first_imsi_@$FIRST_IMSI@" .env
+
+echo "The HSS FQDN is $HSS_FQDN"
+
+export REALM="$DOMAIN"
+sed -i -e "s@_realm_@$DOMAIN@" .env
+
+
+echo "The REALM is $REALM"
+
+export HSS_HOSTNAME="$HOSTNAME"
+sed -i -e "s@_hss_hostname_@$HSS_HOSTNAME@" .env
+
+echo "The HSS HOSTNAME is $HSS_HOSTNAME"
+
+docker-compose up -d db_init
+
+docker-compose up -d cassandra_web
+
+sleep 5
+
+docker-compose up -d oai_hss
+
+docker rm db-init
+
+docker ps -a
+
+echo "HSS started $(date +"%T")"
+
+exit 0

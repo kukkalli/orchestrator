@@ -1,6 +1,6 @@
 import logging
 
-from templates.four_g_core.hss_user_data import HSSUserData
+from templates.four_g_vm_core.hss_user_data import HSSUserData
 from templates.vm_template import VMTemplate
 
 LOG = logging.getLogger(__name__)

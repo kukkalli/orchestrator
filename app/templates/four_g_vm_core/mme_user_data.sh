@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Start HSS: $(date +"%T")" >> /home/ubuntu/initial_startup.log
+echo "Start MME: $(date +'%T')" >> /home/ubuntu/initial_startup.log
 
 cat > /home/ubuntu/.ssh/authorized_keys << EOF
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGxlZsduAGeKqz3UhzHeXiJOsRlBQTZIyOxA0DrXso9ncDveooDqUr+Xw5XZx44nHFNjWocoQowDdaA8jj0DYEs9wF5ELGj/rm4n6a1b6tXVAlb3Vojb5C0mZfx2gUA6i5GNnNXONRttaW53XeOoD/VDM9tlgBnpa04bBQ1naTiLbQsQg== os@controller
@@ -72,7 +72,6 @@ ff02::3 ip6-allhosts
 
 EOF
 
-
-echo "HSS started $(date +"%T")" >> /home/ubuntu/initial_startup.log
+echo "MME started $(date +'%T')" >> /home/ubuntu/initial_startup.log
 
 exit 0

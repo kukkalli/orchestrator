@@ -105,7 +105,7 @@ for i in $IP_ADDR; do
     sudo -- sh -c "echo $i $HOSTNAME $FQDN_HOSTNAME >> /etc/hosts"
     if [[ $i == "10.10"* ]];
     then
-      MANAGEMENT_IP=$i
+      export MANAGEMENT_IP=$i
     fi
     if [[ $i == "10.11"* ]];
     then
@@ -126,8 +126,8 @@ echo "--------------- SPGW-U FQDN is: ---------------"
 echo "SPGW-U FQDN $FQDN_HOSTNAME"
 echo "--------------- SPGW-U FQDN is: ---------------"
 
-SGWC_IP_ADDRESS="@@sgwc_ip_address@@"
-SGWC_HOSTNAME="@@sgwc_hostname@@"
+export SGWC_IP_ADDRESS="@@sgwc_ip_address@@"
+export SGWC_HOSTNAME="@@sgwc_hostname@@"
 sudo -- sh -c "echo $SGWC_IP_ADDRESS $SGWC_HOSTNAME $SGWC_HOSTNAME.$DOMAIN >> /etc/hosts"
 
 su - ubuntu

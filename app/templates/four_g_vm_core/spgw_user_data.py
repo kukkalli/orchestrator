@@ -1,4 +1,4 @@
-class HSSUserData:
+class SPGWUserData:
     USERDATA = """
 
 MME_IP="@@mme_ip@@"

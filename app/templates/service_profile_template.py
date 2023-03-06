@@ -27,6 +27,7 @@ class ServiceProfileTemplate:
         nova = Nova(AuthenticateConnection())
         self.flavor_id_map: Dict[str, Flavor] = nova.get_flavor_id_map()
         nova.close_connection()
+        self.vm_user_data_dict: Dict[str, str] = {}
 
     def get_vm_requirements_list(self):
         return self.vm_requirements_list
@@ -61,5 +62,7 @@ class ServiceProfileTemplate:
         print(f"Built ServiceProfileTemplate: {time.time()}")
 
     def populate_user_data(self, nf_ip_dict: Dict[str, str]) -> Dict[str, str]:
+        LOG.debug(f"I am in service profile template, {self.domain_name}")
         print(f"I am in service profile template, {self.domain_name}")
+        self.vm_user_data_dict: Dict[str, str] = {}
         return {}

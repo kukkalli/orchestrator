@@ -1,4 +1,4 @@
-class HSSUserData:
+class MMEUserData:
     USERDATA = """
 
 MME_IP="@@mme_ip@@"

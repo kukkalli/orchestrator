@@ -9,6 +9,7 @@ from db.maria_database import MariaDB
 from templates.four_g_lte_core import FourGLTECore
 from templates.four_g_lte_core_cass_db import FourGLTECoreCassDB
 from templates.four_g_lte_core_rcc import FourGLTECoreRCC
+from templates.four_g_vm_lte_core import FourGVMLTECore
 from templates.serviceprofiles import ServiceProfiles
 
 LOG = logging.getLogger(__name__)
@@ -117,6 +118,8 @@ class InputRequest:
             return None
         elif self.service_profile == ServiceProfiles.FIVE_G_CORE_DU:
             return None
+        elif self.service_profile == ServiceProfiles.FOUR_G_VM_LTE_CORE:
+            service_profile = FourGVMLTECore(self.hostname_prefix, self.domain_name, self.bandwidth)
         else:
             LOG.error(f"Service Profile Template Not Found: {time.time()}")
             abort(404)

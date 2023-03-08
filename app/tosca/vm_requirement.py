@@ -16,6 +16,7 @@ class VMRequirement:
         self.hostname = network_function.vm_name
         self.__int_id = int_id
         self.flavor = network_function.flavor
+        self.image_name = network_function.image_name
         self.image_id = network_function.image_id
         self.networks = network_function.networks
         self.key_pair = key_pair

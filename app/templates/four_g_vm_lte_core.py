@@ -5,6 +5,7 @@ from templates.common_user_data import CommonUserData
 from templates.four_g_vm_core.hss_user_data import HSSUserData
 from templates.four_g_vm_core.mme_user_data import MMEUserData
 from templates.four_g_vm_core.spgw_user_data import SPGWUserData
+from templates.pdn_type import PDNType
 from templates.service_profile_template import ServiceProfileTemplate
 from templates.vm_template import VMTemplate
 
@@ -34,60 +35,60 @@ class FourGVMLTECore(ServiceProfileTemplate):
         super().populate_user_data()
         for network_function in self.get_network_functions():
             if network_function.name == self.HSS:
-                mme = self.vnf_vm_map[self.MME]
-                mme_ip = nf_ip_dict[self.MME]
-                user_data = network_function.user_data
-                user_data = user_data.replace("@@domain@@", self.domain_name)
-                user_data = user_data.replace("@@mme_ip@@", mme_ip)
-                user_data = user_data.replace("@@mme_hostname@@", mme.hostname)
-                user_data = user_data.replace("@@op_key@@", "0123456789ABCDEF0123456789ABCDEF")
-                user_data = user_data.replace("@@lte_k@@", "0123456789ABCDEF0123456789ABCDEF")
-                user_data = user_data.replace("@@apn-1@@", "tuckn")
-                user_data = user_data.replace("@@first_imsi@@", "265820000038021")
-
-                # print(f"hss user data: {user_data}")
-                self.vm_user_data_dict[self.HSS] = user_data
-
+                self.hss_user_data(network_function, nf_ip_dict)
             elif network_function.name == self.MME:
-                hss_ip = nf_ip_dict[self.HSS]
-                hss = self.vnf_vm_map[self.HSS]
-                spgw_c_ip = nf_ip_dict[self.SPGW_C]
-
-                user_data = network_function.user_data
-                user_data = user_data.replace("@@domain@@", self.domain_name)
-                user_data = user_data.replace("@@hss_ip@@", hss_ip)
-                user_data = user_data.replace("@@hss_hostname@@", hss.hostname)
-                user_data = user_data.replace("@@mcc@@", "265")
-                user_data = user_data.replace("@@mnc@@", "82")
-                user_data = user_data.replace("@@mme_gid@@", "32768")
-                user_data = user_data.replace("@@mme_code@@", "3")
-                user_data = user_data.replace("@@sgwc_ip_address@@", spgw_c_ip)
-                self.vm_user_data_dict[self.MME] = user_data
-
+                self.mme_user_data(network_function, nf_ip_dict)
             elif network_function.name == self.SPGW:
-                mme = self.vnf_vm_map[self.MME]
-                mme_ip = nf_ip_dict[self.MME]
-                user_data = network_function.user_data
-
-                user_data = user_data.replace("@@domain@@", self.domain_name). \
-                    replace("@@mcc@@", "265").replace("@@mnc@@", "82"). \
-                    replace("@@gw_id@@", "1").replace("@@apn-1@@", "tuckn").replace("@@apn-2@@", "tuckn2"). \
-                    replace("@@mme_ip@@", mme_ip).replace("@@mme_hostname@@", mme.hostname)
-                self.vm_user_data_dict[self.SPGW] = user_data
+                self.spgw_user_data(network_function, nf_ip_dict)
 
         return self.vm_user_data_dict
 
-    def hss_user_data(self):
+    def hss_user_data(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]):
+        hss_user_data = network_function.user_data
+        hss_user_data = hss_user_data.replace("@@domain@@", self.domain_name)
         mme = self.vnf_vm_map[self.MME]
         mme_ip = nf_ip_dict[self.MME]
-        user_data = network_function.user_data
-        user_data = user_data.replace("@@domain@@", self.domain_name)
-        user_data = user_data.replace("@@mme_ip@@", mme_ip)
-        user_data = user_data.replace("@@mme_hostname@@", mme.hostname)
-        user_data = user_data.replace("@@op_key@@", "0123456789ABCDEF0123456789ABCDEF")
-        user_data = user_data.replace("@@lte_k@@", "0123456789ABCDEF0123456789ABCDEF")
-        user_data = user_data.replace("@@apn-1@@", "tuckn")
-        user_data = user_data.replace("@@first_imsi@@", "265820000038021")
+        hss_user_data = hss_user_data.replace("@@mme_ip@@", mme_ip)
+        hss_user_data = hss_user_data.replace("@@mme_hostname@@", mme.hostname)
+        hss_user_data = hss_user_data.replace("@@operator_key@@", "0123456789ABCDEF0123456789ABCDEF")
+        hss_user_data = hss_user_data.replace("@@country_code@@", "DE")
+        hss_user_data = hss_user_data.replace("@@state_code@@", "SN")
+        hss_user_data = hss_user_data.replace("@@csn@@", "TUC")
+        hss_user_data = hss_user_data.replace("@@cfn@@", "TU-Chemnitz")
+        hss_user_data = hss_user_data.replace("@@apn@@", "tuckn.ipv4")
+        hss_user_data = hss_user_data.replace("@@pdn_type@@", PDNType.IPv4.value)
+        hss_user_data = hss_user_data.replace("@@user_imsi@@", "265820000038021")
+        spgw_ip = nf_ip_dict[self.SPGW]
+        hss_user_data = hss_user_data.replace("@@spgw_ip@@", spgw_ip)
+        hss_user_data = hss_user_data.replace("@@security_key@@", "0123456789ABCDEF0123456789ABCDEF")
+        self.vm_user_data_dict[self.HSS] = hss_user_data
+
+    def mme_user_data(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]):
+        hss_ip = nf_ip_dict[self.HSS]
+        hss = self.vnf_vm_map[self.HSS]
+        spgw_ip = nf_ip_dict[self.SPGW]
+
+        mme_user_data = network_function.user_data
+        mme_user_data = mme_user_data.replace("@@domain@@", self.domain_name)
+        mme_user_data = mme_user_data.replace("@@hss_ip@@", hss_ip)
+        mme_user_data = mme_user_data.replace("@@hss_hostname@@", hss.hostname)
+        mme_user_data = mme_user_data.replace("@@mcc@@", "265")
+        mme_user_data = mme_user_data.replace("@@mnc@@", "82")
+        mme_user_data = mme_user_data.replace("@@mme_gid@@", "32768")
+        mme_user_data = mme_user_data.replace("@@mme_code@@", "3")
+        mme_user_data = mme_user_data.replace("@@spgw_ip_address@@", spgw_ip)
+        self.vm_user_data_dict[self.MME] = mme_user_data
+
+    def spgw_user_data(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]):
+        mme = self.vnf_vm_map[self.MME]
+        mme_ip = nf_ip_dict[self.MME]
+        spgw_user_data = network_function.user_data
+
+        spgw_user_data = spgw_user_data.replace("@@domain@@", self.domain_name). \
+            replace("@@mcc@@", "265").replace("@@mnc@@", "82"). \
+            replace("@@gw_id@@", "1").replace("@@apn-1@@", "tuckn").replace("@@apn-2@@", "tuckn2"). \
+            replace("@@mme_ip@@", mme_ip).replace("@@mme_hostname@@", mme.hostname)
+        self.vm_user_data_dict[self.SPGW] = spgw_user_data
 
 
 def main():

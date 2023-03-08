@@ -9,7 +9,7 @@
 -----------
 
 ## HSS start-up on boot
-1. Create a script `start_on_boot.sh` to start the spgw on the path `/home/ubuntu/`
+1. Create a script `start_on_boot` to start the spgw on the path `/home/ubuntu/`
    ```
    #!/bin/bash
    
@@ -32,7 +32,7 @@
    [Service]
    Type=oneshot
    RemainAfterExit=yes
-   ExecStart=/home/ubuntu/start_on_boot.sh 
+   ExecStart=/home/ubuntu/start_on_boot
    
    [Install]
    WantedBy=multi-user.target
@@ -66,7 +66,7 @@
 
 
 ## MME start-up on boot
-1. Create a script `start_on_boot.sh` to start the spgw on the path `/home/ubuntu/`
+1. Create a script `start_on_boot` to start the spgw on the path `/home/ubuntu/`
    ```
    #!/bin/bash
 
@@ -89,7 +89,7 @@
    [Service]
    Type=oneshot
    RemainAfterExit=yes
-   ExecStart=/home/ubuntu/start_on_boot.sh 
+   ExecStart=/home/ubuntu/start_on_boot
    
    [Install]
    WantedBy=multi-user.target
@@ -124,7 +124,7 @@
 
 
 ## SPGW start-up on boot
-1. Create a script `start_on_boot.sh` to start the spgw on the path `/home/ubuntu/`
+1. Create a script `start_on_boot` to start the spgw on the path `/home/ubuntu/`
    ```
    #!/bin/bash
    
@@ -147,7 +147,7 @@
    [Service]
    Type=oneshot
    RemainAfterExit=yes
-   ExecStart=/home/ubuntu/start_on_boot.sh 
+   ExecStart=/home/ubuntu/start_on_boot
    
    [Install]
    WantedBy=multi-user.target
@@ -180,3 +180,7 @@
    exit 0
    ```
 
+```
+openstack image save --file oai-hss.img oai-hss
+openstack image create --container-format bare --disk-format qcow2 --min-disk 20 --min-ram 4096 --file oai-hss.img --public --progress oai-hss
+```

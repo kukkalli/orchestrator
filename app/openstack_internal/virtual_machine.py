@@ -34,7 +34,7 @@ class VirtualMachine:
         # self.__project = Project(self.connection)
         # self.__user = User(self.connection)
 
-    def create_virtual_machine(self, name: str, image, flavor="2", vm_count=1, security_groups: list = None,
+    def create_virtual_machine(self, name: str, image: str, flavor="2", vm_count=1, security_groups: list = None,
                                userdata: str = "", key_pair=None, networks: list = None, host=None):
         if security_groups is None:
             security_groups = ["default"]
@@ -45,8 +45,8 @@ class VirtualMachine:
         """
         nova_client: NovaV2Client = self.__clients.get_nova_client()
         return nova_client.servers.create(name=name, image=image, flavor=flavor, min_count=vm_count, max_count=vm_count,
-                                          security_groups=security_groups, userdata=userdata, key_name=key_pair,
-                                          admin_pass=None,
+                                          # security_groups=security_groups,
+                                          userdata=userdata, key_name=key_pair, admin_pass=None,
                                           nics=networks, access_ip_v4=None, access_ip_v6=None, host=host,
                                           hypervisor_hostname=None)
 

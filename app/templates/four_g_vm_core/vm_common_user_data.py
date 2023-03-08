@@ -16,7 +16,7 @@ echo "--------------------------------------------------------------------------
 /home/ubuntu/initial_startup.log
 
 while timedatectl | grep 'System clock synchronized: no' > /dev/null; do sleep 1 
-echo "waiting for clock synchronization..." done
+echo "waiting for clock synchronization..." done >> /home/ubuntu/initial_startup.log
 
 cat > /home/ubuntu/.ssh/authorized_keys << EOF
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGxlZsduAGeKqz3UhzHeXiJOsRlBQTZIyOxA0DrXso9ncDveooDqUr+Xw5XZx44nHFNjWocoQowDdaA8jj0DYEs9wF5ELGj/rm4n6a1b6tXVAlb3Vojb5C0mZfx2gUA6i5GNnNXONRttaW53XeOoD/VDM9tlgBnpa04bBQ1naTiLbQsQg== os@controller
@@ -92,6 +92,26 @@ ff02::3 ip6-allhosts
 
 
 EOF
+
+IP_ADDR=$(ip address |grep ens|grep inet|awk '{print $2}'| awk -F / '{print $1}')
+
+sudo -- sh -c "echo '' >>  /etc/hosts"
+
+for i in $IP_ADDR; do
+    sudo -- sh -c "echo $i $HOSTNAME $FQDN_HOSTNAME >> /etc/hosts"
+    if [[ $i == "10.10"* ]];
+    then
+      export MANAGEMENT_IP_SN=$i
+    fi
+    if [[ $i == "10.11"* ]];
+    then
+      export FABRIC_IP_SN=$i
+    fi
+done
+
+IP_ADDRESS_SUBNET_MASK=$(ip -o -f inet addr show | awk '/scope global/ {print $4}')
+
+for 
 
 echo "Added hosts file: $(date +"%T")" >> /home/ubuntu/initial_startup.log
 

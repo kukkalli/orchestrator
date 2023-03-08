@@ -19,7 +19,7 @@ class VMTemplate:
         self.image_id = "4dc9d880-672a-4eb9-b93e-49540e263657"
         self.ip_addresses: Dict[str, str] = {}
         self.networks: List[Dict[str, str]] = [{"net-id": ""}]
-        self.user_data = CommonUserData.USERDATA + user_data
+        self.user_data = CommonUserData.USERDATA
         self.in_v_links: List[VirtualLink] = []
         self.out_v_links: List[VirtualLink] = []
 

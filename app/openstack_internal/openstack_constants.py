@@ -30,3 +30,7 @@ class OpenStackConstants(object):
     UBUNTU_20_04 = "focal-server-cloudimg-amd64"
     UBUNTU_18_04 = "bionic-server-cloudimg-amd64"
     CIRROS_0_5_2 = "cirros-0.5.2-x86_64"
+
+    OAI_HSS = "oai-hss"
+    OAI_MME = "oai-mme"
+    OAI_SPGW = "oai-spgw"

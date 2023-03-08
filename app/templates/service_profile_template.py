@@ -44,9 +44,6 @@ class ServiceProfileTemplate:
         for index, network_function in enumerate(self.network_functions):
             LOG.info(f"Network Function Name: {network_function.name}, Index: {index}")
             vm_request = VMRequirement(int_id=index, network_function=network_function)
-            # vm_request = VMRequirement(int_id=index, hostname=network_function.vm_name,
-            # flavor=network_function.flavor, image_id=network_function.image_id, networks=network_function.networks,
-            # ip_addresses=network_function.ip_addresses)
 
             self.vnf_vm_map[network_function.name] = vm_request
             self.vm_requirements_list.append(vm_request)

@@ -176,8 +176,8 @@ class ServiceChain:
 
             LOG.debug("Creating VM: {} on hypervisor: {} with key_pair: {}".format(vm.hostname, vm.hypervisor_hostname,
                                                                                    key_pair))
-            server = virtual_machine.create_virtual_machine(vm.hostname, vm.image_id, flavor=vm.flavor,
-                                                            security_groups=["default"],
+            server = virtual_machine.create_virtual_machine(vm.hostname, vm.image_name, flavor=vm.flavor,
+                                                            # security_groups=["default"],
                                                             userdata=vm_user_data_dict[vm.name],
                                                             key_pair=key_pair, networks=vm.networks,
                                                             host=vm.hypervisor_hostname)

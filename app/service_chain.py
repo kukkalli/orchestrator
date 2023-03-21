@@ -57,7 +57,7 @@ class ServiceChain:
 
         # self.create_vlinks_flows(provider_network_name)
 
-        # self.create_vms()
+        self.create_vms()
 
         end_time = time.time_ns()
         LOG.info(f"Deploying Optimizer solution: End Time: {end_time}")
@@ -146,17 +146,15 @@ class ServiceChain:
                 print("--------------------------------------------------------------------------------------------")
 
     def create_flow(self, node, link, provider_network_name, src_v_node, dst_v_node, arp_code):
-        # of = OpenFlow()
+        of = OpenFlow()
         print(f"Src IP: {self.get_vm_ip_address(provider_network_name, src_v_node)}")
         print(f"Dst IP: {self.get_vm_ip_address(provider_network_name, dst_v_node)}")
-        """
         of.create_arp_flow(node.id, node.ports_dict[link.dst_port_id].port_number, arp_code)
         of.json_forwarding_flow_install(node.id, node.ports_dict[link.dst_port_id].port_number,
                                         self.get_vm_ip_address(provider_network_name, src_v_node)
                                         + src_v_node.subnet_mask,
                                         self.get_vm_ip_address(provider_network_name, dst_v_node)
                                         + dst_v_node.subnet_mask)
-        """
 
     def create_vms(self):
         vm_user_data_dict = self.tosca.service_template.populate_user_data(self.nf_ip_dict)
@@ -176,8 +174,8 @@ class ServiceChain:
 
             LOG.debug("Creating VM: {} on hypervisor: {} with key_pair: {}".format(vm.hostname, vm.hypervisor_hostname,
                                                                                    key_pair))
-            server = virtual_machine.create_virtual_machine(vm.hostname, vm.image_name, flavor=vm.flavor,
-                                                            # security_groups=["default"],
+            server = virtual_machine.create_virtual_machine(vm.hostname, vm.image_id, flavor=vm.flavor,
+                                                            security_groups=["default"],
                                                             userdata=vm_user_data_dict[vm.name],
                                                             key_pair=key_pair, networks=vm.networks,
                                                             host=vm.hypervisor_hostname)
@@ -192,7 +190,7 @@ class ServiceChain:
 def main():
     # topology_builder = TopologyBuilder("hanif")
     # tosca_builder = TOSCABuilder("hanif")
-    input_request: InputRequest = InputRequest("KN-Core", "FOUR_G_VM_LTE_CORE", max_link_delay=0.5)
+    input_request: InputRequest = InputRequest("KN-Core", "FOUR_G_LTE_CORE", max_link_delay=50)
     execute = ServiceChain(input_request)
     execute.create_service_chain()
     exit()

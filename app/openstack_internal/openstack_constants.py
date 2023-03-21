@@ -31,6 +31,6 @@ class OpenStackConstants(object):
     UBUNTU_18_04 = "bionic-server-cloudimg-amd64"
     CIRROS_0_5_2 = "cirros-0.5.2-x86_64"
 
-    OAI_HSS = "oai-hss"
-    OAI_MME = "oai-mme"
-    OAI_SPGW = "oai-spgw"
+    OAI_HSS_VMI = "oai-hss"
+    OAI_MME_VMI = "oai-mme"
+    OAI_SPGW_VMI = "oai-spgw"

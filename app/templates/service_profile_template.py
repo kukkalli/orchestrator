@@ -57,6 +57,7 @@ class ServiceProfileTemplate:
 
         LOG.info(f"Built ServiceProfileTemplate: {time.time()}")
         print(f"Built ServiceProfileTemplate: {time.time()}")
+        return self
 
     def populate_user_data(self, nf_ip_dict: Dict[str, str]) -> Dict[str, str]:
         LOG.debug(f"I am in service profile template, {self.domain_name}")

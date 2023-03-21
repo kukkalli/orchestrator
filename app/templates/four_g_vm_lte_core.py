@@ -44,10 +44,13 @@ class FourGVMLTECore(ServiceProfileTemplate):
         return self.vm_user_data_dict
 
     def hss_user_data(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]):
-        hss_user_data = network_function.user_data
-        hss_user_data = hss_user_data.replace("@@domain@@", self.domain_name)
         mme = self.vnf_vm_map[self.MME]
         mme_ip = nf_ip_dict[self.MME]
+        spgw = self.vnf_vm_map[self.SPGW]
+        spgw_ip = nf_ip_dict[self.SPGW]
+
+        hss_user_data = network_function.user_data
+        hss_user_data = hss_user_data.replace("@@domain@@", self.domain_name)
         hss_user_data = hss_user_data.replace("@@mme_ip@@", mme_ip)
         hss_user_data = hss_user_data.replace("@@mme_hostname@@", mme.hostname)
         hss_user_data = hss_user_data.replace("@@operator_key@@", "0123456789ABCDEF0123456789ABCDEF")
@@ -55,28 +58,32 @@ class FourGVMLTECore(ServiceProfileTemplate):
         hss_user_data = hss_user_data.replace("@@state_code@@", "SN")
         hss_user_data = hss_user_data.replace("@@csn@@", "TUC")
         hss_user_data = hss_user_data.replace("@@cfn@@", "TU-Chemnitz")
-        hss_user_data = hss_user_data.replace("@@apn@@", "tuckn.ipv4")
+        hss_user_data = hss_user_data.replace("@@apn@@", "tuc.ipv4")
         hss_user_data = hss_user_data.replace("@@pdn_type@@", PDNType.IPv4.value)
         hss_user_data = hss_user_data.replace("@@user_imsi@@", "265820000038021")
-        spgw_ip = nf_ip_dict[self.SPGW]
         hss_user_data = hss_user_data.replace("@@spgw_ip@@", spgw_ip)
+        hss_user_data = hss_user_data.replace("@@spgw_hostname@@", spgw.hostname)
         hss_user_data = hss_user_data.replace("@@security_key@@", "0123456789ABCDEF0123456789ABCDEF")
         self.vm_user_data_dict[self.HSS] = hss_user_data
 
     def mme_user_data(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]):
-        hss_ip = nf_ip_dict[self.HSS]
         hss = self.vnf_vm_map[self.HSS]
+        hss_ip = nf_ip_dict[self.HSS]
+        mme_ip = nf_ip_dict[self.MME]
+        spgw = self.vnf_vm_map[self.SPGW]
         spgw_ip = nf_ip_dict[self.SPGW]
 
         mme_user_data = network_function.user_data
         mme_user_data = mme_user_data.replace("@@domain@@", self.domain_name)
         mme_user_data = mme_user_data.replace("@@hss_ip@@", hss_ip)
         mme_user_data = mme_user_data.replace("@@hss_hostname@@", hss.hostname)
+        mme_user_data = mme_user_data.replace("@@mme_ip@@", mme_ip)
         mme_user_data = mme_user_data.replace("@@mcc@@", "265")
         mme_user_data = mme_user_data.replace("@@mnc@@", "82")
         mme_user_data = mme_user_data.replace("@@mme_gid@@", "32768")
         mme_user_data = mme_user_data.replace("@@mme_code@@", "3")
-        mme_user_data = mme_user_data.replace("@@spgw_ip_address@@", spgw_ip)
+        mme_user_data = mme_user_data.replace("@@spgw_ip@@", spgw_ip)
+        mme_user_data = mme_user_data.replace("@@spgw_ip@@", spgw_ip)
         self.vm_user_data_dict[self.MME] = mme_user_data
 
     def spgw_user_data(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]):
@@ -84,10 +91,14 @@ class FourGVMLTECore(ServiceProfileTemplate):
         mme_ip = nf_ip_dict[self.MME]
         spgw_user_data = network_function.user_data
 
-        spgw_user_data = spgw_user_data.replace("@@domain@@", self.domain_name). \
-            replace("@@mcc@@", "265").replace("@@mnc@@", "82"). \
-            replace("@@gw_id@@", "1").replace("@@apn-1@@", "tuckn").replace("@@apn-2@@", "tuckn2"). \
-            replace("@@mme_ip@@", mme_ip).replace("@@mme_hostname@@", mme.hostname)
+        spgw_user_data = spgw_user_data.replace("@@domain@@", self.domain_name)
+        spgw_user_data = spgw_user_data.replace("@@mcc@@", "265")
+        spgw_user_data = spgw_user_data.replace("@@mnc@@", "82")
+        spgw_user_data = spgw_user_data.replace("@@gw_id@@", "1")
+        spgw_user_data = spgw_user_data.replace("@@apn-1@@", "tuckn")
+        spgw_user_data = spgw_user_data.replace("@@apn-2@@", "tuckn2")
+        spgw_user_data = spgw_user_data.replace("@@mme_ip@@", mme_ip)
+        spgw_user_data = spgw_user_data.replace("@@mme_hostname@@", mme.hostname)
         self.vm_user_data_dict[self.SPGW] = spgw_user_data
 
 

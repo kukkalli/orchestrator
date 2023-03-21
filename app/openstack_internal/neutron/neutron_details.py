@@ -71,10 +71,10 @@ class Neutron:
 
     def get_ip_address(self, network_id: str, name: str):
         """
-        Get security groups list
+        Get ip address
         param network_id: ID of the network to create port
         """
-        return self.connection.create_port(network_id, name)
+        return self.connection.create_port(network_id, name, port_security_enabled=False)
 
     def create_port(self, network_id: str):
         port = self.connection.create_port(network_id)

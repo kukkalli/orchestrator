@@ -1,10 +1,23 @@
 class MMEUserData:
     USERDATA = """
 
-MME_IP="@@mme_ip@@"
-MME_HOSTNAME="@@mme_hostname@@"
 
+export HSS_HOSTNAME="@@hss_hostname@@"
+export HSS_FQDN="@@hss_hostname@@"
+export MME_IP="@@mme_ip@@"
+export MME_HOSTNAME="@@mme_hostname@@"
+export MME_FQDN="$MME_HOSTNAME.$DOMAIN"
+export COUNTRY_CODE=@@country_code@@
+export STATE_CODE=@@state_code@@
+export COMPANY_SHORT_NAME=@@csn@@
+export COMPANY_FULL_NAME=@@cfn@@
+export SPGW_IP="@@spgw_ip@@"
+export SPGW_HOSTNAME="@@spgw_hostname@@"
+export SPGW_FQDN="$SPGW_HOSTNAME.$DOMAIN"
+
+sudo -- sh -c "echo $HSS_IP $HSS_HOSTNAME $HSS_HOSTNAME.$DOMAIN >> /etc/hosts"
 sudo -- sh -c "echo $MME_IP $MME_HOSTNAME $MME_HOSTNAME.$DOMAIN >> /etc/hosts"
+sudo -- sh -c "echo $SPGW_IP $SPGW_HOSTNAME $SPGW_HOSTNAME.$DOMAIN >> /etc/hosts"
 
 # Change user to ubuntu
 echo "Changing user to ubuntu"

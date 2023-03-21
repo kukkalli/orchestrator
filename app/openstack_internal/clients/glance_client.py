@@ -1,5 +1,6 @@
 import logging
 
+from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.clients.clients import Clients
 
 LOG = logging.getLogger(__name__)
@@ -31,10 +32,11 @@ class Glance:
 
 
 def main():
-    glance = Glance(Clients())
+    clients = Clients(AuthenticateConnection())
+    glance = Glance(clients)
     image_name = "bionic-server-cloudimg-amd64"
     for image in glance.get_image_list():
-        print("Image name {}: {}".format(image.get('name'), image.keys()))
+        print("Image name {}: {}".format(image.get('name'), image.get('id')))
     for image in glance.get_images_by_wildcard_name("server"):
         print("selected image {}: {}".format(image.get('name'), image.get('description')))
     print("Id of image {} is {}".format(image_name, glance.get_image_id(image_name)))

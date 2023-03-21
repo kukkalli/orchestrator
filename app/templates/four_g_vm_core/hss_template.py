@@ -15,7 +15,7 @@ class HSSTemplate(VMTemplate):
         self.flavor = "2"
         self.vm_name = name+"-hss"
         self.name = "hss"
-        self.image_name: str = OpenStackConstants.OAI_HSS
+        self.image_name: str = OpenStackConstants.OAI_HSS_VMI
         self.image_id = "be75324b-2625-4fc7-8861-9b5087196b57"
         self.user_data = CommonUserData.USERDATA + HSSUserData.USERDATA
 

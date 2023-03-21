@@ -2,6 +2,7 @@ import logging
 from typing import Dict
 
 from templates.common_user_data import CommonUserData
+from templates.four_g_core.hss_template import HSSTemplate
 from templates.four_g_core.hss_user_data import HSSUserData
 from templates.four_g_core.mme_user_data import MMEUserData
 from templates.four_g_core.spgwc_user_data import SPGWCUserData
@@ -20,7 +21,7 @@ class FourGLTECore(ServiceProfileTemplate):
 
     def __init__(self, name: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
         super().__init__(name, domain_name, bandwidth)
-        hss = VMTemplate(self.name, "hss", "2", HSSUserData.USERDATA)
+        hss = HSSTemplate(self.name)
         self.network_functions.append(hss)
         mme = VMTemplate(self.name, "mme", "3", MMEUserData.USERDATA)
         self.network_functions.append(mme)
@@ -102,13 +103,6 @@ class FourGLTECore(ServiceProfileTemplate):
 
 
 def main():
-    domain_name = "tu-chemnitz.de"
-    user_data = CommonUserData.USERDATA + HSSUserData.USERDATA
-    user_data = user_data.replace("@@domain@@", domain_name)
-    print(f'after: {user_data}')
-    # print(f'user data: {user_data.replace("@@domain@@", domain_name)}')
-
-    """
     service = FourGLTECore("test", "kukkalli.com", 1000)
     service.build()
     flavor = service.flavor_id_map["2"]
@@ -118,7 +112,6 @@ def main():
 
     for link in service.get_v_links_list():
         print(f"link name: {link.id}, int_id: {link.int_id}")
-    """
 
 
 if __name__ == "__main__":

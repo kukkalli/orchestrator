@@ -3,6 +3,7 @@ from datetime import datetime
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.clients.clients import Clients
+from openstack_internal.glance.glance_details import Glance
 from openstack_internal.neutron.neutron_details import Neutron
 
 from novaclient.v2.client import Client as NovaV2Client
@@ -27,7 +28,7 @@ class VirtualMachine:
         self.authenticate = AuthenticateConnection()
         self.connection = self.authenticate.get_connection()
         self.__clients = Clients(self.authenticate)
-        # self.__glance = Glance(self.connection)
+        self.__glance = Glance(self.connection)
         # self.__keypair = KeyPair(self.connection)
         # self.__neutron = Neutron(self.connection)
         # self.__nova = Nova(self.connection)
@@ -118,7 +119,10 @@ def main():
     neutron = Neutron(AuthenticateConnection().get_connection())
     management_network_id = "4200c22b-80d3-48ea-9586-2a98140f1616"
     fabric_network_id = "ebe835d0-7c36-43fb-8c57-5b6b5872b0ce"
-
+    vm_object = VirtualMachine()
+    vm_object.create_virtual_machine_with_port("hss", )
+    """
+    """
     service = FourGLTECore(service_chain_name, "tu-chemnitz.de", 1000)
     service.build()
     hostnames_list: list[dict] = []
@@ -127,7 +131,7 @@ def main():
         print(f"VNF name: {vnf.get_name()}")
         hostnames_list.append({vnf.get_name(): vnf.get_vm_name()})
         for network in vnf.networks:
-
+            print(f"network id: {network['net-id']}")
             network["v4-fixed-ip"] = neutron.get_available_ip(network_id=network["net-id"], is_delete=True)
 
             network["port-id"] = neutron.create_port(network_id=network["net-id"])

@@ -167,7 +167,7 @@ class ServiceChain:
 def main():
     # topology_builder = TopologyBuilder("hanif")
     # tosca_builder = TOSCABuilder("hanif")
-    input_request: InputRequest = InputRequest("Test006", "FOUR_G_LTE_CORE", max_link_delay=50)
+    input_request: InputRequest = InputRequest("Test007", "FOUR_G_LTE_CORE", max_link_delay=50)
     execute = ServiceChain(input_request)
     execute.create_service_chain()
     exit()

@@ -25,10 +25,16 @@ chown ubuntu:ubuntu -R oai-docker-compose
 
 cd oai-docker-compose/4g/spgw-u/ || exit
 
+echo "MANAGEMENT_IP='${MANAGEMENT_IP}'" >> .env
+echo "FABRIC_IP='${FABRIC_IP}'" >> .env
+
 export DOMAIN="$DOMAIN"
 echo "DOMAIN is: $DOMAIN" >> /boot.log
+echo "DOMAIN='${DOMAIN}'" >> .env
+
 export REALM="$DOMAIN"
 echo "REALM is: $REALM" >> /boot.log
+echo "REALM='${REALM}'" >> .env
 
 MCC="@@mcc@@"
 export MCC="$MCC"

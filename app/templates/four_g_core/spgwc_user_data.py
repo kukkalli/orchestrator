@@ -13,8 +13,7 @@ su - ubuntu
 export MANAGEMENT_IP="$MANAGEMENT_IP"
 export FABRIC_IP="$FABRIC_IP"
 export FABRIC_IP="$MANAGEMENT_IP"
-echo "MANAGEMENT_IP='${MANAGEMENT_IP}'" >> .env
-echo "FABRIC_IP='${FABRIC_IP}'" >> .env
+
 
 cd /home/ubuntu/ || exit
 
@@ -24,6 +23,8 @@ chown ubuntu:ubuntu -R oai-docker-compose
 
 cd oai-docker-compose/4g/spgw-c/ || exit
 
+echo "MANAGEMENT_IP='${MANAGEMENT_IP}'" >> .env
+echo "FABRIC_IP='${FABRIC_IP}'" >> .env
 export DOMAIN="$DOMAIN"
 echo "DOMAIN is: $DOMAIN" >> /boot.log
 echo "DOMAIN='${DOMAIN}'" >> .env

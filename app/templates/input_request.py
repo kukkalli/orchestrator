@@ -139,7 +139,7 @@ class InputRequest:
 
 def main():
     input_request = InputRequest(name="Hanif testing orchestrator", service_profile="FOUR_G_LTE_CORE", bandwidth=150,
-                                 max_link_delay=0.001)
+                                 max_link_delay=50)
     print(f"name: {input_request.get_service_chain_name()}, service_profile: {input_request.get_service_profile()}", )
     print(f'service template: {input_request.get_service_template()}')
 

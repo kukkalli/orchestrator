@@ -8,9 +8,9 @@ LOG = logging.getLogger(__name__)
 
 class FourGLTECoreRCC(FourGLTECore):
 
-    def __init__(self, name: str, domain_name: str, bandwidth: int, max_link_delay: float = 1.0):
-        super().__init__(name, domain_name, bandwidth)
-        rcc = VMTemplate(self.name, "rcc", "3")
+    def __init__(self, prefix: str, domain_name: str, bandwidth: int, max_link_delay: float = 1.0):
+        super().__init__(prefix, domain_name, bandwidth)
+        rcc = VMTemplate(self.prefix, "rcc", "3")
         self.network_functions.append(rcc)
 
         self.nfv_v_links_list.append({"out": "mme", "in": "rcc", "delay": max_link_delay})

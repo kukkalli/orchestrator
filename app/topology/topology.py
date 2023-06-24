@@ -42,13 +42,14 @@ class Topology:
 
     def build(self):
         LOG.info(f"Building Network Topology of the data-center network - Started")
+        # print(f"Building Network Topology of the data-center network - Started")
         for link in self.links:
             switch_id, port_id = "", ""
             try:
                 switch_id = link.dst_node_id
                 port_id = link.dst_port_id
                 if link.dst_port_id is not None:
-                    print(f"link: dst-nid: {link.dst_node_id}, dst-pid: {link.dst_port_id}")
+                    # print(f"link: dst-nid: {link.dst_node_id}, dst-pid: {link.dst_port_id}")
                     self.switches_dict[link.dst_node_id].ports_dict[link.dst_port_id].set_in_link(link)
                 elif link.dst_node_id in self.compute_servers_dict:
                     self.compute_servers_dict[link.dst_node_id].add_in_link(link)
@@ -57,7 +58,7 @@ class Topology:
                 switch_id = link.src_node_id
                 port_id = link.src_port_id
                 if link.src_port_id is not None:
-                    print(f"link: src-nid: {link.src_node_id}, src-pid: {link.src_port_id}")
+                    # print(f"link: src-nid: {link.src_node_id}, src-pid: {link.src_port_id}")
                     self.switches_dict[link.src_node_id].ports_dict[link.src_port_id].set_out_link(link)
                 elif link.src_node_id in self.compute_servers_dict:
                     self.compute_servers_dict[link.src_node_id].add_out_link(link)
@@ -65,8 +66,10 @@ class Topology:
                     self.other_servers_dict[link.src_node_id].add_out_link(link)
             except RuntimeError:
                 LOG.error(f"Invalid switch {switch_id} or switch port {port_id}")
-                print(f"Invalid switch {switch_id} or switch port {port_id}")
-        LOG.info(f"Building Network Topology of the data-center network - Complete")
+                # print(f"Invalid switch {switch_id} or switch port {port_id}")
+            # print(f"-------------------------")
+        LOG.info("Building Network Topology of the data-center network - Complete")
+        # print("Building Network Topology of the data-center network - Complete")
 
     def add_compute_server(self, compute_server: ComputeServer) -> None:
         LOG.debug(f"Added Compute Server: {compute_server.name}")

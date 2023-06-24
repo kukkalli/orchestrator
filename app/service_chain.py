@@ -1,5 +1,5 @@
 import logging
-import time
+import datetime, time
 from typing import Dict
 
 from odl.openflow import OpenFlow
@@ -20,37 +20,37 @@ LOG = logging.getLogger(__name__)
 class ServiceChain:
 
     def __init__(self, input_request: InputRequest):
-        start_time = time.time_ns()
+        start_time = time.time()
         LOG.info(f"Creating Topology Builder: Start Time: {start_time}")
         self.topology: Topology = TopologyBuilder(input_request.name).build_topology()
-        end_time = time.time_ns()
+        end_time = time.time()
         LOG.info(f"Created  Topology Builder: End Time: {end_time}")
-        LOG.info(f"Topology creation time: {(end_time - start_time)/1000000000}s")
+        LOG.info(f"Topology creation time: {(end_time - start_time)}s")
 
-        start_time = time.time_ns()
+        start_time = time.time()
         LOG.info(f"Creating ToscaInput: Start Time: {start_time}")
         self.tosca: TOSCAInput = TOSCAInput(input_request)
         self.tosca.build()
-        end_time = time.time_ns()
+        end_time = time.time()
         LOG.info(f"Created  ToscaInput: End Time: {end_time}")
-        LOG.info(f"ToscaInput creation time: {(end_time - start_time)/1000000000}s")
+        LOG.info(f"ToscaInput creation time: {(end_time - start_time)}s")
         self.network_ip_dict_list: Dict[str, list] = {}
         self.nf_ip_dict: Dict[str, str] = {}
         self.neutron = None
 
     def create_service_chain(self) -> {}:
         provider_network_name = OpenStackConstants.MANAGEMENT_NETWORK_NAME
-        start_time = time.time_ns()
+        start_time = time.time()
         LOG.info(f"Creating Optimizer object: Start Time: {start_time}")
         optimizer = Optimizer(self.topology, self.tosca)
         LOG.info(f"Created  Optimizer object")
-        LOG.info(f"Calling  Optimizer.optimize(): Start Time: {time.time_ns()}")
+        LOG.info(f"Calling  Optimizer.optimize(): Start Time: {time.time()}")
         optimizer.optimize()
-        end_time = time.time_ns()
+        end_time = time.time()
         LOG.info(f"Called   Optimizer.optimize(): End Time: {end_time}")
-        LOG.info(f"Optimizer solution response time: {(end_time - start_time)/1000000000}s")
+        LOG.info(f"Optimizer solution response time: {(end_time - start_time)}s")
 
-        start_time = time.time_ns()
+        start_time = time.time()
         LOG.info(f"Deploying Optimizer solution: Start Time: {start_time}")
         self.create_network_dict()
         self.bind_ip_to_vm(provider_network_name)
@@ -59,9 +59,9 @@ class ServiceChain:
 
         self.create_vms()
 
-        end_time = time.time_ns()
+        end_time = time.time()
         LOG.info(f"Deploying Optimizer solution: End Time: {end_time}")
-        LOG.info(f"Deploying Optimizer solution time: {(end_time - start_time)/1000000000}s")
+        LOG.info(f"Deploying Optimizer solution time: {(end_time - start_time)}s")
 
         return {"vm-creation": "success"}
 
@@ -70,8 +70,6 @@ class ServiceChain:
         self.neutron = Neutron(AuthenticateConnection().get_connection())
         for network_name in OpenStackConstants.NETWORKS_LIST:
             LOG.info(f"Network ID: {self.neutron.networks_dict[network_name]}, Name: {network_name}")
-            print(f"Network ID: {self.neutron.networks_dict[network_name]}, Name: {network_name}")
-            # ip_list = self.neutron.get_available_ip_list(network_name, len(self.tosca.vm_requirements))
             self.network_ip_dict_list[network_name] = self.neutron.get_available_ip_list(
                 network_name, len(self.tosca.vm_requirements))
         self.neutron.connection.close()
@@ -83,18 +81,11 @@ class ServiceChain:
         for vm_requirement in self.tosca.vm_requirements:
             networks = []
             int_id = vm_requirement.int_id
-            print(f"VM int ID: {int_id}, VM name: {vm_requirement.hostname}")
             for network_name in OpenStackConstants.NETWORKS_LIST:
                 ip_list = self.network_ip_dict_list[network_name]
                 network_dict = {"net-id": self.neutron.networks_dict[network_name], "v4-fixed-ip": ip_list[int_id]}
                 networks.append(network_dict)
             vm_requirement.networks = networks
-            print(f"provider network name: {provider_network_name} \n"
-                  f"Provider network ID  : {self.neutron.networks_dict[provider_network_name]} \n"
-                  f"Provider IP of VM: {self.network_ip_dict_list[provider_network_name][vm_requirement.int_id]}\n"
-                  f"get_vm_ip_address:"
-                  f" {self.get_vm_ip_address(provider_network_name, vm_requirement)}")
-            print(f"VM networks: {vm_requirement.networks}")
             self.nf_ip_dict[vm_requirement.name] = self.get_vm_ip_address(provider_network_name, vm_requirement)
 
     def create_vlinks_flows(self, provider_network_name: str):
@@ -117,33 +108,11 @@ class ServiceChain:
                 else:
                     dst_node = self.topology.compute_servers_dict.get(link.dst_node_id)
 
-                print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-                print(f"Virtual Link Name: {v_link.id}, Physical Link Name: {link.id},"
-                      f"src->dst: {src_node.id}->{dst_node.id},\n"
-                      f" src_ip: {self.get_vm_ip_address(provider_network_name, src_v_node)},\n"
-                      f" dst_ip: {self.get_vm_ip_address(provider_network_name, dst_v_node)}")
                 if src_node.is_switch:
                     self.create_flow(src_node, link, provider_network_name, src_v_node, dst_v_node, 1)
-                    """
-                    of.create_arp_flow(src_node.id, src_node.ports_dict[link.src_port_id].port_number, 1)
-                    of.json_forwarding_flow_install(src_node.id, src_node.ports_dict[link.src_port_id].port_number,
-                                                    self.get_vm_ip_address(provider_network_name, src_v_node)
-                                                    + src_v_node.subnet_mask,
-                                                    self.get_vm_ip_address(provider_network_name, dst_v_node)
-                                                    + dst_v_node.subnet_mask)
-                    """
 
                 if dst_node.is_switch:
                     self.create_flow(dst_node, link, provider_network_name, src_v_node, dst_v_node, 2)
-                    """
-                    of.create_arp_flow(dst_node.id, dst_node.ports_dict[link.dst_port_id].port_number, 2)
-                    of.json_forwarding_flow_install(dst_node.id, dst_node.ports_dict[link.dst_port_id].port_number,
-                                                    self.get_vm_ip_address(provider_network_name, src_v_node)
-                                                    + src_v_node.subnet_mask,
-                                                    self.get_vm_ip_address(provider_network_name, dst_v_node)
-                                                    + dst_v_node.subnet_mask)
-                    """
-                print("--------------------------------------------------------------------------------------------")
 
     def create_flow(self, node, link, provider_network_name, src_v_node, dst_v_node, arp_code):
         of = OpenFlow()
@@ -167,30 +136,38 @@ class ServiceChain:
 
         virtual_machine = VirtualMachine()
         LOG.info("-----------------------------------------------------------------")
+        print("-----------------------------------------------------------------")
         for vm in self.tosca.vm_requirements:
-            start_time = time.time_ns()
+            start_time = time.time()
             LOG.info(f"Starting {vm.hostname} at: {start_time}")
+            print(f"Starting {vm.hostname} at: {start_time}")
             key_pair = "hanif-kukkalli"
 
             LOG.debug("Creating VM: {} on hypervisor: {} with key_pair: {}".format(vm.hostname, vm.hypervisor_hostname,
                                                                                    key_pair))
+            print("Creating VM: {} on hypervisor: {} with key_pair: {}".format(vm.hostname, vm.hypervisor_hostname,
+                                                                               key_pair))
             server = virtual_machine.create_virtual_machine(vm.hostname, vm.image_id, flavor=vm.flavor,
                                                             security_groups=["default"],
                                                             userdata=vm_user_data_dict[vm.name],
                                                             key_pair=key_pair, networks=vm.networks,
                                                             host=vm.hypervisor_hostname)
+            LOG.debug(f"Created {vm.name} Server: {server}")
             print(f"Created {vm.name} Server: {server}")
-            end_time = time.time_ns()
+            end_time = time.time()
             LOG.info(f"Started {vm.hostname} at: {end_time}")
-            LOG.info(f"Creation of {vm.hostname} time: {(end_time - start_time) / 1000000000}s")
+            print(f"Started {vm.hostname} at: {end_time}")
+            LOG.info(f"Creation of {vm.hostname} time: {(end_time - start_time)}s")
+            print(f"Creation of {vm.hostname} time: {(end_time - start_time)}s")
             LOG.info("-----------------------------------------------------------------")
+            print("-----------------------------------------------------------------")
         virtual_machine.close_connection()
 
 
 def main():
     # topology_builder = TopologyBuilder("hanif")
     # tosca_builder = TOSCABuilder("hanif")
-    input_request: InputRequest = InputRequest("KN-Core", "FOUR_G_LTE_CORE", max_link_delay=50)
+    input_request: InputRequest = InputRequest("Test006", "FOUR_G_LTE_CORE", max_link_delay=50)
     execute = ServiceChain(input_request)
     execute.create_service_chain()
     exit()

@@ -22,7 +22,6 @@ class Glance:
 
     def create_image_name_id_map(self):
         for image in self.image_list:
-            print(f"create map: image: id: {image.id}, name: {image.name}")
             self.image_name_id_dict[image.name] = image.id
 
     def get_image_list(self) -> List:

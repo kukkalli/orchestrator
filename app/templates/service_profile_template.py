@@ -14,8 +14,8 @@ LOG = logging.getLogger(__name__)
 
 class ServiceProfileTemplate:
 
-    def __init__(self, name: str, domain_name: str, bandwidth: int, max_delay: float = 50.0):
-        self.name = name
+    def __init__(self, prefix: str, domain_name: str, bandwidth: int, max_delay: float = 50.0):
+        self.prefix = prefix
         self.domain_name = domain_name
         self.bandwidth = bandwidth
         self.max_delay = max_delay
@@ -51,8 +51,6 @@ class ServiceProfileTemplate:
         for index, link in enumerate(self.nfv_v_links_list):
             v_link = VirtualLink(link['out'] + "-" + link['in'], index, self.vnf_vm_map.get(link['in']).int_id,
                                  self.vnf_vm_map.get(link['out']).int_id, self.bandwidth, link['delay'])
-            # self.vnf_vm_map.get(link['out']).out_v_links.append(v_link)
-            # self.vnf_vm_map.get(link['in']).in_v_links.append(v_link)
             self.v_links.append(v_link)
 
         LOG.info(f"Built ServiceProfileTemplate: {time.time()}")
@@ -61,6 +59,6 @@ class ServiceProfileTemplate:
 
     def populate_user_data(self, nf_ip_dict: Dict[str, str]) -> Dict[str, str]:
         LOG.debug(f"I am in service profile template, {self.domain_name}")
-        print(f"I am in service profile template, {self.domain_name}")
+        # print(f"I am in service profile template, {self.domain_name}")
         self.vm_user_data_dict: Dict[str, str] = {}
         return {}

@@ -19,11 +19,11 @@ class FourGVMLTECore(ServiceProfileTemplate):
 
     def __init__(self, name: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
         super().__init__(name, domain_name, bandwidth)
-        hss = VMTemplate(self.name, self.HSS, "2", HSSUserData.USERDATA)
+        hss = VMTemplate(self.prefix, self.HSS, "2", HSSUserData.USERDATA)
         self.network_functions.append(hss)
-        mme = VMTemplate(self.name, self.MME, "3", MMEUserData.USERDATA)
+        mme = VMTemplate(self.prefix, self.MME, "3", MMEUserData.USERDATA)
         self.network_functions.append(mme)
-        spgw = VMTemplate(self.name, self.SPGW, "3", SPGWUserData.USERDATA)
+        spgw = VMTemplate(self.prefix, self.SPGW, "3", SPGWUserData.USERDATA)
         self.network_functions.append(spgw)
 
         self.nfv_v_links_list.append({"out": self.HSS, "in": self.MME, "delay": max_delay})
@@ -34,11 +34,11 @@ class FourGVMLTECore(ServiceProfileTemplate):
     def populate_user_data(self, nf_ip_dict: Dict[str, str]) -> Dict[str, str]:
         super().populate_user_data()
         for network_function in self.get_network_functions():
-            if network_function.name == self.HSS:
+            if network_function.prefix == self.HSS:
                 self.hss_user_data(network_function, nf_ip_dict)
-            elif network_function.name == self.MME:
+            elif network_function.prefix == self.MME:
                 self.mme_user_data(network_function, nf_ip_dict)
-            elif network_function.name == self.SPGW:
+            elif network_function.prefix == self.SPGW:
                 self.spgw_user_data(network_function, nf_ip_dict)
 
         return self.vm_user_data_dict

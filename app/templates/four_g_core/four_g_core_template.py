@@ -8,6 +8,8 @@ LOG = logging.getLogger(__name__)
 
 class FourGCoreTemplate(VMTemplate):
 
-    def __init__(self, name: str):
-        super().__init__(name)
+    def __init__(self, prefix: str, nf_name: str):
+        super().__init__(prefix)
+        self.vm_name = prefix+"-"+nf_name
+        self.name = nf_name
         self.user_data = CommonUserData.USERDATA

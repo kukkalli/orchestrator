@@ -13,6 +13,7 @@ from templates.service_profile_template import ServiceProfileTemplate
 from templates.four_g_core.spgwc_template import SPGWCTemplate
 from templates.four_g_core.spgwu_template import SPGWUTemplate
 from templates.vm_template import VMTemplate
+from test_scripts.service_build_test import service_built
 from tosca.virtual_link import VirtualLink
 from tosca.vm_requirement import VMRequirement
 
@@ -112,14 +113,7 @@ class FourGLTECoreCassDB(ServiceProfileTemplate):
 
 def main():
     service = FourGLTECoreCassDB("test", "kukkalli.com", 1000)
-    service.build()
-    flavor = service.flavor_id_map["2"]
-    print(f"Flavor: id: {flavor.id}, name: {flavor.name}, vcpus: {flavor.vcpus}, ram: {flavor.ram}")
-    for vm_request in service.get_vm_requirements_list():
-        print(f"VM Requirement: {vm_request.hostname}, int_id: {vm_request.int_id}")
-
-    for link in service.get_v_links_list():
-        print(f"link name: {link.id}, int_id: {link.int_id}")
+    service_built(service)
 
 
 if __name__ == "__main__":

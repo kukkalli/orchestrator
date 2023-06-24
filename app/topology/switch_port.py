@@ -12,6 +12,9 @@ class SwitchPort:
         self.__json = port
         LOG.debug(f"port: {port}")
         self.switch_id = switch_id
+        if isinstance(port, str):
+            self.__id = port
+            return
         self.__id = port['id']
         self.hardware_address = port["flow-node-inventory:hardware-address"]
         self.supported = port["flow-node-inventory:supported"]

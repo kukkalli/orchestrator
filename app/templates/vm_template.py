@@ -9,9 +9,9 @@ LOG = logging.getLogger(__name__)
 
 class VMTemplate:
 
-    def __init__(self, sc_name: str = "template", name: str = "network-function", flavor: str = "2",
+    def __init__(self, prefix: str = "template", name: str = "network-function", flavor: str = "2",
                  user_data: str = "", image_name: str = OpenStackConstants.UBUNTU_18_04):
-        self.vm_name = sc_name + "-" + name
+        self.vm_name = prefix + "-" + name
         self.name = name
         self.flavor = flavor
         self.image_name: str = image_name

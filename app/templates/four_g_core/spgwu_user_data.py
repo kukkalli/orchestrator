@@ -1,8 +1,8 @@
 class SPGWUUserData:
     USERDATA = """
-echo "--------------- SPGW-U FQDN is: ---------------" >> boot.log
-echo "SPGW-U FQDN $FQDN_HOSTNAME" >> boot.log
-echo "--------------- SPGW-U FQDN is: ---------------" >> boot.log
+echo "--------------- SPGW-U FQDN is: ---------------"
+echo "SPGW-U FQDN $FQDN_HOSTNAME"
+echo "--------------- SPGW-U FQDN is: ---------------"
 
 SGWC_IP_ADDRESS="@@sgwc_ip_address@@"
 SGWC_HOSTNAME="@@sgwc_hostname@@"
@@ -29,58 +29,58 @@ echo "MANAGEMENT_IP='${MANAGEMENT_IP}'" >> .env
 echo "FABRIC_IP='${FABRIC_IP}'" >> .env
 
 export DOMAIN="$DOMAIN"
-echo "DOMAIN is: $DOMAIN" >> /boot.log
+echo "DOMAIN is: $DOMAIN"
 echo "DOMAIN='${DOMAIN}'" >> .env
 
 export REALM="$DOMAIN"
-echo "REALM is: $REALM" >> /boot.log
+echo "REALM is: $REALM"
 echo "REALM='${REALM}'" >> .env
 
 MCC="@@mcc@@"
 export MCC="$MCC"
-echo "MCC is: $MCC" >> /boot.log
+echo "MCC is: $MCC"
 MNC="@@mnc@@"
 export MNC="$MNC"
-echo "MNC is: $MNC" >> /boot.log
+echo "MNC is: $MNC"
 GW_ID="@@gw_id@@" # 1
 export GW_ID="$GW_ID"
-echo "GW ID is: $GW_ID" >> /boot.log
+echo "GW ID is: $GW_ID"
 APN1="@@apn-1@@.ipv4" # tuckn.ipv4
 export APN1="$APN1"
-echo "APN 1 is: $APN1" >> /boot.log
+echo "APN 1 is: $APN1"
 APN2="@@apn-2@@.ipv4" # tuckn2.ipv4
 export APN2="$APN2"
-echo "APN 2 is: $APN2" >> /boot.log
+echo "APN 2 is: $APN2"
 INSTANCE="@@instance@@"
 export INSTANCE="$INSTANCE"
-echo "INSTANCE is: $INSTANCE" >> /boot.log
+echo "INSTANCE is: $INSTANCE"
 NETWORK_UE_IP="@@network_ue_ip@@"
 export NETWORK_UE_IP="$NETWORK_UE_IP"
-echo "NETWORK_UE_IP is: $NETWORK_UE_IP" >> /boot.log
+echo "NETWORK_UE_IP is: $NETWORK_UE_IP"
 
 SPGW_U_HOSTNAME="$(hostname -s)"
 export SPGW_U_HOSTNAME="$SPGW_U_HOSTNAME"
-echo "SPGW-U hostname is $SPGW_U_HOSTNAME" >> /boot.log
+echo "SPGW-U hostname is $SPGW_U_HOSTNAME"
 
 export SGWC_IP_ADDRESS="$SGWC_IP_ADDRESS"
-echo "SGWC_IP_ADDRESS is: $SGWC_IP_ADDRESS" >> /boot.log
+echo "SGWC_IP_ADDRESS is: $SGWC_IP_ADDRESS"
 
 export TZ="Europe/Berlin"
-echo "Timezone is $TZ" >> /boot.log
+echo "Timezone is $TZ"
 
 # Wait for SPGW-C to be up and running
-echo "Waiting for SPGW-C at IP: $SGWC_IP_ADDRESS to be up and running" >> /boot.log
+echo "Waiting for SPGW-C at IP: $SGWC_IP_ADDRESS to be up and running"
 ./wait-for-sgw-c.sh "$SGWC_IP_ADDRESS"
-echo "SPGW-C at IP: $SGWC_IP_ADDRESS is up and running" >> /boot.log
-echo "----------------------------------------------------------------------------------------" >> /boot.log
-echo "SPGW-C responding : $(date +"%T.%N")" >> /boot.log
+echo "SPGW-C at IP: $SGWC_IP_ADDRESS is up and running"
+echo "----------------------------------------------------------------------------------------"
+echo "SPGW-C responding : $(date +"%T.%N")"
 
 docker-compose up -d oai_spgwu
 
-docker ps >> /boot.log
+docker-compose ps -a
 
-echo "----------------------------------------------------------------------------------------" >> /boot.log
-echo "Started SPGW-U : $(date +"%T.%N")" >> /boot.log
+echo "----------------------------------------------------------------------------------------"
+echo "Started SPGW-U : $(date +"%T.%N")"
 
 exit 0
 

@@ -10,12 +10,16 @@ class CommonUserData:
     USERDATA = ScriptHead.USERDATA + AuthorizedKeys.USERDATA + """
 DOMAIN="@@domain@@"
 
+echo "Domain: ${DOMAIN}"
+
 INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
+
+echo "The interfaces: ${INTERFACES}"
 
 first=true
 interface_name=""
-sudo rm /etc/netplan/50-cloud-init.yaml
-sudo -- sh -c "echo 'network:' >> /etc/netplan/50-cloud-init.yaml"
+# sudo rm /etc/netplan/50-cloud-init.yaml
+sudo -- sh -c "echo 'network:' > /etc/netplan/50-cloud-init.yaml"
 sudo -- sh -c "echo '    ethernets:' >> /etc/netplan/50-cloud-init.yaml"
 
 # shellcheck disable=SC2068
@@ -32,20 +36,47 @@ do
         sudo -- sh -c "echo '            match:' >> /etc/netplan/50-cloud-init.yaml"
         sudo -- sh -c "echo '                macaddress: ${i}' >> /etc/netplan/50-cloud-init.yaml"
         sudo -- sh -c "echo '            set-name: ${interface_name}' >> /etc/netplan/50-cloud-init.yaml"
-    fi
+#        if [[ ${interface_name} == "ens3" ]]; then
+#            sudo -- sh -c "echo '            gateway4: 10.10.0.1' >> /etc/netplan/50-cloud-init.yaml"
+#            sudo -- sh -c "echo '            nameservers:' >> /etc/netplan/50-cloud-init.yaml"
+#            sudo -- sh -c "echo '                addresses:' >> /etc/netplan/50-cloud-init.yaml"
+#            sudo -- sh -c "echo '                - 8.8.8.8' >> /etc/netplan/50-cloud-init.yaml"
+#        fi
+   fi
 done
 
 sudo -- sh -c "echo '    version: 2' >> /etc/netplan/50-cloud-init.yaml"
 
+echo "-------------- Netplan Yaml --------------"
+cat /etc/netplan/50-cloud-init.yaml
+echo "-------------- Netplan Yaml --------------"
+
 sudo -- sh -c "echo 'network: {config: disabled}' >> /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg"
 
 sudo netplan apply
+
+#sudo ip route del default
+#sudo ip route add default via 10.10.0.1 
+
+ip r
 
 HOSTNAME=$(hostname -s)
 
 sudo hostnamectl set-hostname "$HOSTNAME"."$DOMAIN"
 
 FQDN_HOSTNAME=$(hostname)
+
+while true; do
+    wget -q --spider https://google.com
+
+    if [ $? -eq 0 ]; then
+        echo "Network is Online : $(date +"%T.%N") --"
+        break
+    else
+        echo "Network is Offline: $(date +"%T.%N") --"
+        sleep 2
+    fi
+done
 
 sudo rm /etc/hosts
 cat > /etc/hosts << EOF
@@ -64,7 +95,7 @@ EOF
 
 sudo apt-get update
 
-sudo apt-get install ca-certificates curl gnupg lsb-release
+sudo apt-get install ca-certificates curl gnupg lsb-release -y
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor \
  -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -91,15 +122,17 @@ cat > /etc/docker/daemon.json << EOF
     "fixed-cidr-v6": "2001:db8:1::/64"
 }
 EOF
+echo "Configured docker daemon.json file to set log outputs"
 
 sudo usermod -aG docker ubuntu
+echo "Allow docker to be run using user as: ubuntu"
 
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 
 IP_ADDR=$(ip address |grep ens|grep inet|awk '{print $2}'| awk -F / '{print $1}')
-
 sudo -- sh -c "echo '' >>  /etc/hosts"
+echo "IP Address: $IP_ADDR"
 
 for i in $IP_ADDR; do
     sudo -- sh -c "echo $i $HOSTNAME $FQDN_HOSTNAME >> /etc/hosts"
@@ -113,12 +146,14 @@ for i in $IP_ADDR; do
     fi
 done
 
+cat /etc/hosts
+
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
 sudo chmod +x /usr/local/bin/docker-compose
 
-echo "--------------- docker-compose version is: ---------------" >> boot.log
-docker-compose --version >> boot.log
-echo "--------------- docker-compose version is: ---------------" >> boot.log
+echo "--------------- docker-compose version is: ---------------"
+docker-compose --version
+echo "--------------- docker-compose version is: ---------------"
 
     """

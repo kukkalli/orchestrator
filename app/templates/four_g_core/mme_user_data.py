@@ -91,6 +91,9 @@ echo "MME FQDN is $MME_FQDN"
 echo "Update mme.conf file before pushing it to docker"
 ./update_mme_conf.sh
 
+docker pull redis:6.0.5
+docker pull kukkalli/magma-mme:1.0.0
+
 # Wait for HSS to be up and running
 echo "-----------------------------------------------------------"
 echo "Waiting for HSS at IP: $HSS_IP to be up and running"

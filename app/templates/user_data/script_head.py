@@ -13,5 +13,9 @@ echo "--------------------------------------------------------------------------
 #echo "-------------------------------------------------------------------------------------------------"
 #echo "-- Clock Synchronization - End  : $(date +"%T.%N") --"
 
+echo "Setting password"
+echo -e 'password\npassword' | passwd ubuntu
+echo "Password set to password"
+
     """
 

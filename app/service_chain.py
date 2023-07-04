@@ -1,5 +1,5 @@
 import logging
-import datetime, time
+import time
 from typing import Dict
 
 from odl.openflow import OpenFlow
@@ -147,7 +147,7 @@ class ServiceChain:
                                                                                    key_pair))
             print("Creating VM: {} on hypervisor: {} with key_pair: {}".format(vm.hostname, vm.hypervisor_hostname,
                                                                                key_pair))
-            print(f"User data: {vm_user_data_dict[vm.name]}")
+            # print(f"User data: {vm_user_data_dict[vm.name]}")
             server = virtual_machine.create_virtual_machine(vm.hostname, vm.image_id, flavor=vm.flavor,
                                                             security_groups=["default"],
                                                             userdata=vm_user_data_dict[vm.name],
@@ -168,7 +168,7 @@ class ServiceChain:
 def main():
     # topology_builder = TopologyBuilder("hanif")
     # tosca_builder = TOSCABuilder("hanif")
-    input_request: InputRequest = InputRequest("Test014", "FOUR_G_LTE_CORE", max_link_delay=1)
+    input_request: InputRequest = InputRequest("Docker 004 4G 50us", "FOUR_G_LTE_CORE", max_link_delay=0.05)
     execute = ServiceChain(input_request)
     execute.create_service_chain()
     exit()

@@ -55,11 +55,6 @@ sudo -- sh -c "echo 'network: {config: disabled}' >> /etc/cloud/cloud.cfg.d/99-d
 
 sudo netplan apply
 
-#sudo ip route del default
-#sudo ip route add default via 10.10.0.1 
-
-ip r
-
 HOSTNAME=$(hostname -s)
 
 sudo hostnamectl set-hostname "$HOSTNAME"."$DOMAIN"

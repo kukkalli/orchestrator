@@ -62,11 +62,14 @@ class TopologyBuilder:
         source_dest: List[List] = [[0, 2], [2, 0], [0, 3], [3, 0], [1, 2], [2, 1], [1, 3], [3, 1]]
         for i in range(len(source_dest)):
             # print(f"the value of i is : {i}")
+            capacity = 40000000
+            link_length = 0.001
+            delay_per_km = 0.035
 
             self.links.append(Link(f"link_{i}", i, source_dest[i][1], source_dest[i][0],
                                    f"switch{source_dest[i][1] + 1}_switch{source_dest[i][0] + 1}",
                                    f"switch{source_dest[i][0] + 1}_switch{source_dest[i][1] + 1}",
-                                   10000000))
+                                   capacity, link_length, delay_per_km))
 
             self.switches[source_dest[i][0]].add_port(SwitchPort(f"switch{source_dest[i][0] + 1}",
                                                                  f"switch{source_dest[i][0] + 1}_"
@@ -90,16 +93,23 @@ class TopologyBuilder:
         self.other_servers.append(server)
 
     def hardcoded_links(self):
+        link_length = 0.001
+        delay_per_km = 0.035
         mapped_physical_links: List[ServerSwitchLinks] = [ServerSwitchLinks(server="compute02", switch="switch4",
-                                                                            port="10", link_length=0.001),
+                                                                            port="10", link_length=link_length,
+                                                                            delay_per_km=delay_per_km),
                                                           ServerSwitchLinks(server="compute03", switch="switch3",
-                                                                            port="10", link_length=0.001),
+                                                                            port="10", link_length=link_length,
+                                                                            delay_per_km=delay_per_km),
                                                           ServerSwitchLinks(server="compute01", switch="switch3",
-                                                                            port="11", link_length=0.001),
+                                                                            port="11", link_length=link_length,
+                                                                            delay_per_km=delay_per_km),
                                                           ServerSwitchLinks(server="controller", switch="switch3",
-                                                                            port="9", link_length=0.001),
+                                                                            port="9", link_length=link_length,
+                                                                            delay_per_km=delay_per_km),
                                                           ServerSwitchLinks(server="rrh", switch="switch4",
-                                                                            port="11", link_length=0.010)
+                                                                            port="11", link_length=link_length,
+                                                                            delay_per_km=delay_per_km)
                                                           ]
         """
         Create DHCP Flows to controller

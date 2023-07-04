@@ -5,7 +5,7 @@ LOG = logging.getLogger(__name__)
 
 class Link:
 
-    def __init__(self, _id, int_id: int, dst_node_id: int, src_node_id: int, dst_port_id: str = None,
+    def __init__(self, _id: str, int_id: int, dst_node_id: int, src_node_id: int, dst_port_id: str = None,
                  src_port_id: str = None, capacity: int = 10000000, length_of_link: float = 0.001,
                  delay_per_km: float = 0.035, bi_directional=False):
         self.__id = _id

@@ -66,6 +66,8 @@ export TZ="Europe/Berlin"
 echo "Timezone is $TZ"
 echo "TZ='${TZ}'" >> .env
 
+docker pull kukkalli/oai-spgwc:v1.2.0
+
 # Wait for MME to be up and running
 echo "Waiting for MME at IP: $MME_IP to be up and running"
 ./wait-for-mme.sh "$MME_IP"

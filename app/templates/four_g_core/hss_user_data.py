@@ -66,7 +66,7 @@ echo "Starting db_init $(date +"%T.%N")"
 
 docker-compose up -d db_init
 
-docker-compose up -d cassandra_web
+# docker-compose up -d cassandra_web
 
 sleep 5
 

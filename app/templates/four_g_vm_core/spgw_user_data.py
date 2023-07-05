@@ -1,5 +1,29 @@
 class SPGWUserData:
     USERDATA = """
+echo "SPGW Main User Script: $(date +'%T.%N')"
+echo "SPGW Main User Script: $(date +'%T.%N')" >> log_startup.log
+
+export REALM=tu-chemnitz.de
+export HSS_HOSTNAME=hss
+export HSS_FQDN=hss.tu-chemnitz.de
+export HSS_IP=10.10.2.96
+export MME_FQDN=mme.tu-chemnitz.de
+export MME_IP=10.10.2.52
+export MME_IP_SN=10.10.2.52/16
+export SPGW_FQDN=spgw.tu-chemnitz.de
+export SPGW_IP=10.10.1.21
+export SPGW_IP_SN=10.10.1.21/16
+export MCC=265
+export MNC=82
+export MME_GID=4
+export MME_CODE=1
+export TAC=1
+export MANAGEMENT_INTERFACE_NAME=ens3
+export FABRIC_INTERFACE_NAME=ens3
+export COUNTRY_CODE=DE
+export STATE_CODE=SN
+export COMPANY_SHORT_NAME="tuc"
+export COMPANY_FULL_NAME="TU-Chemnitz"
 
 MME_IP="@@mme_ip@@"
 MME_HOSTNAME="@@mme_hostname@@"

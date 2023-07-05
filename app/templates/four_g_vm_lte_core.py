@@ -2,8 +2,11 @@ import logging
 from typing import Dict
 
 from templates.common_user_data import CommonUserData
+from templates.four_g_vm_core.hss_template import HSSTemplate
 from templates.four_g_vm_core.hss_user_data import HSSUserData
+from templates.four_g_vm_core.mme_template import MMETemplate
 from templates.four_g_vm_core.mme_user_data import MMEUserData
+from templates.four_g_vm_core.spgw_template import SPGWCTemplate
 from templates.four_g_vm_core.spgw_user_data import SPGWUserData
 from templates.pdn_type import PDNType
 from templates.service_profile_template import ServiceProfileTemplate
@@ -17,8 +20,12 @@ class FourGVMLTECore(ServiceProfileTemplate):
     MME = "mme"
     SPGW = "spgw"
 
-    def __init__(self, name: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
-        super().__init__(name, domain_name, bandwidth)
+    def __init__(self, prefix: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
+        super().__init__(prefix, domain_name, bandwidth)
+        self.network_functions.append(HSSTemplate(prefix, self.HSS))
+        self.network_functions.append(MMETemplate(prefix, self.MME))
+        self.network_functions.append(SPGWCTemplate(prefix, self.SPGW_C))
+
         hss = VMTemplate(self.prefix, self.HSS, "2", HSSUserData.USERDATA)
         self.network_functions.append(hss)
         mme = VMTemplate(self.prefix, self.MME, "3", MMEUserData.USERDATA)

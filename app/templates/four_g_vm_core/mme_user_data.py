@@ -34,43 +34,43 @@ cd /home/ubuntu/ || exit
 cd oai-docker-compose/4g/hss/ || exit
 
 export MANAGEMENT_IP="$MANAGEMENT_IP"
-sed -i -e "s@_domain_@$DOMAIN@" .env
+sed -i -e "s@_domain_@$DOMAIN@" /home/ubuntu/env_var
 echo "The HSS_MANAGEMENT_IP is $HSS_MANAGEMENT_IP"
-sed -i -e "s@_management_ip_@$MANAGEMENT_IP@" .env
+sed -i -e "s@_management_ip_@$MANAGEMENT_IP@" /home/ubuntu/env_var
 
 export FABRIC_IP="$FABRIC_IP"
 export FABRIC_IP="$MANAGEMENT_IP"
 echo "The HSS_FABRIC_IP is $FABRIC_IP"
-sed -i -e "s@_fabric_ip_@$FABRIC_IP@" .env
+sed -i -e "s@_fabric_ip_@$FABRIC_IP@" /home/ubuntu/env_var
 export HSS_FQDN="$FQDN_HOSTNAME"
-sed -i -e "s@_hss_fqdn_@$HSS_FQDN@" .env
+sed -i -e "s@_hss_fqdn_@$HSS_FQDN@" /home/ubuntu/env_var
 
 export OP_KEY="@@op_key@@"
-sed -i -e "s@_op_key_@$OP_KEY@" .env
+sed -i -e "s@_op_key_@$OP_KEY@" /home/ubuntu/env_var
 export LTE_K="@@lte_k@@"
-sed -i -e "s@_lte_k_@$LTE_K@" .env
+sed -i -e "s@_lte_k_@$LTE_K@" /home/ubuntu/env_var
 APN1="@@apn-1@@.ipv4" # tuckn.ipv4
 export APN1="$APN1"
-sed -i -e "s@_apn_1_@$APN1@" .env
+sed -i -e "s@_apn_1_@$APN1@" /home/ubuntu/env_var
 echo "APN 1 is: $APN1"
 APN2="@@apn-2@@.ipv4" # tuckn2.ipv4
 export APN2="$APN2"
-sed -i -e "s@_apn_2_@$APN2@" .env
+sed -i -e "s@_apn_2_@$APN2@" /home/ubuntu/env_var
 echo "APN 2 is: $APN2"
 
 export FIRST_IMSI="@@first_imsi@@"
-sed -i -e "s@_first_imsi_@$FIRST_IMSI@" .env
+sed -i -e "s@_first_imsi_@$FIRST_IMSI@" /home/ubuntu/env_var
 
 echo "The HSS FQDN is $HSS_FQDN"
 
 export REALM="$DOMAIN"
-sed -i -e "s@_realm_@$DOMAIN@" .env
+sed -i -e "s@_realm_@$DOMAIN@" /home/ubuntu/env_var
 
 
 echo "The REALM is $REALM"
 
 export HSS_HOSTNAME="$HOSTNAME"
-sed -i -e "s@_hss_hostname_@$HSS_HOSTNAME@" .env
+sed -i -e "s@_hss_hostname_@$HSS_HOSTNAME@" /home/ubuntu/env_var
 
 echo "The HSS HOSTNAME is $HSS_HOSTNAME"
 

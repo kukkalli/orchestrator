@@ -1,5 +1,6 @@
 class HSSUserData:
     USERDATA = """
+echo "HSS Main User Script: $(date +'%T.%N')"
 echo "HSS Main User Script: $(date +'%T.%N')" >> log_startup.log
 
 export HSS_FQDN="$FQDN_HOSTNAME"

@@ -3,7 +3,6 @@ from datetime import datetime
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
 from openstack_internal.clients.clients import Clients
-from openstack_internal.glance.glance_details import Glance
 from openstack_internal.neutron.neutron_details import Neutron
 
 from novaclient.v2.client import Client as NovaV2Client
@@ -28,7 +27,7 @@ class VirtualMachine:
         self.authenticate = AuthenticateConnection()
         self.connection = self.authenticate.get_connection()
         self.__clients = Clients(self.authenticate)
-        self.__glance = Glance(self.connection)
+        # self.__glance = Glance(self.connection)
         # self.__keypair = KeyPair(self.connection)
         # self.__neutron = Neutron(self.connection)
         # self.__nova = Nova(self.connection)

@@ -31,7 +31,7 @@ S-GW :
         # S-GW binded interface for S11 communication (GTPV2-C), if none selected the ITTI message interface is used
 EOF
 
-echo "        SGW_INTERFACE_NAME_FOR_S11              = \"${FABRIC_IP_PORT}\";                         # STRING, interface name, YOUR NETWORK CONFIG HERE" >> spgw.conf
+echo "        SGW_INTERFACE_NAME_FOR_S11              = \"${FABRIC_INTERFACE_NAME}\";                         # STRING, interface name, YOUR NETWORK CONFIG HERE" >> spgw.conf
 echo "        SGW_IPV4_ADDRESS_FOR_S11                = \"${FABRIC_IP}\";               # STRING, CIDR, YOUR NETWORK CONFIG HERE" >> spgw.conf
 
 cat >> spgw.conf << EOF
@@ -39,7 +39,7 @@ cat >> spgw.conf << EOF
         # S-GW binded interface for S1-U communication (GTPV1-U) can be ethernet interface, virtual ethernet interface, we don't advise wireless interfaces
 EOF
 
-echo "        SGW_INTERFACE_NAME_FOR_S1U_S12_S4_UP    = \"${FABRIC_IP_PORT}\";                       # STRING, interface name, YOUR NETWORK CONFIG HERE, USE \"lo\" if S-GW run on eNB host" >> spgw.conf
+echo "        SGW_INTERFACE_NAME_FOR_S1U_S12_S4_UP    = \"${FABRIC_INTERFACE_NAME}\";                       # STRING, interface name, YOUR NETWORK CONFIG HERE, USE \"lo\" if S-GW run on eNB host" >> spgw.conf
 echo "        SGW_IPV4_ADDRESS_FOR_S1U_S12_S4_UP      = \"${FABRIC_IP}\";              # STRING, CIDR, YOUR NETWORK CONFIG HERE" >> spgw.conf
 
 cat >> spgw.conf << EOF

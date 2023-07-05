@@ -5,9 +5,7 @@ from templates.common_user_data import CommonUserData
 from templates.four_g_vm_core.hss_template import HSSTemplate
 from templates.four_g_vm_core.hss_user_data import HSSUserData
 from templates.four_g_vm_core.mme_template import MMETemplate
-from templates.four_g_vm_core.mme_user_data import MMEUserData
-from templates.four_g_vm_core.spgw_template import SPGWCTemplate
-from templates.four_g_vm_core.spgw_user_data import SPGWUserData
+from templates.four_g_vm_core.spgw_template import SPGWTemplate
 from templates.pdn_type import PDNType
 from templates.service_profile_template import ServiceProfileTemplate
 from templates.vm_template import VMTemplate
@@ -24,14 +22,16 @@ class FourGVMLTECore(ServiceProfileTemplate):
         super().__init__(prefix, domain_name, bandwidth)
         self.network_functions.append(HSSTemplate(prefix, self.HSS))
         self.network_functions.append(MMETemplate(prefix, self.MME))
-        self.network_functions.append(SPGWCTemplate(prefix, self.SPGW_C))
+        self.network_functions.append(SPGWTemplate(prefix, self.SPGW))
 
+        """
         hss = VMTemplate(self.prefix, self.HSS, "2", HSSUserData.USERDATA)
         self.network_functions.append(hss)
         mme = VMTemplate(self.prefix, self.MME, "3", MMEUserData.USERDATA)
         self.network_functions.append(mme)
         spgw = VMTemplate(self.prefix, self.SPGW, "3", SPGWUserData.USERDATA)
         self.network_functions.append(spgw)
+        """
 
         self.nfv_v_links_list.append({"out": self.HSS, "in": self.MME, "delay": max_delay})
         self.nfv_v_links_list.append({"out": self.MME, "in": self.HSS, "delay": max_delay})
@@ -39,13 +39,14 @@ class FourGVMLTECore(ServiceProfileTemplate):
         self.nfv_v_links_list.append({"out": self.SPGW, "in": self.MME, "delay": max_delay})
 
     def populate_user_data(self, nf_ip_dict: Dict[str, str]) -> Dict[str, str]:
-        super().populate_user_data()
+        LOG.debug(f"I am in VM based 4G LTE Core, {self.domain_name}")
+        # vm_user_data_dict: Dict[str, str] = {}
         for network_function in self.get_network_functions():
-            if network_function.prefix == self.HSS:
+            if network_function.name == self.HSS:
                 self.hss_user_data(network_function, nf_ip_dict)
-            elif network_function.prefix == self.MME:
+            elif network_function.name == self.MME:
                 self.mme_user_data(network_function, nf_ip_dict)
-            elif network_function.prefix == self.SPGW:
+            elif network_function.name == self.SPGW:
                 self.spgw_user_data(network_function, nf_ip_dict)
 
         return self.vm_user_data_dict
@@ -81,16 +82,24 @@ class FourGVMLTECore(ServiceProfileTemplate):
         spgw_ip = nf_ip_dict[self.SPGW]
 
         mme_user_data = network_function.user_data
+
         mme_user_data = mme_user_data.replace("@@domain@@", self.domain_name)
         mme_user_data = mme_user_data.replace("@@hss_ip@@", hss_ip)
         mme_user_data = mme_user_data.replace("@@hss_hostname@@", hss.hostname)
         mme_user_data = mme_user_data.replace("@@mme_ip@@", mme_ip)
         mme_user_data = mme_user_data.replace("@@mcc@@", "265")
         mme_user_data = mme_user_data.replace("@@mnc@@", "82")
-        mme_user_data = mme_user_data.replace("@@mme_gid@@", "32768")
-        mme_user_data = mme_user_data.replace("@@mme_code@@", "3")
+        mme_user_data = mme_user_data.replace("@@mme_gid@@", "4")
+        mme_user_data = mme_user_data.replace("@@mme_code@@", "1")
+        mme_user_data = mme_user_data.replace("@@tac@@", "1")
+        mme_user_data = mme_user_data.replace("@@country_code@@", "DE")
+        mme_user_data = mme_user_data.replace("@@state_code@@", "SN")
+        mme_user_data = mme_user_data.replace("@@csn@@", "TUC")
+        mme_user_data = mme_user_data.replace("@@cfn@@", "TU-Chemnitz")
         mme_user_data = mme_user_data.replace("@@spgw_ip@@", spgw_ip)
-        mme_user_data = mme_user_data.replace("@@spgw_ip@@", spgw_ip)
+        mme_user_data = mme_user_data.replace("@@spgw_hostname@@", spgw.hostname)
+        mme_user_data = mme_user_data.replace("@@spgw_ip_sn@@", spgw_ip+"/16")
+
         self.vm_user_data_dict[self.MME] = mme_user_data
 
     def spgw_user_data(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]):
@@ -110,13 +119,14 @@ class FourGVMLTECore(ServiceProfileTemplate):
 
 
 def main():
+    pass
+    """
     domain_name = "tu-chemnitz.de"
     user_data = CommonUserData.USERDATA + HSSUserData.USERDATA
     user_data = user_data.replace("@@domain@@", domain_name)
     print(f'after: {user_data}')
     # print(f'user data: {user_data.replace("@@domain@@", domain_name)}')
 
-    """
     service = FourGLTECore("test", "kukkalli.com", 1000)
     service.build()
     flavor = service.flavor_id_map["2"]

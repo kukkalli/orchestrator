@@ -147,7 +147,8 @@ class ServiceChain:
                                                                                    key_pair))
             print("Creating VM: {} on hypervisor: {} with key_pair: {}".format(vm.hostname, vm.hypervisor_hostname,
                                                                                key_pair))
-            # print(f"User data: {vm_user_data_dict[vm.name]}")
+            if vm.name == "mme":
+                print(f"User data: {vm_user_data_dict[vm.name]}")
             server = virtual_machine.create_virtual_machine(vm.hostname, vm.image_id, flavor=vm.flavor,
                                                             security_groups=["default"],
                                                             userdata=vm_user_data_dict[vm.name],

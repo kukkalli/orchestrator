@@ -15,12 +15,13 @@ class VMTemplate:
         self.name = name
         self.flavor = flavor
         self.image_name: str = image_name
-        self.image_id = "4dc9d880-672a-4eb9-b93e-49540e263657"
+        self.image_id: str = "4dc9d880-672a-4eb9-b93e-49540e263657"
         self.ip_addresses: Dict[str, str] = {}
         self.networks: List[Dict[str, str]] = [{"net-id": ""}]
         self.user_data = user_data
         self.in_v_links: List[VirtualLink] = []
         self.out_v_links: List[VirtualLink] = []
+        self.key_pair = "hanif-kukkalli"
 
     def get_flavour(self):
         return self.flavor

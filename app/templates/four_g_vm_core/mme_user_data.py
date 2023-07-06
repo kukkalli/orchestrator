@@ -62,8 +62,10 @@ echo "export MME_IP_SN=\"${MME_IP_SN}\"" >> env_var
 echo "export SPGW_IP_SN=\"$SPGW_IP_SN\"" >> env_var
 
 echo "Starting MME: $(date +'%T.%N')" >> log_startup.log
+echo "Starting MME: $(date +'%T.%N')"
 ./initialize_oai_mme
 echo "MME started: $(date +'%T.%N')" >> log_startup.log
+echo "MME started: $(date +'%T.%N')"
 
 exit 0
 

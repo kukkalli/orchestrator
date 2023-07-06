@@ -76,16 +76,14 @@ echo "export MANAGEMENT_INTERFACE_NAME=\"$MANAGEMENT_INTERFACE_NAME\"" >> env_va
 echo "export FABRIC_IP=\"$FABRIC_IP\"" >> env_var
 echo "export FABRIC_IP_SN=\"$FABRIC_IP_SN\"" >> env_var
 echo "export FABRIC_INTERFACE_NAME=\"$FABRIC_INTERFACE_NAME\"" >> env_var
-
 echo "The HSS_FABRIC_IP is $FABRIC_IP" >> log_startup.log
 echo "export HSS_FABRIC_IP=\"$FABRIC_IP\"" >> env_var
 
-
 echo "Starting HSS: $(date +'%T.%N')" >> log_startup.log
+echo "Starting HSS: $(date +'%T.%N')"
 ./initialize_oai_hss
-
-# ./start_on_boot
 echo "HSS started: $(date +'%T.%N')" >> log_startup.log
+echo "HSS started: $(date +'%T.%N')"
 
 exit 0
 

@@ -149,6 +149,8 @@ class ServiceChain:
 
             LOG.debug("Creating VM: {} on hypervisor: {}".format(vm.hostname, vm.hypervisor_hostname))
             print("Creating VM: {} on hypervisor: {}".format(vm.hostname, vm.hypervisor_hostname))
+            print(f"Networks:\n{vm.networks}")
+            print(f"userdata:\n{vm_user_data_dict[vm.name]}")
             server = virtual_machine.create_virtual_machine(vm.hostname, vm.image_id, flavor=vm.flavor,
                                                             security_groups=["default"],
                                                             userdata=vm_user_data_dict[vm.name],

@@ -1,9 +1,9 @@
 class ScriptHead:
     USERDATA = """#!/bin/bash
 
-echo "-------------------------------------------------------------------------------------------------"
-echo "Start User Data Script: $(date +'%F %T.%N %Z')"
-echo "-------------------------------------------------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------------" >> /home/ubuntu/log_startup.log
+echo "Start User Data Script: $(date +'%F %T.%N %Z')" >> /home/ubuntu/log_startup.log
+echo "-------------------------------------------------------------------------------------------------" >> /home/ubuntu/log_startup.log
 #echo "-- Clock Synchronization - Start: $(date +'%F %T.%N %Z') --"
 #while timedatectl | grep 'System clock synchronized: no' > /dev/null; do
 #    sleep 1
@@ -13,9 +13,9 @@ echo "--------------------------------------------------------------------------
 #echo "-------------------------------------------------------------------------------------------------"
 #echo "-- Clock Synchronization - End  : $(date +'%F %T.%N %Z') --"
 
-echo "Setting password"
+echo "Setting password" >> /home/ubuntu/log_startup.log
 echo -e 'password\npassword' | passwd ubuntu
-echo "Password set to password"
+echo "Password set to password" >> /home/ubuntu/log_startup.log
 
     """
 

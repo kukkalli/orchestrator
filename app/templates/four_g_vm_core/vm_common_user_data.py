@@ -10,6 +10,7 @@ class CommonUserData:
     USERDATA = ScriptHead.USERDATA + AuthorizedKeys.USERDATA + """
 
 DOMAIN="@@domain@@"
+echo "export DOMAIN=${DOMAIN}" >> /home/ubuntu/env_var
 
 echo "Configure networks: $(date +'%F %T.%N %Z')"
 echo "Configure networks: $(date +'%F %T.%N %Z')" >> /home/ubuntu/log_startup.log
@@ -51,7 +52,7 @@ do
     fi
 done
 
-cat /etc/network/interfaces.d/50-cloud-init.cfg
+echo "$(cat /etc/network/interfaces.d/50-cloud-init.cfg)" >> /home/ubuntu/log_startup.log
 
 sudo rm /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
 sudo -- sh -c "echo '# network: {config: disabled}' >> /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg"
@@ -62,8 +63,12 @@ echo "Configured networks: $(date +'%F %T.%N %Z')"
 # sudo systemctl restart networking.service
 
 export HOSTNAME=$(hostname -s)
+echo "Hostname: ${HOSTNAME}" >> /home/ubuntu/log_startup.log
+echo "Domain: ${DOMAIN}" >> /home/ubuntu/log_startup.log
 
 sudo hostnamectl set-hostname "${HOSTNAME}"."${DOMAIN}"
+
+echo "Hostname: $(hostname)" >> /home/ubuntu/log_startup.log
 
 FQDN_HOSTNAME=$(hostname)
 

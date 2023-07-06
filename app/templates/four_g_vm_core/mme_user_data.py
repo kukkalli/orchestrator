@@ -1,7 +1,7 @@
 class MMEUserData:
     USERDATA = """
 echo "MME Main User Script: $(date +'%F %T.%N %Z')"
-echo "MME Main User Script: $(date +'%F %T.%N %Z')" >> log_startup.log
+echo "MME Main User Script: $(date +'%F %T.%N %Z')" >> /home/ubuntu/log_startup.log
 
 export HSS_IP=@@hss_ip@@
 export HSS_HOSTNAME="@@hss_hostname@@"
@@ -25,6 +25,8 @@ export TAC=@@tac@@
 
 sudo -- sh -c "echo $HSS_IP $HSS_HOSTNAME $HSS_FQDN >> /etc/hosts"
 sudo -- sh -c "echo $SPGW_IP $SPGW_HOSTNAME $SPGW_FQDN >> /etc/hosts"
+echo "Host files: $(date +'%F %T.%N %Z')" >> /home/ubuntu/log_startup.log
+echo "$(cat /etc/hosts)" >> /home/ubuntu/log_startup.log
 
 # Change user to ubuntu
 echo "Changing user to ubuntu"
@@ -35,6 +37,8 @@ echo "export OPERATOR_KEY=@@operator_key@@" >> /home/ubuntu/env_var
 
 cd /home/ubuntu/ || exit
 rm -f env_var
+echo "HSS IP is ${HSS_IP}" >> /home/ubuntu/env_var
+
 export REALM="$DOMAIN"
 echo "export REALM=${REALM}" >> env_var
 echo "export HSS_IP=${HSS_IP}" >> env_var
@@ -61,10 +65,13 @@ MME_IP_SN=\"${MANAGEMENT_IP_SN}\"
 echo "export MME_IP_SN=\"${MME_IP_SN}\"" >> env_var
 echo "export SPGW_IP_SN=\"$SPGW_IP_SN\"" >> env_var
 
-echo "Starting MME: $(date +'%F %T.%N %Z')" >> log_startup.log
+echo "env_var file: $(date +'%F %T.%N %Z')" >> /home/ubuntu/log_startup.log
+echo "$(cat env_var)" >> /home/ubuntu/log_startup.log
+
+echo "Starting MME: $(date +'%F %T.%N %Z')" >> /home/ubuntu/log_startup.log
 echo "Starting MME: $(date +'%F %T.%N %Z')"
 ./initialize_oai_mme
-echo "MME started: $(date +'%F %T.%N %Z')" >> log_startup.log
+echo "MME started: $(date +'%F %T.%N %Z')" >> /home/ubuntu/log_startup.log
 echo "MME started: $(date +'%F %T.%N %Z')"
 
 exit 0

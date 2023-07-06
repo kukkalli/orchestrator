@@ -103,18 +103,17 @@ class FourGVMLTECore(ServiceProfileTemplate):
         self.vm_user_data_dict[self.MME] = mme_user_data
 
     def spgw_user_data(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]):
+        hss = self.vnf_vm_map[self.HSS]
+        hss_ip = nf_ip_dict[self.HSS]
         mme = self.vnf_vm_map[self.MME]
         mme_ip = nf_ip_dict[self.MME]
         spgw_user_data = network_function.user_data
 
         spgw_user_data = spgw_user_data.replace("@@domain@@", self.domain_name)
-        spgw_user_data = spgw_user_data.replace("@@mcc@@", "265")
-        spgw_user_data = spgw_user_data.replace("@@mnc@@", "82")
-        spgw_user_data = spgw_user_data.replace("@@gw_id@@", "1")
-        spgw_user_data = spgw_user_data.replace("@@apn-1@@", "tuckn")
-        spgw_user_data = spgw_user_data.replace("@@apn-2@@", "tuckn2")
+        spgw_user_data = spgw_user_data.replace("@@hss_ip@@", hss_ip)
         spgw_user_data = spgw_user_data.replace("@@mme_ip@@", mme_ip)
         spgw_user_data = spgw_user_data.replace("@@mme_hostname@@", mme.hostname)
+        spgw_user_data = spgw_user_data.replace("@@hss_hostname@@", hss.hostname)
         self.vm_user_data_dict[self.SPGW] = spgw_user_data
 
 

@@ -63,6 +63,7 @@ echo "export SPGW_IP_SN=\"$SPGW_IP_SN\"" >> env_var
 
 echo "Starting MME: $(date +'%T.%N')" >> log_startup.log
 ./initialize_oai_mme
+echo "MME started: $(date +'%T.%N')" >> log_startup.log
 
 exit 0
 

@@ -11,44 +11,53 @@ class CommonUserData:
 
 DOMAIN="@@domain@@"
 
-echo "Configure networks: $(date +"%T")"
-echo "Configure networks: $(date +"%T")" >> /home/ubuntu/log_startup.log
+echo "Configure networks: $(date +'%F %T.%N %Z')"
+echo "Configure networks: $(date +'%F %T.%N %Z')" >> /home/ubuntu/log_startup.log
+
+find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;
 
 INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
+echo "Interfaces: ${INTERFACES}"
 
 first=true
 interface_name=""
 sudo rm /etc/network/interfaces.d/50-cloud-init.cfg
+sudo rm -f /etc/network/interfaces.d/.keep
+
 sudo -- sh -c "echo '# This file is generated from information provided by' >> /etc/network/interfaces.d/50-cloud-init.cfg"
 sudo -- sh -c "echo '# the datasource.  Changes to it will not persist across an instance.' >> /etc/network/interfaces.d/50-cloud-init.cfg"
-sudo -- sh -c "echo '# To disable cloud-init's network configuration capabilities, write a file' >> /etc/network/interfaces.d/50-cloud-init.cfg"
+sudo -- sh -c "echo '# To disable cloud-init\'s network configuration capabilities, write a file' >> /etc/network/interfaces.d/50-cloud-init.cfg"
 sudo -- sh -c "echo '# /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:' >> /etc/network/interfaces.d/50-cloud-init.cfg"
 sudo -- sh -c "echo '# network: {config: disabled}' >> /etc/network/interfaces.d/50-cloud-init.cfg"
-sudo -- sh -c "echo '            ' >> /etc/network/interfaces.d/50-cloud-init.cfg"
+sudo -- sh -c "echo '' >> /etc/network/interfaces.d/50-cloud-init.cfg"
 sudo -- sh -c "echo 'auto lo' >> /etc/network/interfaces.d/50-cloud-init.cfg"
 sudo -- sh -c "echo 'iface lo inet loopback' >> /etc/network/interfaces.d/50-cloud-init.cfg"
-sudo -- sh -c "echo '            ' >> /etc/network/interfaces.d/50-cloud-init.cfg"
+sudo -- sh -c "echo '' >> /etc/network/interfaces.d/50-cloud-init.cfg"
 
 # shellcheck disable=SC2068
 for i in ${INTERFACES[@]};
 do
+    echo "interface element: ${i}"
     if ${first}
     then
         first=false
         interface_name=${i}
+        echo "interface_name: ${interface_name}"
         sudo -- sh -c "echo 'auto ${interface_name}' >> /etc/network/interfaces.d/50-cloud-init.cfg"
         sudo -- sh -c "echo 'iface ${interface_name} inet dhcp' >> /etc/network/interfaces.d/50-cloud-init.cfg"
     else
         first=true
-        sudo -- sh -c "echo '            ' >> /etc/network/interfaces.d/50-cloud-init.cfg"
+        sudo -- sh -c "echo '' >> /etc/network/interfaces.d/50-cloud-init.cfg"
     fi
 done
+
+cat /etc/network/interfaces.d/50-cloud-init.cfg
 
 sudo rm /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
 sudo -- sh -c "echo '# network: {config: disabled}' >> /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg"
 sudo -- sh -c "echo 'network: {config: disabled}' >> /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg"
-echo "Configured networks: $(date +"%T")" >> /home/ubuntu/log_startup.log
-echo "Configured networks: $(date +"%T")"
+echo "Configured networks: $(date +'%F %T.%N %Z')" >> /home/ubuntu/log_startup.log
+echo "Configured networks: $(date +'%F %T.%N %Z')"
 
 # sudo systemctl restart networking.service
 
@@ -58,8 +67,8 @@ sudo hostnamectl set-hostname "${HOSTNAME}"."${DOMAIN}"
 
 FQDN_HOSTNAME=$(hostname)
 
-echo "Add hosts file: $(date +"%T")" >> /home/ubuntu/log_startup.log
-echo "Add hosts file: $(date +"%T")"
+echo "Add hosts file: $(date +'%F %T.%N %Z')" >> /home/ubuntu/log_startup.log
+echo "Add hosts file: $(date +'%F %T.%N %Z')"
 
 sudo rm /etc/hosts
 cat >> /etc/hosts << EOF
@@ -78,6 +87,9 @@ ff02::3 ip6-allhosts
 EOF
 
 IP_ADDR=$(ip address |grep ens|grep inet|awk '{print $2}'| awk -F / '{print $1}')
+
+echo $IP_ADDR
+
 sudo -- sh -c "echo '' >>  /etc/hosts"
 
 for i in $IP_ADDR; do
@@ -116,7 +128,8 @@ echo "MANAGEMENT_INTERFACE_NAME: ${MANAGEMENT_INTERFACE_NAME}"
 echo "FABRIC_IP_SN: ${FABRIC_IP_SN}"
 echo "FABRIC_INTERFACE_NAME: ${FABRIC_INTERFACE_NAME}"
 echo "IP_ADDRESS_SUBNET_MASK: ${IP_ADDRESS_SUBNET_MASK}"
-echo "Added hosts file: $(date +"%T")" >> /home/ubuntu/log_startup.log
+echo "Added hosts file: $(date +'%F %T.%N %Z')" >> /home/ubuntu/log_startup.log
+echo "Added hosts file: $(date +'%F %T.%N %Z')"
 
 
     """

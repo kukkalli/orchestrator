@@ -69,17 +69,17 @@ echo "TZ='${TZ}'" >> .env
 docker pull kukkalli/oai-spgwc:v1.2.0
 
 # Wait for MME to be up and running
-echo "Waiting for MME at IP: $MME_IP to be up and running"
+echo "Waiting for MME at IP: $MME_IP to be up and running: $(date +'%F %T.%N %Z')"
 ./wait-for-mme.sh "$MME_IP"
 echo "MME at IP: $MME_IP is up and running"
 echo "----------------------------------------------------------------------------------------"
-echo "MME responding : $(date +"%T.%N")"
+echo "MME responding : $(date +'%F %T.%N %Z')"
 
 docker-compose up -d oai_spgwc
 
 docker-compose ps -a
 echo "----------------------------------------------------------------------------------------"
-echo "Started SPGW-C : $(date +"%T.%N")"
+echo "Started SPGW-C : $(date +'%F %T.%N %Z')"
 
 exit 0
 

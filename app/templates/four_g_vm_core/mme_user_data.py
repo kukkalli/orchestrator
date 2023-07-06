@@ -1,7 +1,7 @@
 class MMEUserData:
     USERDATA = """
-echo "MME Main User Script: $(date +'%T.%N')"
-echo "MME Main User Script: $(date +'%T.%N')" >> log_startup.log
+echo "MME Main User Script: $(date +'%F %T.%N %Z')"
+echo "MME Main User Script: $(date +'%F %T.%N %Z')" >> log_startup.log
 
 export HSS_IP=@@hss_ip@@
 export HSS_HOSTNAME="@@hss_hostname@@"
@@ -61,11 +61,11 @@ MME_IP_SN=\"${MANAGEMENT_IP_SN}\"
 echo "export MME_IP_SN=\"${MME_IP_SN}\"" >> env_var
 echo "export SPGW_IP_SN=\"$SPGW_IP_SN\"" >> env_var
 
-echo "Starting MME: $(date +'%T.%N')" >> log_startup.log
-echo "Starting MME: $(date +'%T.%N')"
+echo "Starting MME: $(date +'%F %T.%N %Z')" >> log_startup.log
+echo "Starting MME: $(date +'%F %T.%N %Z')"
 ./initialize_oai_mme
-echo "MME started: $(date +'%T.%N')" >> log_startup.log
-echo "MME started: $(date +'%T.%N')"
+echo "MME started: $(date +'%F %T.%N %Z')" >> log_startup.log
+echo "MME started: $(date +'%F %T.%N %Z')"
 
 exit 0
 

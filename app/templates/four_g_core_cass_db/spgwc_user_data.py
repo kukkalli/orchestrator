@@ -58,13 +58,13 @@ echo "Waiting for MME at IP: $MME_IP to be up and running"
 ./wait-for-mme.sh "$MME_IP"
 echo "MME at IP: $MME_IP is up and running"
 echo "-----------------------------------------------------------------------------------------------------"
-echo "MME responding : $(date +"%T")"
+echo "MME responding : $(date +'%F %T.%N %Z')"
 
 docker-compose up -d oai_spgwc
 
 docker ps
 echo "-----------------------------------------------------------------------------------------------------"
-echo "Started SPGW-C : $(date +"%T")"
+echo "Started SPGW-C : $(date +'%F %T.%N %Z')"
 
 exit 0
 

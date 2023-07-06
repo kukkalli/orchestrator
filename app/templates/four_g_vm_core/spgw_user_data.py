@@ -1,7 +1,7 @@
 class SPGWUserData:
     USERDATA = """
-echo "SPGW Main User Script: $(date +'%T.%N')"
-echo "SPGW Main User Script: $(date +'%T.%N')" >> log_startup.log
+echo "SPGW Main User Script: $(date +'%F %T.%N %Z')"
+echo "SPGW Main User Script: $(date +'%F %T.%N %Z')" >> log_startup.log
 
 HSS_IP=@@hss_ip@@
 HSS_HOSTNAME="@@hss_hostname@@"
@@ -25,13 +25,14 @@ echo "export HSS_HOSTNAME=${HSS_HOSTNAME}" >> env_var
 echo "export MME_IP=${MME_IP}" >> env_var
 echo "export MME_HOSTNAME=${MME_HOSTNAME}" >> env_var
 echo "export FABRIC_IP=${MANAGEMENT_IP}" >> env_var
-echo "export FABRIC_INTERFACE_NAME=${FABRIC_INTERFACE_NAME}" >> env_var
+echo "export FABRIC_IP_SN=${MANAGEMENT_IP_SN}" >> env_var
+echo "export FABRIC_INTERFACE_NAME=${MANAGEMENT_INTERFACE_NAME}" >> env_var
 
-echo "Starting SPGW: $(date +'%T.%N')" >> log_startup.log
-echo "Starting SPGW: $(date +'%T.%N')"
+echo "Starting SPGW: $(date +'%F %T.%N %Z')" >> log_startup.log
+echo "Starting SPGW: $(date +'%F %T.%N %Z')"
 ./initialize_oai_spgw
-echo "SPGW started: $(date +'%T.%N')" >> log_startup.log
-echo "SPGW started: $(date +'%T.%N')"
+echo "SPGW started: $(date +'%F %T.%N %Z')" >> log_startup.log
+echo "SPGW started: $(date +'%F %T.%N %Z')"
 
 exit 0
 

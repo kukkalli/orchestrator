@@ -1,5 +1,6 @@
 import logging
 import time
+from datetime import datetime
 from typing import Dict
 
 from odl.openflow import OpenFlow
@@ -141,14 +142,13 @@ class ServiceChain:
             start_time = time.time()
             LOG.info(f"Starting {vm.hostname} at: {start_time}")
             print(f"Starting {vm.hostname} at: {start_time}")
+            date_time = datetime.fromtimestamp(start_time)
+            LOG.info(f"Started {vm.hostname} at: {date_time.strftime('%Y-%m-%d, %H:%M:%S.%f')}")
+            print(f"Started {vm.hostname} at: {date_time.strftime('%Y-%m-%d, %H:%M:%S.%f')}")
             key_pair = "hanif-kukkalli"
 
-            LOG.debug("Creating VM: {} on hypervisor: {} with key_pair: {}".format(vm.hostname, vm.hypervisor_hostname,
-                                                                                   key_pair))
-            print("Creating VM: {} on hypervisor: {} with key_pair: {}".format(vm.hostname, vm.hypervisor_hostname,
-                                                                               key_pair))
-            if vm.name == "mme":
-                print(f"User data: {vm_user_data_dict[vm.name]}")
+            LOG.debug("Creating VM: {} on hypervisor: {}".format(vm.hostname, vm.hypervisor_hostname))
+            print("Creating VM: {} on hypervisor: {}".format(vm.hostname, vm.hypervisor_hostname))
             server = virtual_machine.create_virtual_machine(vm.hostname, vm.image_id, flavor=vm.flavor,
                                                             security_groups=["default"],
                                                             userdata=vm_user_data_dict[vm.name],
@@ -157,6 +157,9 @@ class ServiceChain:
             LOG.debug(f"Created {vm.name} Server: {server}")
             print(f"Created {vm.name} Server: {server}")
             end_time = time.time()
+            date_time = datetime.fromtimestamp(end_time)
+            LOG.info(f"Started {vm.hostname} at: {date_time.strftime('%Y-%m-%d, %H:%M:%S.%f')}")
+            print(f"Started {vm.hostname} at: {date_time.strftime('%Y-%m-%d, %H:%M:%S.%f')}")
             LOG.info(f"Started {vm.hostname} at: {end_time}")
             print(f"Started {vm.hostname} at: {end_time}")
             LOG.info(f"Creation of {vm.hostname} time: {(end_time - start_time)}s")
@@ -167,9 +170,7 @@ class ServiceChain:
 
 
 def main():
-    # topology_builder = TopologyBuilder("hanif")
-    # tosca_builder = TOSCABuilder("hanif")
-    input_request: InputRequest = InputRequest("VM 000 4G 50ms", "FOUR_G_VM_LTE_CORE", max_link_delay=50)
+    input_request: InputRequest = InputRequest("VM 003 4G 50ms", "FOUR_G_VM_LTE_CORE", max_link_delay=50)
     execute = ServiceChain(input_request)
     execute.create_service_chain()
     exit()

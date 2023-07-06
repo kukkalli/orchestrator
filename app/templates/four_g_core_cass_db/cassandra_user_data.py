@@ -62,17 +62,13 @@ echo "The HSS HOSTNAME is $HSS_HOSTNAME"
 
 docker-compose up -d db_init
 
-docker-compose up -d cassandra_web
-
 sleep 5
-
-docker-compose up -d oai_hss
 
 docker rm db-init
 
 docker ps -a
 
-echo "HSS started $(date +"%T")"
+echo "Cassandra started $(date +'%F %T.%N %Z')"
 
 exit 0
 

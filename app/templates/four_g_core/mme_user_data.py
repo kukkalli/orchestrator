@@ -96,20 +96,20 @@ docker pull kukkalli/magma-mme:1.0.0
 
 # Wait for HSS to be up and running
 echo "-----------------------------------------------------------"
-echo "Waiting for HSS at IP: $HSS_IP to be up and running"
+echo "Waiting for HSS at IP: $HSS_IP to be up and running: $(date +'%F %T.%N %Z')"
 echo "-----------------------------------------------------------"
 ./wait-for-hss.sh "$HSS_IP"
 echo "-----------------------------------------------------------"
 echo "HSS at IP: $HSS_IP is up and running"
 echo "-----------------------------------------------------------"
-echo "HSS is responding: $(date +"%T.%N")"
+echo "HSS is responding: $(date +'%F %T.%N %Z')"
 echo "-----------------------------------------------------------"
 
 docker-compose up -d magma_mme
 
 docker-compose ps -a
 
-echo "MME started $(date +"%T.%N")"
+echo "MME started $(date +'%F %T.%N %Z')"
 
 exit 0
 

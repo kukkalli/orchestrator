@@ -73,14 +73,14 @@ echo "-----------------------------------------------------------"
 echo "-----------------------------------------------------------"
 echo "HSS at IP: $HSS_IP is up and running"
 echo "-----------------------------------------------------------"
-echo "HSS is responding: $(date +"%T")"
+echo "HSS is responding: $(date +'%F %T.%N %Z')"
 echo "-----------------------------------------------------------"
 
 docker-compose up -d magma_mme
 
 docker ps
 
-echo "MME started $(date +"%T")"
+echo "MME started $(date +'%F %T.%N %Z')"
 
 exit 0
 

@@ -1,5 +1,6 @@
 import logging
 import time
+from datetime import datetime
 from typing import Dict, List
 
 from openstack_internal.authenticate.authenticate import AuthenticateConnection
@@ -39,8 +40,10 @@ class ServiceProfileTemplate:
         return self.network_functions
 
     def build(self):
-        LOG.info(f"Build ServiceProfileTemplate: {time.time()}")
-        print(f"Build ServiceProfileTemplate: {time.time()}")
+        start_time = time.time()
+        date_time = datetime.fromtimestamp(start_time)
+        LOG.info(f"Build ServiceProfileTemplate: {date_time.strftime('%Y-%m-%d, %H:%M:%S.%f')}")
+        print(f"Build ServiceProfileTemplate: {date_time.strftime('%Y-%m-%d, %H:%M:%S.%f')}")
         for index, network_function in enumerate(self.network_functions):
             LOG.info(f"Network Function Name: {network_function.name}, Index: {index}")
             vm_request = VMRequirement(int_id=index, network_function=network_function)
@@ -53,8 +56,10 @@ class ServiceProfileTemplate:
                                  self.vnf_vm_map.get(link['out']).int_id, self.bandwidth, link['delay'])
             self.v_links.append(v_link)
 
-        LOG.info(f"Built ServiceProfileTemplate: {time.time()}")
-        print(f"Built ServiceProfileTemplate: {time.time()}")
+        start_time = time.time()
+        date_time = datetime.fromtimestamp(start_time)
+        LOG.info(f"Built ServiceProfileTemplate: {date_time.strftime('%Y-%m-%d, %H:%M:%S.%f')}")
+        print(f"Built ServiceProfileTemplate: {date_time.strftime('%Y-%m-%d, %H:%M:%S.%f')}")
         return self
 
     def populate_user_data(self, nf_ip_dict: Dict[str, str]) -> Dict[str, str]:

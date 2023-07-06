@@ -1,7 +1,7 @@
 class HSSUserData:
     USERDATA = """
 
-echo "Start HSS specific userdata: $(date +"%T.%N")"
+echo "Start HSS specific userdata: $(date +'%F %T.%N %Z')"
 
 MME_IP="@@mme_ip@@"
 MME_HOSTNAME="@@mme_hostname@@"
@@ -62,7 +62,7 @@ sed -i -e "s@_hss_hostname_@$HSS_HOSTNAME@" .env
 
 echo "The HSS HOSTNAME is $HSS_HOSTNAME"
 
-echo "Starting db_init $(date +"%T.%N")"
+echo "Starting db_init $(date +'%F %T.%N %Z')"
 
 docker-compose up -d db_init
 
@@ -70,7 +70,7 @@ docker-compose up -d db_init
 
 sleep 5
 
-echo "Starting oai_hss $(date +"%T.%N")"
+echo "Starting oai_hss $(date +'%F %T.%N %Z')"
 
 docker-compose up -d oai_hss
 
@@ -78,7 +78,7 @@ docker rm db-init
 
 docker-compose ps -a
 
-echo "HSS started $(date +"%T.%N")"
+echo "HSS started $(date +'%F %T.%N %Z')"
 
 exit 0
 

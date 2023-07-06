@@ -22,16 +22,27 @@ LOG = logging.getLogger(__name__)
 
 class FourGLTECoreCassDB(ServiceProfileTemplate):
 
+    CASS_DB = "cassandra"
+    HSS = "hss"
+    MME = "mme"
+    SPGW_C = "spgw-c"
+    SPGW_U = "spgw-u"
+
     def __init__(self, name: str, domain_name: str, bandwidth: int, max_link_delay: float = 1.0):
         super().__init__(name, domain_name, bandwidth, max_link_delay)
         """
+        self.network_functions.append(HSSTemplate(prefix, self.CASS_DB))
+        self.network_functions.append(HSSTemplate(prefix, self.HSS))
+        self.network_functions.append(MMETemplate(prefix, self.MME))
+        self.network_functions.append(SPGWCTemplate(prefix, self.SPGW_C))
+        self.network_functions.append(SPGWUTemplate(prefix, self.SPGW_U))
         self.cass_db = CassandraDB(self.name)
+        """
         self.hss = HSS(self.name)
         self.mme = MME(self.name)
         self.spgw_c = SPGWUTemplate(self.name)
         self.spgw_u = SPGWCTemplate(self.name)
         self.__build()
-        """
         cass = VMTemplate(self.name, "cassandra", "2", CassandraDBUserData.USERDATA)
         self.network_functions.append(cass)
         hss = VMTemplate(self.name, "hss", "2", HSSUserData.USERDATA)

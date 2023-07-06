@@ -65,10 +65,10 @@ while true; do
     wget -q --spider https://google.com
 
     if [ $? -eq 0 ]; then
-        echo "Network is Online : $(date +"%T.%N") --"
+        echo "Network is Online : $(date +'%F %T.%N %Z') --"
         break
     else
-        echo "Network is Offline: $(date +"%T.%N") --"
+        echo "Network is Offline: $(date +'%F %T.%N %Z') --"
         sleep 2
     fi
 done

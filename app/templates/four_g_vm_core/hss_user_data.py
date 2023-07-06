@@ -1,7 +1,7 @@
 class HSSUserData:
     USERDATA = """
-echo "HSS Main User Script: $(date +'%T.%N')"
-echo "HSS Main User Script: $(date +'%T.%N')" >> log_startup.log
+echo "HSS Main User Script: $(date +'%F %T.%N %Z')"
+echo "HSS Main User Script: $(date +'%F %T.%N %Z')" >> log_startup.log
 
 export HSS_FQDN="$FQDN_HOSTNAME"
 export MME_IP="@@mme_ip@@"
@@ -79,11 +79,11 @@ echo "export FABRIC_INTERFACE_NAME=\"$FABRIC_INTERFACE_NAME\"" >> env_var
 echo "The HSS_FABRIC_IP is $FABRIC_IP" >> log_startup.log
 echo "export HSS_FABRIC_IP=\"$FABRIC_IP\"" >> env_var
 
-echo "Starting HSS: $(date +'%T.%N')" >> log_startup.log
-echo "Starting HSS: $(date +'%T.%N')"
+echo "Starting HSS: $(date +'%F %T.%N %Z')" >> log_startup.log
+echo "Starting HSS: $(date +'%F %T.%N %Z')"
 ./initialize_oai_hss
-echo "HSS started: $(date +'%T.%N')" >> log_startup.log
-echo "HSS started: $(date +'%T.%N')"
+echo "HSS started: $(date +'%F %T.%N %Z')" >> log_startup.log
+echo "HSS started: $(date +'%F %T.%N %Z')"
 
 exit 0
 

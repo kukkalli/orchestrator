@@ -30,7 +30,8 @@ class OpenStackConstants(object):
     UBUNTU_20_04 = "focal-server-cloudimg-amd64"
     UBUNTU_18_04 = "bionic-server-cloudimg-amd64"
     CIRROS_0_5_2 = "cirros-0.5.2-x86_64"
+    UBUNTU_18_04_LOW_LATENCY = "low-latency-bionic-server-amd64"
 
-    OAI_HSS_VMI = "oai-hk-hss"
-    OAI_MME_VMI = "oai-hk-mme"
-    OAI_SPGW_VMI = "oai-hk-spgw"
+    OAI_HSS_VMI = "oai-slsd-hss"
+    OAI_MME_VMI = "oai-slsd-mme"
+    OAI_SPGW_VMI = "oai-slsd-spgw"

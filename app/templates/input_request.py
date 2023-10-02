@@ -11,6 +11,8 @@ from templates.four_g_lte_core_cass_db import FourGLTECoreCassDB
 from templates.four_g_lte_core_rcc import FourGLTECoreRCC
 from templates.four_g_vm_lte_core import FourGVMLTECore
 from templates.serviceprofiles import ServiceProfiles
+from templates.oai_5gcn_template import OAI5GCN
+from templates.oai_5gcn_du_template import OAI5GCNAndDU
 
 LOG = logging.getLogger(__name__)
 
@@ -114,10 +116,10 @@ class InputRequest:
             service_profile = FourGLTECoreRCC(self.hostname_prefix, self.domain_name, self.bandwidth)
         elif self.service_profile == ServiceProfiles.FOUR_G_LTE_CORE_BBU_CASS_DB:
             service_profile = FourGLTECoreRCC(self.hostname_prefix, self.domain_name, self.bandwidth)
-        elif self.service_profile == ServiceProfiles.FIVE_G_CORE:
-            return None
-        elif self.service_profile == ServiceProfiles.FIVE_G_CORE_DU:
-            return None
+        elif self.service_profile == ServiceProfiles.OAI_5GCN:
+            service_profile = OAI5GCN(self.hostname_prefix, self.domain_name, self.bandwidth, self.max_link_delay)
+        elif self.service_profile == ServiceProfiles.OAI_5GCN_DU:
+            service_profile = OAI5GCNAndDU(self.hostname_prefix, self.domain_name, self.bandwidth, self.max_link_delay)
         elif self.service_profile == ServiceProfiles.FOUR_G_VM_LTE_CORE:
             service_profile = FourGVMLTECore(self.hostname_prefix, self.domain_name, self.bandwidth)
         else:
@@ -138,7 +140,7 @@ class InputRequest:
 
 
 def main():
-    input_request = InputRequest(name="Hanif testing orchestrator", service_profile="FOUR_G_LTE_CORE", bandwidth=150,
+    input_request = InputRequest(name="Hanif testing orchestrator", service_profile="OAI_5GCN", bandwidth=150,
                                  max_link_delay=50)
     print(f"name: {input_request.get_service_chain_name()}, service_profile: {input_request.get_service_profile()}", )
     print(f'service template: {input_request.get_service_template()}')

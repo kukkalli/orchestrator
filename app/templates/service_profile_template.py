@@ -23,7 +23,7 @@ class ServiceProfileTemplate:
         self.network_functions: List[VMTemplate] = []
         self.vm_requirements_list: List[VMRequirement] = []
         self.vnf_vm_map: Dict[str, VMRequirement] = {}
-        self.nfv_v_links_list: List[Dict] = []
+        self.nfv_v_links_list: List[Dict[str, any]] = []
         self.v_links: List[VirtualLink] = []
         nova = Nova(AuthenticateConnection())
         self.flavor_id_map: Dict[str, Flavor] = nova.get_flavor_id_map()
@@ -33,10 +33,13 @@ class ServiceProfileTemplate:
     def get_vm_requirements_list(self):
         return self.vm_requirements_list
 
-    def get_v_links_list(self):
+    def get_v_links_list(self) -> List[VirtualLink]:
         return self.v_links
 
-    def get_network_functions(self):
+    def get_nfv_v_links_list(self) -> List[Dict]:
+        return self.nfv_v_links_list
+
+    def get_network_functions(self) -> List[VMTemplate]:
         return self.network_functions
 
     def build(self):

@@ -8,9 +8,12 @@ LOG = logging.getLogger(__name__)
 
 class CassandraDB(VMTemplate):
 
-    def __init__(self, name: str):
-        super().__init__()
+    def __init__(self, prefix: str, nf_name: str):
+        super().__init__(prefix, nf_name)
         self.flavor = "2"
-        self.vm_name = name+"-cassandra-db"
-        self.name = "cassandra-db"
         self.user_data = self.get_user_data() + CassandraDBUserData.USERDATA
+        # super().__init__()
+        # self.flavor = "2"
+        # self.vm_name = name+"-cassandra-db"
+        # self.name = "cassandra-db"
+        # self.user_data = self.get_user_data() + CassandraDBUserData.USERDATA

@@ -1,9 +1,7 @@
 import logging
 from typing import Dict
 
-from templates.common_user_data import CommonUserData
 from templates.four_g_vm_core.hss_template import HSSTemplate
-from templates.four_g_vm_core.hss_user_data import HSSUserData
 from templates.four_g_vm_core.mme_template import MMETemplate
 from templates.four_g_vm_core.spgw_template import SPGWTemplate
 from templates.pdn_type import PDNType

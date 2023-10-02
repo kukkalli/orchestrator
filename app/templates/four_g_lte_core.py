@@ -95,6 +95,7 @@ class FourGLTECore(ServiceProfileTemplate):
 def main():
     service = FourGLTECore("test", "kukkalli.com", 1000)
     service_built(service)
+    exit()
 
 
 if __name__ == "__main__":

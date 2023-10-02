@@ -1,8 +1,11 @@
-def service_built(service):
+from templates.service_profile_template import ServiceProfileTemplate
+
+
+def service_built(service: ServiceProfileTemplate):
     flavor = service.flavor_id_map["2"]
-    print(f"Flavor: id: {flavor.id}, name: {flavor.prefix},, vcpus: {flavor.vcpus}, ram: {flavor.ram}")
-    for vm_request in service.get_vm_requirements_list():
-        print(f"VM Requirement: {vm_request.hostname}, int_id: {vm_request.int_id}")
+    print(f"Flavor: id: {flavor.id}, name: {flavor.name}, vcpus: {flavor.vcpus}, ram: {flavor.ram}")
+    for network_function in service.get_network_functions():
+        print(f"VM Requirement: {network_function.name}, int_id: {network_function.image_name}")
 
     for link in service.get_v_links_list():
         print(f"link name: {link.id}, int_id: {link.int_id}")

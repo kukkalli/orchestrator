@@ -2,7 +2,9 @@ import logging
 from typing import Dict
 
 from templates.oai_5gcn.mysql.mysql import MySQL
+from templates.oai_5gcn.nrf.nrf import NRF
 from templates.service_profile_template import ServiceProfileTemplate
+from templates.user_data.prepared_image_template import PreparedImageVMTemplate
 from templates.vm_template import VMTemplate
 from test_scripts.service_build_test import service_built
 
@@ -11,8 +13,8 @@ LOG = logging.getLogger(__name__)
 
 class OAI5GCN(ServiceProfileTemplate):
     MYSQL = "mysql"
-    IMS = "asterisk-ims"
     NRF = "oai-nrf"
+    IMS = "asterisk-ims"
     UDR = "oai-udr"
     UDM = "oai-udm"
     AUSF = "oai-ausf"
@@ -24,14 +26,15 @@ class OAI5GCN(ServiceProfileTemplate):
     def __init__(self, prefix: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
         super().__init__(prefix, domain_name, bandwidth, max_delay)
         self.network_functions.append(MySQL(prefix, self.MYSQL))
-        # self.network_functions.append(MMETemplate(prefix, self.MME))
+        self.network_functions.append(NRF(prefix, self.MYSQL))
+        self.network_functions.append(PreparedImageVMTemplate(prefix, self.IMS))
         # self.network_functions.append(SPGWCTemplate(prefix, self.SPGW_C))
         # self.network_functions.append(SPGWUTemplate(prefix, self.SPGW_U))
 
     def populate_vm_ip(self, user_data: str, nf_ip_dict: Dict[str, str]) -> str:
         user_data = user_data.replace("@@mysql_ip@@", nf_ip_dict[self.MYSQL])
-        user_data = user_data.replace("@@ims_ip@@", nf_ip_dict[self.IMS])
         user_data = user_data.replace("@@nrf_ip@@", nf_ip_dict[self.NRF])
+        user_data = user_data.replace("@@ims_ip@@", nf_ip_dict[self.IMS])
         user_data = user_data.replace("@@udr_ip@@", nf_ip_dict[self.UDR])
         user_data = user_data.replace("@@udm_ip@@", nf_ip_dict[self.UDM])
         user_data = user_data.replace("@@ausf_ip@@", nf_ip_dict[self.AUSF])
@@ -47,10 +50,10 @@ class OAI5GCN(ServiceProfileTemplate):
         for network_function in self.get_network_functions():
             if network_function.name == self.MYSQL:
                 vm_user_data_dict[self.MYSQL] = self.update_mysql(network_function, nf_ip_dict)
-            elif network_function.name == self.IMS:
-                vm_user_data_dict[self.IMS] = self.update_ims(network_function, nf_ip_dict)
             elif network_function.name == self.NRF:
                 vm_user_data_dict[self.NRF] = self.update_nrf(network_function, nf_ip_dict)
+            elif network_function.name == self.IMS:
+                vm_user_data_dict[self.IMS] = self.update_ims(network_function, nf_ip_dict)
             elif network_function.name == self.UDR:
                 vm_user_data_dict[self.UDR] = self.update_udr(network_function, nf_ip_dict)
             elif network_function.name == self.UDM:
@@ -104,49 +107,59 @@ class OAI5GCN(ServiceProfileTemplate):
         user_data = self.populate_vm_ip(user_data, nf_ip_dict)
         return user_data
 
-    def update_ims(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]) -> str:
-        user_data = network_function.get_user_data()
-        user_data = user_data.replace("@@domain@@", self.domain_name)
-        return user_data
-
     def update_nrf(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]) -> str:
         user_data = network_function.get_user_data()
         user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = user_data.replace("", "")
+        user_data = self.populate_vm_ip(user_data, nf_ip_dict)
+        return user_data
+
+    def update_ims(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]) -> str:
+        user_data = network_function.get_user_data()
+        user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = self.populate_vm_ip(user_data, nf_ip_dict)
         return user_data
 
     def update_udr(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]) -> str:
         user_data = network_function.get_user_data()
         user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = self.populate_vm_ip(user_data, nf_ip_dict)
         return user_data
 
     def update_udm(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]) -> str:
         user_data = network_function.get_user_data()
         user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = self.populate_vm_ip(user_data, nf_ip_dict)
         return user_data
 
     def update_ausf(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]) -> str:
         user_data = network_function.get_user_data()
         user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = self.populate_vm_ip(user_data, nf_ip_dict)
         return user_data
 
     def update_amf(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]) -> str:
         user_data = network_function.get_user_data()
         user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = self.populate_vm_ip(user_data, nf_ip_dict)
         return user_data
 
     def update_smf(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]) -> str:
         user_data = network_function.get_user_data()
         user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = self.populate_vm_ip(user_data, nf_ip_dict)
         return user_data
 
     def update_upf(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]) -> str:
         user_data = network_function.get_user_data()
         user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = self.populate_vm_ip(user_data, nf_ip_dict)
         return user_data
 
     def update_trf(self, network_function: VMTemplate, nf_ip_dict: Dict[str, str]) -> str:
         user_data = network_function.get_user_data()
         user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = self.populate_vm_ip(user_data, nf_ip_dict)
         return user_data
 
 

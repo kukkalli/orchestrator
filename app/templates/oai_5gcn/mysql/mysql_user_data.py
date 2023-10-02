@@ -17,8 +17,8 @@ ff02::3 ip6-allhosts
 EOF
 
 echo "@@mysql_ip@@\tmysql" >> /home/ubuntu/hosts
-echo "@@ims_ip@@\tasterisk-ims" >> /home/ubuntu/hosts
 echo "@@nrf_ip@@\toai-nrf" >> /home/ubuntu/hosts
+echo "@@ims_ip@@\tasterisk-ims" >> /home/ubuntu/hosts
 echo "@@udr_ip@@\toai-udr" >> /home/ubuntu/hosts
 echo "@@udm_ip@@\toai-udm" >> /home/ubuntu/hosts
 echo "@@ausf_ip@@\toai-ausf" >> /home/ubuntu/hosts
@@ -30,21 +30,22 @@ echo "" >> /home/ubuntu/hosts
 
 cp /home/ubuntu/hosts /etc/hosts
 
-TZ="@@tz@@"
-MYSQL_DATABASE="@@mysql_database@@"
-MYSQL_USER="@@mysql_user@@"
-MYSQL_PASSWORD="@@mysql_password@@"
-MYSQL_ROOT_PASSWORD="@@mysql_root_password@@"
-
-UE_ID="@@ue_id@@"
-ENC_PERMANENT_KEY="@@enc_permanent_key@@"
-PROTECTION_PARAMETER_ID="@@protection_parameter_id@@"
-ENC_OPC_KEY="@@enc_opc_key@@"
-
-SERVING_PLMN_ID="@@serving_plmn_id@@"
-SST="@@sst@@"
-
-DNN=@@dnn@@
+# TZ="@@tz@@"
+# MYSQL_DATABASE="@@mysql_database@@"
+# MYSQL_USER="@@mysql_user@@"
+# MYSQL_PASSWORD="@@mysql_password@@"
+# MYSQL_ROOT_PASSWORD="@@mysql_root_password@@"
+# 
+# UE_ID="@@ue_id@@"
+# ENC_PERMANENT_KEY="@@enc_permanent_key@@"
+# PROTECTION_PARAMETER_ID="@@protection_parameter_id@@"
+# ENC_OPC_KEY="@@enc_opc_key@@"
+# 
+# SERVING_PLMN_ID="@@serving_plmn_id@@"
+# SST="@@sst@@"
+# 
+# DNN=@@dnn@@
+# 
 
 # Change user to ubuntu
 echo "Changing user to ubuntu"
@@ -98,24 +99,24 @@ echo "export ENC_PERMANENT_KEY=@@enc_permanent_key@@" >> /home/ubuntu/env_var
 export PROTECTION_PARAMETER_ID="@@protection_parameter_id@@"
 echo "export PROTECTION_PARAMETER_ID=@@protection_parameter_id@@" >> /home/ubuntu/env_var
 
-export ENC_OPC_KEY="${ENC_OPC_KEY}"
-echo "export ENC_OPC_KEY=${ENC_OPC_KEY}" >> /home/ubuntu/env_var
+export ENC_OPC_KEY="@@enc_opc_key@@"
+echo "export ENC_OPC_KEY=@@enc_opc_key@@" >> /home/ubuntu/env_var
 
 export SUPI="@@ue_id@@"
 echo "export SUPI=@@ue_id@@" >> /home/ubuntu/env_var
 
 export SERVING_PLMN_ID="@@serving_plmn_id@@"
-echo "export SERVING_PLMN_ID=${SERVING_PLMN_ID}" >> /home/ubuntu/env_var
+echo "export SERVING_PLMN_ID=@@serving_plmn_id@@" >> /home/ubuntu/env_var
 
 export SST="@@sst@@"
-echo "export SST=${SST}" >> /home/ubuntu/env_var
+echo "export SST=@@sst@@" >> /home/ubuntu/env_var
 
 export DNN='@@dnn@@'
 echo -e "export DNN=@@dnn@@" >> /home/ubuntu/env_var
 
 cat /home/ubuntu/env_var
 
-./update_oai_sql
+./update_mysql
 
 sleep 2
 

@@ -40,7 +40,7 @@ class ServiceChain:
         self.neutron = None
 
     def create_service_chain(self) -> {}:
-        provider_network_name = OpenStackConstants.MANAGEMENT_NETWORK_NAME
+        provider_network_name = OpenStackConstants.PROVIDER_NETWORK_NAME
         start_time = time.time()
         LOG.info(f"Creating Optimizer object: Start Time: {start_time}")
         optimizer = Optimizer(self.topology, self.tosca)
@@ -70,9 +70,10 @@ class ServiceChain:
         self.network_ip_dict_list = {}
         self.neutron = Neutron(AuthenticateConnection().get_connection())
         for network_name in OpenStackConstants.NETWORKS_LIST:
-            LOG.info(f"Network ID: {self.neutron.networks_dict[network_name]}, Name: {network_name}")
-            self.network_ip_dict_list[network_name] = self.neutron.get_available_ip_list(
-                network_name, len(self.tosca.vm_requirements))
+            if network_name == OpenStackConstants.PROVIDER_NETWORK_NAME:
+                LOG.info(f"Network ID: {self.neutron.networks_dict[network_name]}, Name: {network_name}")
+                self.network_ip_dict_list[network_name] = self.neutron.get_available_ip_list(
+                    network_name, len(self.tosca.vm_requirements))
         self.neutron.connection.close()
 
     def get_vm_ip_address(self, network_name: str, vm_requirement: VMRequirement) -> str:

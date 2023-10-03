@@ -43,19 +43,10 @@ export DOMAIN="${DOMAIN}"
 echo "export DOMAIN=${DOMAIN}" >> /home/ubuntu/env_var
 
 export HOSTNAME="${HOSTNAME}"
-echo "export MYSQL_HOSTNAME=${HOSTNAME}" >> /home/ubuntu/env_var
+echo "export IMS_HOSTNAME=${HOSTNAME}" >> /home/ubuntu/env_var
 
-export NRF_FQDN="${FQDN_HOSTNAME}"
-echo "export NRF_FQDN=${NRF_FQDN}" >> /home/ubuntu/env_var
-
-export TZ="@@tz@@"
-echo "export TZ=@@tz@@" >> /home/ubuntu/env_var
-
-export LOG_LEVEL=@@log_level@@
-echo "LOG_LEVEL=@@log_level@@" >> /home/ubuntu/env_var
-
-export NRF_INTERFACE_NAME_FOR_SBI=eth0
-echo "export NRF_INTERFACE_NAME_FOR_SBI=eth0" >> /home/ubuntu/env_var
+export IMS_FQDN="${FQDN_HOSTNAME}"
+echo "export IMS_FQDN=${IMS_FQDN}" >> /home/ubuntu/env_var
 
 export FABRIC_IP="${FABRIC_IP}"
 echo "export FABRIC_IP=${FABRIC_IP}" >> /home/ubuntu/env_var
@@ -63,9 +54,23 @@ echo "export FABRIC_IP=${FABRIC_IP}" >> /home/ubuntu/env_var
 export MANAGEMENT_IP="${MANAGEMENT_IP}"
 echo "export MANAGEMENT_IP=${MANAGEMENT_IP}" >> /home/ubuntu/env_var
 
+echo "export WEBSMSD_PORT=@@web_port@@" >> /home/ubuntu/env_var
+echo "# export SMS_PORT=8080" >> /home/ubuntu/env_var
+echo "export SMS_PORT=@@sms_port@@" >> /home/ubuntu/env_var
+echo "export TELE_SRV=${HOSTNAME}" >> /home/ubuntu/env_var
+echo "# export DOMAIN=@@domain@@" >> /home/ubuntu/env_var
+echo "export DOMAIN=docker.localhost" >> /home/ubuntu/env_var
+echo "export SYSLOG_LEVEL=@@sys_log@@" >> /home/ubuntu/env_var
+echo "" >> /home/ubuntu/env_var
+echo "export UE_ID_01=@@ue_id_01@@" >> /home/ubuntu/env_var
+echo "export UE_USER_01_FULLNAME=@@ue_user_01_fullname@@" >> /home/ubuntu/env_var
+echo "" >> /home/ubuntu/env_var
+echo "export UE_ID_02=@@ue_id_02@@001010000000002" >> /home/ubuntu/env_var
+echo "export UE_USER_02_FULLNAME=@@ue_user_02_fullname@@" >> /home/ubuntu/env_var
+
 cat /home/ubuntu/env_var
 
-./update_nrf
+./update_ims
 
 sleep 2
 

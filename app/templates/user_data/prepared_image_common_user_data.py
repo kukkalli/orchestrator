@@ -78,7 +78,7 @@ for i in $IP_ADDR; do
     sudo -- sh -c "echo $i $HOSTNAME $FQDN_HOSTNAME >> /etc/hosts"
     if [[ $i == "10.10"* ]];
     then
-      MANAGEMENT_IP=$i
+      export MANAGEMENT_IP=$i
     fi
     if [[ $i == "10.11"* ]];
     then

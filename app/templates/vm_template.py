@@ -23,28 +23,28 @@ class VMTemplate:
         self.out_v_links: List[VirtualLink] = []
         self.key_pair = "hanif-kukkalli"
 
-    def get_flavour(self):
+    def get_flavour(self) -> str:
         return self.flavor
 
-    def get_image_id(self):
+    def get_image_id(self) -> str:
         return self.image_id
 
-    def get_image_name(self):
+    def get_image_name(self) -> str:
         return self.image_name
 
-    def get_ip_addresses(self):
+    def get_ip_addresses(self) -> Dict[str, str]:
         return self.ip_addresses
 
-    def get_networks(self):
+    def get_networks(self) -> List[Dict[str, str]]:
         return self.networks
 
-    def get_vm_name(self):
+    def get_vm_name(self) -> str:
         return self.vm_name
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self.name
 
-    def get_user_data(self):
+    def get_user_data(self) -> str:
         return self.user_data
 
     def create_vm(self):

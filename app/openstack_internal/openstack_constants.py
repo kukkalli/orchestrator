@@ -25,7 +25,8 @@ class OpenStackConstants(object):
     MANAGEMENT_NETWORK_NAME: str = "Management-Network"
     PROVIDER_NETWORK_NAME: str = "TUC11-Network"
 
-    NETWORKS_LIST: List[str] = [MANAGEMENT_NETWORK_NAME, PROVIDER_NETWORK_NAME]
+#    NETWORKS_LIST: List[str] = [MANAGEMENT_NETWORK_NAME, PROVIDER_NETWORK_NAME]
+    NETWORKS_LIST: List[str] = [PROVIDER_NETWORK_NAME]
 
     UBUNTU_22_04 = "ubuntu-22.04-server-cloudimg"
     UBUNTU_20_04 = "focal-server-cloudimg-amd64"

@@ -57,16 +57,16 @@ echo "export MANAGEMENT_IP=${MANAGEMENT_IP}" >> /home/ubuntu/env_var
 echo "export WEBSMSD_PORT=@@web_port@@" >> /home/ubuntu/env_var
 echo "# export SMS_PORT=8080" >> /home/ubuntu/env_var
 echo "export SMS_PORT=@@sms_port@@" >> /home/ubuntu/env_var
-echo "export TELE_SRV=${HOSTNAME}" >> /home/ubuntu/env_var
+echo "export TELE_SRV=\"${HOSTNAME}\"" >> /home/ubuntu/env_var
 echo "# export DOMAIN=@@domain@@" >> /home/ubuntu/env_var
 echo "export DOMAIN=docker.localhost" >> /home/ubuntu/env_var
 echo "export SYSLOG_LEVEL=@@sys_log@@" >> /home/ubuntu/env_var
 echo "" >> /home/ubuntu/env_var
 echo "export UE_ID_01=@@ue_id_01@@" >> /home/ubuntu/env_var
-echo "export UE_USER_01_FULLNAME=@@ue_user_01_fullname@@" >> /home/ubuntu/env_var
+echo "export UE_USER_01_FULLNAME=\"@@ue_user_01_fullname@@\"" >> /home/ubuntu/env_var
 echo "" >> /home/ubuntu/env_var
-echo "export UE_ID_02=@@ue_id_02@@001010000000002" >> /home/ubuntu/env_var
-echo "export UE_USER_02_FULLNAME=@@ue_user_02_fullname@@" >> /home/ubuntu/env_var
+echo "export UE_ID_02=@@ue_id_02@@" >> /home/ubuntu/env_var
+echo "export UE_USER_02_FULLNAME=\"@@ue_user_02_fullname@@\"" >> /home/ubuntu/env_var
 
 cat /home/ubuntu/env_var
 

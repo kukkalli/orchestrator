@@ -172,7 +172,7 @@ class ServiceChain:
 
 
 def main():
-    input_request: InputRequest = InputRequest("OAI 5G 001 50ms", "OAI_5GCN", max_link_delay=50)
+    input_request: InputRequest = InputRequest("OAI 5G 001 50ms", "OAI_5GCN_DC", max_link_delay=50)
     execute = ServiceChain(input_request)
     execute.create_service_chain()
     exit()

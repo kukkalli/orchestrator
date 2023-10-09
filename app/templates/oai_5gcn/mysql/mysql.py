@@ -2,7 +2,7 @@ import logging
 
 from openstack_internal.glance.glance_details import Glance
 from templates.oai_5gcn.mysql.mysql_user_data import MySQLUserData
-from templates.oai_5gcn.oai_5gcn_constants import OAI5GConstants
+from templates.user_data.oai_5gcn_constants import OAI5GConstants
 from templates.user_data.prepared_image_template import PreparedImageVMTemplate
 
 LOG = logging.getLogger(__name__)

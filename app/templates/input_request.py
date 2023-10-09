@@ -12,6 +12,7 @@ from templates.four_g_lte_core_rcc import FourGLTECoreRCC
 from templates.four_g_vm_lte_core import FourGVMLTECore
 from templates.serviceprofiles import ServiceProfiles
 from templates.oai_5gcn_template import OAI5GCN
+from templates.oai_5gcn_dc_template import OAI5GCNDC
 from templates.oai_5gcn_du_template import OAI5GCNAndDU
 
 LOG = logging.getLogger(__name__)
@@ -118,6 +119,8 @@ class InputRequest:
             service_profile = FourGLTECoreRCC(self.hostname_prefix, self.domain_name, self.bandwidth)
         elif self.service_profile == ServiceProfiles.OAI_5GCN:
             service_profile = OAI5GCN(self.hostname_prefix, self.domain_name, self.bandwidth, self.max_link_delay)
+        elif self.service_profile == ServiceProfiles.OAI_5GCN_DC:
+            service_profile = OAI5GCNDC(self.hostname_prefix, self.domain_name, self.bandwidth, self.max_link_delay)
         elif self.service_profile == ServiceProfiles.OAI_5GCN_DU:
             service_profile = OAI5GCNAndDU(self.hostname_prefix, self.domain_name, self.bandwidth, self.max_link_delay)
         elif self.service_profile == ServiceProfiles.FOUR_G_VM_LTE_CORE:

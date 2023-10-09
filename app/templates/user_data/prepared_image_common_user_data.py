@@ -12,38 +12,38 @@ DOMAIN="@@domain@@"
 
 echo "Domain: ${DOMAIN}"
 
-INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
-
-echo "The interfaces: ${INTERFACES}"
-
-first=true
-interface_name=""
-# sudo rm /etc/netplan/50-cloud-init.yaml
-sudo -- sh -c "echo 'network:' > /etc/netplan/50-cloud-init.yaml"
-sudo -- sh -c "echo '    ethernets:' >> /etc/netplan/50-cloud-init.yaml"
-
-# shellcheck disable=SC2068
-for i in ${INTERFACES[@]};
-do
-    if ${first}
-    then
-        first=false
-        interface_name=${i}
-        sudo -- sh -c "echo '        ${interface_name}:' >> /etc/netplan/50-cloud-init.yaml"
-        sudo -- sh -c "echo '            dhcp4: true' >> /etc/netplan/50-cloud-init.yaml"
-    else
-        first=true
-        sudo -- sh -c "echo '            match:' >> /etc/netplan/50-cloud-init.yaml"
-        sudo -- sh -c "echo '                macaddress: ${i}' >> /etc/netplan/50-cloud-init.yaml"
-        sudo -- sh -c "echo '            set-name: ${interface_name}' >> /etc/netplan/50-cloud-init.yaml"
-   fi
-done
-
-sudo -- sh -c "echo '    version: 2' >> /etc/netplan/50-cloud-init.yaml"
-
-echo "-------------- Netplan Yaml --------------"
-cat /etc/netplan/50-cloud-init.yaml
-echo "-------------- Netplan Yaml --------------"
+# INTERFACES=$(find /sys/class/net -mindepth 1 -maxdepth 1 ! -name lo ! -name docker -printf "%P " -execdir cat {}/address \;)
+# 
+# echo "The interfaces: ${INTERFACES}"
+# 
+# first=true
+# interface_name=""
+# # sudo rm /etc/netplan/50-cloud-init.yaml
+# sudo -- sh -c "echo 'network:' > /etc/netplan/50-cloud-init.yaml"
+# sudo -- sh -c "echo '    ethernets:' >> /etc/netplan/50-cloud-init.yaml"
+# 
+# # shellcheck disable=SC2068
+# for i in ${INTERFACES[@]};
+# do
+#     if ${first}
+#     then
+#         first=false
+#         interface_name=${i}
+#         sudo -- sh -c "echo '        ${interface_name}:' >> /etc/netplan/50-cloud-init.yaml"
+#         sudo -- sh -c "echo '            dhcp4: true' >> /etc/netplan/50-cloud-init.yaml"
+#     else
+#         first=true
+#         sudo -- sh -c "echo '            match:' >> /etc/netplan/50-cloud-init.yaml"
+#         sudo -- sh -c "echo '                macaddress: ${i}' >> /etc/netplan/50-cloud-init.yaml"
+#         sudo -- sh -c "echo '            set-name: ${interface_name}' >> /etc/netplan/50-cloud-init.yaml"
+#    fi
+# done
+# 
+# sudo -- sh -c "echo '    version: 2' >> /etc/netplan/50-cloud-init.yaml"
+# 
+# echo "-------------- Netplan Yaml --------------"
+# cat /etc/netplan/50-cloud-init.yaml
+# echo "-------------- Netplan Yaml --------------"
 
 sudo -- sh -c "echo 'network: {config: disabled}' >> /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg"
 
@@ -91,5 +91,6 @@ cat /etc/hosts
 echo "--------------- docker compose version is: ---------------"
 docker compose version
 echo "--------------- docker compose version is: $(docker compose version)" >> /home/ubuntu/log_startup.log
+
 
     """

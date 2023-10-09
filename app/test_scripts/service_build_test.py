@@ -7,5 +7,5 @@ def service_built(service: ServiceProfileTemplate):
     for network_function in service.get_network_functions():
         print(f"VM Requirement: {network_function.name}, int_id: {network_function.image_name}")
 
-    for link in service.get_v_links_list():
-        print(f"link name: {link.id}, int_id: {link.int_id}")
+    for link in service.get_nfv_v_links_list():
+        print(f"link name: {link['out']}, int_id: {link['in']}")

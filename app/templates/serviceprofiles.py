@@ -12,6 +12,7 @@ class ServiceProfiles(Enum):
     FOUR_G_LTE_CORE_BBU_CASS_DB = "FOUR_G_LTE_CORE_BBU_CASS_DB"
     FOUR_G_VM_LTE_CORE = "FOUR_G_VM_LTE_CORE"
     OAI_5GCN = "OAI_5GCN"
+    OAI_5GCN_DC = "OAI_5GCN_DC"
     OAI_5GCN_DU = "OAI_5GCN_DU"
 
     def get_name(self):
@@ -38,8 +39,8 @@ def main():
     print(isinstance(ServiceProfiles.FOUR_G_VM_LTE_CORE, ServiceProfiles))
     print(ServiceProfiles.default())
     print(ServiceProfiles.FOUR_G_LTE_CORE_BBU.describe())
-    print(ServiceProfiles.OAI_5GCN.name)
-    print(ServiceProfiles.OAI_5GCN.value)
+    print(ServiceProfiles.OAI_5GCN_DC.name)
+    print(ServiceProfiles.OAI_5GCN_DC.value)
     exit()
 
 

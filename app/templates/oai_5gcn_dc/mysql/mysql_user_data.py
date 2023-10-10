@@ -1,6 +1,21 @@
 class MySQLUserData:
     USERDATA = """
-cat > /home/ubuntu/hosts << EOF
+# Change user to ubuntu
+echo "Changing user to ubuntu"
+su - ubuntu
+echo "Changed user to $USER"
+
+cd /home/ubuntu/ || exit
+
+git clone https://github.com/kukkalli/oai-docker-compose.git
+
+chown ubuntu:ubuntu -R oai-docker-compose
+
+cd oai-docker-compose/5g/mysql/ || exit
+
+rm -f env_var
+
+cat > hosts << EOF
 127.0.0.1 localhost
 
 # The following lines are desirable for IPv6 capable hosts
@@ -16,34 +31,19 @@ ff02::3 ip6-allhosts
 # OAI 5GCN VM IPs
 EOF
 
-echo "@@mysql_ip@@\tmysql" >> /home/ubuntu/hosts
-echo "@@nrf_ip@@\toai-nrf" >> /home/ubuntu/hosts
-echo "@@ims_ip@@\tasterisk-ims" >> /home/ubuntu/hosts
-echo "@@udr_ip@@\toai-udr" >> /home/ubuntu/hosts
-echo "@@udm_ip@@\toai-udm" >> /home/ubuntu/hosts
-echo "@@ausf_ip@@\toai-ausf" >> /home/ubuntu/hosts
-echo "@@amf_ip@@\toai-amf" >> /home/ubuntu/hosts
-echo "@@smf_ip@@\toai-smf" >> /home/ubuntu/hosts
-echo "@@upf_ip@@\toai-spgwu" >> /home/ubuntu/hosts
-echo "@@trf_ip@@\toai-trf-gen" >> /home/ubuntu/hosts
-echo "" >> /home/ubuntu/hosts
+echo "@@mysql_ip@@\tmysql" >> hosts
+echo "@@nrf_ip@@\toai-nrf" >> hosts
+echo "@@ims_ip@@\tasterisk-ims" >> hosts
+echo "@@udr_ip@@\toai-udr" >> hosts
+echo "@@udm_ip@@\toai-udm" >> hosts
+echo "@@ausf_ip@@\toai-ausf" >> hosts
+echo "@@amf_ip@@\toai-amf" >> hosts
+echo "@@smf_ip@@\toai-smf" >> hosts
+echo "@@upf_ip@@\toai-spgwu" >> hosts
+echo "@@trf_ip@@\toai-trf-gen" >> hosts
+echo "" >> hosts
 
-cp /home/ubuntu/hosts /etc/hosts
-
-# Change user to ubuntu
-echo "Changing user to ubuntu"
-su - ubuntu
-echo "Changed user to $USER"
-
-cd /home/ubuntu/ || exit
-
-git clone https://github.com/kukkalli/oai-docker-compose.git
-
-chown ubuntu:ubuntu -R oai-docker-compose
-
-cd oai-docker-compose/5g/mysql/ || exit
-
-rm -f env_var
+sudo cp hosts /etc/hosts
 
 export DOMAIN="${DOMAIN}"
 echo "export DOMAIN=${DOMAIN}" >> env_var

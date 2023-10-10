@@ -26,7 +26,7 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 
-127.0.0.1	oai-nrf
+127.0.0.1	${HOSTNAME}
 
 # OAI 5GCN VM IPs
 EOF
@@ -57,8 +57,8 @@ echo "export IMS_FQDN=${IMS_FQDN}" >> env_var
 export FABRIC_IP="${FABRIC_IP}"
 echo "export FABRIC_IP=${FABRIC_IP}" >> env_var
 
-export MANAGEMENT_IP="${MANAGEMENT_IP}"
-echo "export MANAGEMENT_IP=${MANAGEMENT_IP}" >> env_var
+# export MANAGEMENT_IP="${MANAGEMENT_IP}"
+# echo "export MANAGEMENT_IP=${MANAGEMENT_IP}" >> env_var
 
 echo "export WEBSMSD_PORT=@@web_port@@" >> env_var
 echo "# export SMS_PORT=8080" >> env_var

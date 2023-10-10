@@ -26,7 +26,7 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 
-127.0.0.1	mysql
+127.0.0.1	${HOSTNAME}
 
 # OAI 5GCN VM IPs
 EOF

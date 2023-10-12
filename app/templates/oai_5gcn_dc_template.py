@@ -5,6 +5,7 @@ from templates.oai_5gcn_dc.ims.ims import IMS
 from templates.oai_5gcn_dc.mysql.mysql import MySQL
 from templates.oai_5gcn_dc.nrf.nrf import NRF
 from templates.service_profile_template import ServiceProfileTemplate
+from templates.user_data.oai_5gcn_constants import OAI5GConstants
 from templates.user_data.prepared_image_template import PreparedImageVMTemplate
 from test_scripts.service_build_test import service_built
 
@@ -40,6 +41,74 @@ class OAI5GCNDC(ServiceProfileTemplate):
                   "ue_user_01_fullname": "Ameya Joshi",
                   "ue_id_02": "001010000000002",
                   "ue_user_02_fullname": "Syed Tasnimul Islam"}
+
+    CONFIG_Values = {
+        "MYSQL_SERVER": "mysql",
+        "MYSQL_IPV4_ADDRESS": "10.11.2.160",
+        "MYSQL_USER": "oai_tuc",
+        "MYSQL_PASS": "oai_tuc",
+        "MYSQL_DB": "oai_db",
+        "DB_CONNECTION_TIMEOUT": "300",
+        "WAIT_MYSQL": "120",
+        "USE_FQDN_DNS": "yes",
+        "REGISTER_NRF": "yes",
+        "NRF_HOSTNAME": "oai-nrf",
+        "NRF_IPV4_ADDRESS": "10.11.1.41",
+        "NRF_FQDN": "oai-nrf",
+        "DOMAIN": "tu-chemnitz.de",
+        # PLMN list 01
+        "MCC_01": "208",
+        "MNC_01": "95",
+        "AMF_REGION_ID_01": "128",
+        "AMF_SET_ID_01": "1",
+        "AMF_POINTER_01": "1",
+        # PLMN list 02
+        "MCC_02": "460",
+        "MNC_02": "11",
+        "AMF_REGION_ID_02": "10",
+        "AMF_SET_ID_02": "1",
+        "AMF_POINTER_02": "1",
+        # PLMN Support List
+        "PLMN_SL_MCC": "208",
+        "PLMN_SL_MNC": "95",
+        "PLMN_SL_TAC": "0xa000",
+        # NSSAI Set 01
+        "NSSAI_SST_01": "1",
+        # NSSAI Set 02
+        "NSSAI_SST_02": "1",
+        "NSSAI_SD_02": "1",
+        # NSSAI Set 03
+        "NSSAI_SST_03": "222",
+        "NSSAI_SD_03": "123",
+        # IMS IPv4
+        "IMS_IPV4": "10.11.1.118",
+        # DNN List
+        # DNN 01
+        "DNN_01_SST": "1",
+        "DNN_01_DNN": "oai",
+        "DNN_01_5QI": "9",
+        "DNN_01_SESSION_AMBR_UL": "200Mbps",
+        "DNN_01_SESSION_AMBR_DL": "400Mbps",
+        "DNN_01_PDU_SESSION_TYPE": "IPV4",
+        # DNN 02
+        "DNN_02_SST": "1",
+        "DNN_02_SD": "1",
+        "DNN_02_DNN": "oai.ipv4",
+        "DNN_02_5QI": "9",
+        "DNN_02_SESSION_AMBR_UL": "100Mbps",
+        "DNN_02_SESSION_AMBR_DL": "200Mbps",
+        "DNN_02_PDU_SESSION_TYPE": "IPV4",
+        # Default DNN
+        "DNN_DEF_SST": "222",
+        "DNN_DEF_SD": "123",
+        "DNN_DEF_DNN": "default",
+        "DNN_DEF_5QI": 9,
+        "DNN_DEF_SESSION_AMBR_UL": "50Mbps",
+        "DNN_DEF_SESSION_AMBR_Dl": "100Mbps",
+        "DNN_DEF_PDU_SESSION_TYPE": "IPV4",
+        "DNN_IMS": "ims",
+        "DNN_IMS_PDU_SESSION_TYPE": "IPV4V6"
+    }
 
     UDR_Values = {
         "TZ": "Europe/Berlin",
@@ -162,6 +231,7 @@ class OAI5GCNDC(ServiceProfileTemplate):
     def populate_vm_ip(self, user_data: str, nf_ip_dict: Dict[str, str]) -> str:
         user_data = user_data.replace("@@domain@@", self.domain_name)
         user_data = user_data.replace("@@mysql_ip@@", nf_ip_dict[self.MYSQL])
+        user_data = user_data.replace("@@mysql_ip@@", nf_ip_dict[self.MYSQL])
         user_data = user_data.replace("@@nrf_ip@@", nf_ip_dict[self.NRF])
         user_data = user_data.replace("@@ims_ip@@", nf_ip_dict[self.IMS])
         user_data = user_data.replace("@@udr_ip@@", nf_ip_dict[self.UDR])
@@ -204,6 +274,7 @@ class OAI5GCNDC(ServiceProfileTemplate):
         return vm_user_data_dict
 
     def update_mysql(self, user_data: str) -> str:
+        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_MYSQL_DOCKER)
         user_data = user_data.replace("@@tz@@", self.MySQL_Values.get("timezone"))
         # MySQL database values
         user_data = user_data.replace("@@mysql_database@@", self.MySQL_Values.get("mysql_database"))
@@ -237,11 +308,13 @@ class OAI5GCNDC(ServiceProfileTemplate):
         return user_data
 
     def update_nrf(self, user_data: str) -> str:
+        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_NRF_DOCKER)
         user_data = user_data.replace("@@tz@@", self.NRF_Values.get("timezone"))
         user_data = user_data.replace("@@log_level@@", self.NRF_Values.get("log_level"))
         return user_data
 
     def update_ims(self, user_data: str) -> str:
+        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_IMS_DOCKER)
         user_data = user_data.replace("@@web_port@@", self.IMS_Values.get("web_port"))
         user_data = user_data.replace("@@sms_port@@", self.IMS_Values.get("sms_port"))
         user_data = user_data.replace("@@sys_log@@", self.IMS_Values.get("sys_log"))
@@ -251,7 +324,11 @@ class OAI5GCNDC(ServiceProfileTemplate):
         user_data = user_data.replace("@@ue_user_02_fullname@@", self.IMS_Values.get("ue_user_02_fullname"))
         return user_data
 
+    def update_config(self, user_data: str) -> str:
+
+        return user_data
     def update_udr(self, user_data: str) -> str:
+        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_UDR_DOCKER)
         user_data = user_data.replace("@@tz@@", self.UDR_Values.get("TZ"))
         user_data = user_data.replace("@@web_port@@", "80")
         user_data = user_data.replace("@@sms_port@@", "80")
@@ -263,26 +340,32 @@ class OAI5GCNDC(ServiceProfileTemplate):
         return user_data
 
     def update_udm(self, user_data: str) -> str:
+        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_UDM_DOCKER)
         user_data = user_data.replace("@@domain@@", self.domain_name)
         return user_data
 
     def update_ausf(self, user_data: str) -> str:
+        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_AUSF_DOCKER)
         user_data = user_data.replace("@@domain@@", self.domain_name)
         return user_data
 
     def update_amf(self, user_data: str) -> str:
+        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_AMF_DOCKER)
         user_data = user_data.replace("@@domain@@", self.domain_name)
         return user_data
 
     def update_smf(self, user_data: str) -> str:
+        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_SMF_DOCKER)
         user_data = user_data.replace("@@domain@@", self.domain_name)
         return user_data
 
     def update_upf(self, user_data: str) -> str:
+        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_SMF_DOCKER)
         user_data = user_data.replace("@@domain@@", self.domain_name)
         return user_data
 
     def update_trf(self, user_data: str) -> str:
+        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_TRF_GEN_DOCKER)
         user_data = user_data.replace("@@domain@@", self.domain_name)
         return user_data
 

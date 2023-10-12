@@ -18,8 +18,8 @@ class NRF(PreparedImageVMTemplate):
 
 
 def main():
-    mysql = NRF("oai", "nrf")
-    print("Image ID: {}\nUserData: {}".format(mysql.image_id, mysql.user_data))
+    vmt = NRF("oai", "nrf")
+    print("Image ID: {}\nUserData: {}".format(vmt.image_id, vmt.user_data))
     exit()
 
 

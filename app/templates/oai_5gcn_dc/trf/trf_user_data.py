@@ -1,4 +1,4 @@
-class IMSUserData:
+class TRFUserData:
     USERDATA = """
 # Change user to ubuntu
 echo "Changing user to ubuntu"
@@ -11,7 +11,7 @@ git clone https://github.com/kukkalli/oai-docker-compose.git
 
 chown ubuntu:ubuntu -R oai-docker-compose
 
-cd oai-docker-compose/5g/asterisk-ims/ || exit
+cd oai-docker-compose/5g/oai-nrf/ || exit
 
 rm -f env_var
 
@@ -52,10 +52,19 @@ export DOMAIN="${DOMAIN}"
 echo "export DOMAIN=${DOMAIN}" >> env_var
 
 export HOSTNAME="${HOSTNAME}"
-echo "export IMS_HOSTNAME=${HOSTNAME}" >> env_var
+echo "export HOSTNAME=${HOSTNAME}" >> env_var
 
-export IMS_FQDN="${FQDN_HOSTNAME}"
-echo "export IMS_FQDN=${IMS_FQDN}" >> env_var
+export NRF_FQDN="${FQDN_HOSTNAME}"
+echo "export NRF_FQDN=${NRF_FQDN}" >> env_var
+
+export TZ="@@tz@@"
+echo "export TZ=@@tz@@" >> env_var
+
+export LOG_LEVEL=@@log_level@@
+echo "export LOG_LEVEL=@@log_level@@" >> env_var
+
+export NRF_INTERFACE_NAME_FOR_SBI=eth0
+echo "export NRF_INTERFACE_NAME_FOR_SBI=eth0" >> env_var
 
 export FABRIC_IP="${FABRIC_IP}"
 echo "export FABRIC_IP=${FABRIC_IP}" >> env_var
@@ -63,21 +72,9 @@ echo "export FABRIC_IP=${FABRIC_IP}" >> env_var
 # export MANAGEMENT_IP="${MANAGEMENT_IP}"
 # echo "export MANAGEMENT_IP=${MANAGEMENT_IP}" >> env_var
 
-echo "export WEBSMSD_PORT=@@web_port@@" >> env_var
-echo "# export SMS_PORT=8080" >> env_var
-echo "export SMS_PORT=@@sms_port@@" >> env_var
-echo "export TELE_SRV=\"${HOSTNAME}\"" >> env_var
-echo "# export DOMAIN=@@domain@@" >> env_var
-echo "export DOMAIN=docker.localhost" >> env_var
-echo "export SYSLOG_LEVEL=@@sys_log@@" >> env_var
-echo "" >> env_var
-echo "export UE_ID_01=@@ue_id_01@@" >> env_var
-echo "export UE_USER_01_FULLNAME=\"@@ue_user_01_fullname@@\"" >> env_var
-echo "" >> env_var
-echo "export UE_ID_02=@@ue_id_02@@" >> env_var
-echo "export UE_USER_02_FULLNAME=\"@@ue_user_02_fullname@@\"" >> env_var
-
 cat env_var
+
+./wait_for_dependencies
 
 ./deploy
 
@@ -85,7 +82,7 @@ sleep 2
 
 docker ps -a
 
-echo "IMS started $(date +'%F %T.%N %Z')"
+echo "TRF started $(date +'%F %T.%N %Z')"
 
 exit 0
 

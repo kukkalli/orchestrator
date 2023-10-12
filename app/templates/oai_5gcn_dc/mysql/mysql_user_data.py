@@ -31,7 +31,7 @@ ff02::3 ip6-allhosts
 # OAI 5GCN VM IPs
 EOF
 
-echo "@@mysql_ip@@\tmysql" >> hosts
+echo "@@mysql_ip@@\tmysql\t" >> hosts
 echo "@@nrf_ip@@\toai-nrf" >> hosts
 echo "@@ims_ip@@\tasterisk-ims" >> hosts
 echo "@@udr_ip@@\toai-udr" >> hosts
@@ -44,6 +44,9 @@ echo "@@trf_ip@@\toai-trf-gen" >> hosts
 echo "" >> hosts
 
 sudo cp hosts /etc/hosts
+
+export IMAGE_NAME="@@image_name@@"
+echo "export IMAGE_NAME=\"@@image_name@@\"" >> env_var
 
 export DOMAIN="${DOMAIN}"
 echo "export DOMAIN=${DOMAIN}" >> env_var
@@ -105,7 +108,7 @@ echo -e "export DNN='@@dnn@@'" >> env_var
 
 cat env_var
 
-./update_mysql
+./deploy
 
 sleep 2
 

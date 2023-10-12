@@ -45,6 +45,9 @@ echo "" >> hosts
 
 sudo cp hosts /etc/hosts
 
+export IMAGE_NAME="@@image_name@@"
+echo "export IMAGE_NAME=\"@@image_name@@\"" >> env_var
+
 export DOMAIN="${DOMAIN}"
 echo "export DOMAIN=${DOMAIN}" >> env_var
 
@@ -71,7 +74,7 @@ echo "export FABRIC_IP=${FABRIC_IP}" >> env_var
 
 cat env_var
 
-./update_nrf
+./deploy
 
 sleep 2
 

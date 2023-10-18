@@ -11,7 +11,7 @@ git clone https://github.com/kukkalli/oai-docker-compose.git
 
 chown ubuntu:ubuntu -R oai-docker-compose
 
-cd oai-docker-compose/5g/oai-nrf/ || exit
+cd oai-docker-compose/5g/ausf/ || exit
 
 rm -f env_var
 

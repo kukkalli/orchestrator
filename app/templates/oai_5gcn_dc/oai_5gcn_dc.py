@@ -136,6 +136,52 @@ class OAI5GCNDC(ServiceProfileTemplate):
         "REGISTER_NRF": "yes"
     }
 
+    AMF_Values = {
+        "AMF_NAME": "OAI-AMF",
+        "LOG_LEVEL": "debug",
+        "AMF_INTERFACE_NAME_FOR_NGAP": "eth0",
+        "AMF_PORT_NGAP": "38412",
+        "AMF_INTERFACE_NAME_FOR_SBI": "eth0",
+        "AMF_PORT_SBI": "80",
+        "AMF_API_VERSION_SBI": "v1",
+        "AMF_HTTP2_PORT_SBI": "8080",
+        "USE_FQDN_DNS": "yes",
+        "REGISTER_NRF": "yes",
+        "EXTERNAL_AUSF": "yes",
+        # SMF Info
+        "SMF_01_INSTANCE_ID": "1",
+        "SMF_01_PORT": "80",
+        "SMF_01_HTTP2_PORT": "8080",
+        "SMF_01_VERSION": "v1",
+        "SMF_01_SELECTED": "true",
+        # NRF Info
+        "NRF_PORT": "80",
+        "NRF_API_VERSION": "v1",
+        # AUSF Info
+        "AUSF_PORT": "80",
+        "AUSF_API_VERSION": "v1",
+        # UDM Info
+        "UDM_PORT": "80",
+        "UDM_API_VERSION": "v1",
+        # MySQL Info
+        "MYSQL_USER": "oai_tuc",
+        "MYSQL_PASS": "oai_tuc",
+        "MYSQL_DB": "oai_db",
+        # PLMN list 01
+        "MCC_01": "208",
+        "MNC_01": "95",
+        "AMF_REGION_ID_01": "128",
+        "AMF_SET_ID_01": "1",
+        "AMF_POINTER_01": "1",
+        # PLMN Support List
+        "PLMN_SL_MCC": "208",
+        "PLMN_SL_MNC": "95",
+        "PLMN_SL_TAC": "0xa000",
+        # "PLMN_SL_TAC": "0x0001",
+        # NSSAI Set 01
+        "NSSAI_SST_01": "1"
+    }
+
     def __init__(self, prefix: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
         super().__init__(prefix, domain_name, bandwidth, max_delay)
         self.add_network_function_list(prefix)
@@ -375,7 +421,7 @@ class OAI5GCNDC(ServiceProfileTemplate):
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_AUSF_DOCKER)
         user_data = user_data.replace("@@domain@@", self.domain_name)
         user_data = user_data.replace("@@tz@@", self.TimeZone)
-        user_data = user_data.replace("@@udm_name@@", self.AUSF_Values.get("AUSF_NAME"))
+        user_data = user_data.replace("@@ausf_name@@", self.AUSF_Values.get("AUSF_NAME"))
         user_data = user_data.replace("@@sbi_if_name@@", self.AUSF_Values.get("SBI_IF_NAME"))
         user_data = user_data.replace("@@register_nrf@@", self.AUSF_Values.get("REGISTER_NRF"))
         user_data = user_data.replace("@@use_fqdn_dns@@", self.AUSF_Values.get("USE_FQDN_DNS"))
@@ -386,6 +432,56 @@ class OAI5GCNDC(ServiceProfileTemplate):
     def update_amf(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_AMF_DOCKER)
         user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = user_data.replace("@@tz@@", self.TimeZone)
+        user_data = user_data.replace("@@amf_name@@", self.AMF_Values.get("AMF_NAME"))
+        user_data = user_data.replace("@@log_level@@", self.AMF_Values.get("LOG_LEVEL"))
+        user_data = user_data.replace("@@AMF_INTERFACE_NAME_FOR_NGAP@@",
+                                      self.AMF_Values.get("AMF_INTERFACE_NAME_FOR_NGAP"))
+        user_data = user_data.replace("@@AMF_PORT_NGAP@@", self.AMF_Values.get("AMF_PORT_NGAP"))
+        user_data = user_data.replace("@@AMF_INTERFACE_NAME_FOR_SBI@@",
+                                      self.AMF_Values.get("AMF_INTERFACE_NAME_FOR_SBI"))
+        user_data = user_data.replace("@@AMF_PORT_SBI@@", self.AMF_Values.get("AMF_PORT_SBI"))
+        user_data = user_data.replace("@@AMF_API_VERSION_SBI@@", self.AMF_Values.get("AMF_API_VERSION_SBI"))
+        user_data = user_data.replace("@@AMF_HTTP2_PORT_SBI@@", self.AMF_Values.get("AMF_HTTP2_PORT_SBI"))
+        user_data = user_data.replace("@@USE_FQDN_DNS@@", self.AMF_Values.get("USE_FQDN_DNS"))
+        user_data = user_data.replace("@@REGISTER_NRF@@", self.AMF_Values.get("REGISTER_NRF"))
+        user_data = user_data.replace("@@EXTERNAL_AUSF@@", self.AMF_Values.get("EXTERNAL_AUSF"))
+        # SMF Info
+        user_data = user_data.replace("@@SMF_01_INSTANCE_ID@@", self.AMF_Values.get("SMF_01_INSTANCE_ID"))
+        user_data = user_data.replace("@@SMF_01_PORT@@", self.AMF_Values.get("SMF_01_PORT"))
+        user_data = user_data.replace("@@SMF_01_HTTP2_PORT@@", self.AMF_Values.get("SMF_01_HTTP2_PORT"))
+        user_data = user_data.replace("@@SMF_01_VERSION@@", self.AMF_Values.get("SMF_01_VERSION"))
+        user_data = user_data.replace("@@SMF_01_FQDN@@", self.SMF)
+        user_data = user_data.replace("@@SMF_01_SELECTED@@", self.AMF_Values.get("SMF_01_SELECTED"))
+        # NRF Info
+        user_data = user_data.replace("@@NRF_PORT@@", self.AMF_Values.get("NRF_PORT"))
+        user_data = user_data.replace("@@NRF_API_VERSION@@", self.AMF_Values.get("NRF_API_VERSION"))
+        user_data = user_data.replace("@@NRF_FQDN@@", self.NRF)
+        # AUSF Info
+        user_data = user_data.replace("@@AUSF_PORT@@", self.AMF_Values.get("AUSF_PORT"))
+        user_data = user_data.replace("@@AUSF_API_VERSION@@", self.AMF_Values.get("AUSF_API_VERSION"))
+        user_data = user_data.replace("@@AUSF_FQDN@@", self.AUSF)
+        # UDM Info
+        user_data = user_data.replace("@@UDM_PORT@@", self.AMF_Values.get("UDM_PORT"))
+        user_data = user_data.replace("@@UDM_API_VERSION@@", self.AMF_Values.get("UDM_API_VERSION"))
+        user_data = user_data.replace("@@UDM_FQDN@@", self.UDM)
+        # MySQL Info
+        user_data = user_data.replace("@@MYSQL_SERVER@@", self.MYSQL)
+        user_data = user_data.replace("@@MYSQL_USER@@", self.AMF_Values.get("MYSQL_USER"))
+        user_data = user_data.replace("@@MYSQL_PASS@@", self.AMF_Values.get("MYSQL_PASS"))
+        user_data = user_data.replace("@@MYSQL_DB@@", self.AMF_Values.get("MYSQL_DB"))
+        # PLMN list 01
+        user_data = user_data.replace("@@MCC_01@@", self.AMF_Values.get("MCC_01"))
+        user_data = user_data.replace("@@MNC_01@@", self.AMF_Values.get("MNC_01"))
+        user_data = user_data.replace("@@AMF_REGION_ID_01@@", self.AMF_Values.get("AMF_REGION_ID_01"))
+        user_data = user_data.replace("@@AMF_SET_ID_01@@", self.AMF_Values.get("AMF_SET_ID_01"))
+        user_data = user_data.replace("@@AMF_POINTER_01@@", self.AMF_Values.get("AMF_POINTER_01"))
+        # PLMN Support List
+        user_data = user_data.replace("@@PLMN_SL_MCC@@", self.AMF_Values.get("PLMN_SL_MCC"))
+        user_data = user_data.replace("@@PLMN_SL_MNC@@", self.AMF_Values.get("PLMN_SL_MNC"))
+        user_data = user_data.replace("@@PLMN_SL_TAC@@", self.AMF_Values.get("PLMN_SL_TAC"))
+        # NSSAI Set 01
+        user_data = user_data.replace("@@NSSAI_SST_01@@", self.AMF_Values.get("NSSAI_SST_01"))
         return user_data
 
     def update_smf(self, user_data: str) -> str:

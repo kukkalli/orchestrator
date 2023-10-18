@@ -129,6 +129,13 @@ class OAI5GCNDC(ServiceProfileTemplate):
         "REGISTER_NRF": "yes"
     }
 
+    AUSF_Values = {
+        "AUSF_NAME": "OAI_AUSF",
+        "SBI_IF_NAME": "eth0",
+        "USE_FQDN_DNS": "yes",
+        "REGISTER_NRF": "yes"
+    }
+
     def __init__(self, prefix: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
         super().__init__(prefix, domain_name, bandwidth, max_delay)
         self.add_network_function_list(prefix)
@@ -174,16 +181,15 @@ class OAI5GCNDC(ServiceProfileTemplate):
     def populate_vm_ip(self, user_data: str, nf_ip_dict: Dict[str, str]) -> str:
         user_data = user_data.replace("@@domain@@", self.domain_name)
         user_data = user_data.replace("@@mysql_ip@@", nf_ip_dict[self.MYSQL])
-        user_data = user_data.replace("@@mysql_ip@@", nf_ip_dict[self.MYSQL])
         user_data = user_data.replace("@@nrf_ip@@", nf_ip_dict[self.NRF])
         user_data = user_data.replace("@@ims_ip@@", nf_ip_dict[self.IMS])
         user_data = user_data.replace("@@udr_ip@@", nf_ip_dict[self.UDR])
-        # user_data = user_data.replace("@@udm_ip@@", nf_ip_dict[self.UDM])
-        # user_data = user_data.replace("@@ausf_ip@@", nf_ip_dict[self.AUSF])
-        # user_data = user_data.replace("@@amf_ip@@", nf_ip_dict[self.AMF])
-        # user_data = user_data.replace("@@smf_ip@@", nf_ip_dict[self.SMF])
-        # user_data = user_data.replace("@@upf_ip@@", nf_ip_dict[self.UPF])
-        # user_data = user_data.replace("@@trf_ip@@", nf_ip_dict[self.TRF_GEN])
+        user_data = user_data.replace("@@udm_ip@@", nf_ip_dict[self.UDM])
+        user_data = user_data.replace("@@ausf_ip@@", nf_ip_dict[self.AUSF])
+        user_data = user_data.replace("@@amf_ip@@", nf_ip_dict[self.AMF])
+        user_data = user_data.replace("@@smf_ip@@", nf_ip_dict[self.SMF])
+        user_data = user_data.replace("@@upf_ip@@", nf_ip_dict[self.UPF])
+        user_data = user_data.replace("@@trf_ip@@", nf_ip_dict[self.TRF_GEN])
         return user_data
 
     def populate_user_data(self, nf_ip_dict: Dict[str, str]) -> Dict[str, str]:
@@ -368,6 +374,13 @@ class OAI5GCNDC(ServiceProfileTemplate):
     def update_ausf(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_AUSF_DOCKER)
         user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = user_data.replace("@@tz@@", self.TimeZone)
+        user_data = user_data.replace("@@udm_name@@", self.AUSF_Values.get("AUSF_NAME"))
+        user_data = user_data.replace("@@sbi_if_name@@", self.AUSF_Values.get("SBI_IF_NAME"))
+        user_data = user_data.replace("@@register_nrf@@", self.AUSF_Values.get("REGISTER_NRF"))
+        user_data = user_data.replace("@@use_fqdn_dns@@", self.AUSF_Values.get("USE_FQDN_DNS"))
+        user_data = user_data.replace("@@udm_fqdn@@", self.UDM)
+        user_data = user_data.replace("@@nrf_fqdn@@", self.NRF)
         return user_data
 
     def update_amf(self, user_data: str) -> str:

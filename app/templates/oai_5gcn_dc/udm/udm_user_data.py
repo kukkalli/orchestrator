@@ -45,26 +45,11 @@ echo "" >> hosts
 
 sudo cp hosts /etc/hosts
 
-export IMAGE_NAME="@@image_name@@"
-echo "export IMAGE_NAME=\"@@image_name@@\"" >> env_var
-
 export DOMAIN="${DOMAIN}"
 echo "export DOMAIN=${DOMAIN}" >> env_var
 
 export HOSTNAME="${HOSTNAME}"
 echo "export HOSTNAME=${HOSTNAME}" >> env_var
-
-export TZ="@@tz@@"
-echo "export TZ=@@tz@@" >> env_var
-
-export NRF_INTERFACE_NAME_FOR_SBI=eth0
-echo "export NRF_INTERFACE_NAME_FOR_SBI=eth0" >> env_var
-
-export FABRIC_IP="${FABRIC_IP}"
-echo "export FABRIC_IP=${FABRIC_IP}" >> env_var
-
-# export MANAGEMENT_IP="${MANAGEMENT_IP}"
-# echo "export MANAGEMENT_IP=${MANAGEMENT_IP}" >> env_var
 
 echo -e "export IMAGE_NAME='@@image_name@@'" >> env_var
 echo -e "export TZ=@@tz@@" >> env_var
@@ -78,8 +63,6 @@ echo -e "export NRF_IPV4_ADDRESS=@@nrf_ip@@" >> env_var
 echo -e "export NRF_FQDN=@@nrf_fqdn@@" >> env_var
 
 cat env_var
-
-./wait_for_dependencies
 
 ./deploy
 

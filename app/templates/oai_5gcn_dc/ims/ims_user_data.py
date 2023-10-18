@@ -66,16 +66,16 @@ echo "export FABRIC_IP=${FABRIC_IP}" >> env_var
 echo "export WEBSMSD_PORT=@@web_port@@" >> env_var
 echo "# export SMS_PORT=8080" >> env_var
 echo "export SMS_PORT=@@sms_port@@" >> env_var
-echo "export TELE_SRV=\"${HOSTNAME}\"" >> env_var
+echo -e "export TELE_SRV='${HOSTNAME}'" >> env_var
 echo "# export DOMAIN=@@domain@@" >> env_var
 echo "export DOMAIN=docker.localhost" >> env_var
 echo "export SYSLOG_LEVEL=@@sys_log@@" >> env_var
 echo "" >> env_var
 echo "export UE_ID_01=@@ue_id_01@@" >> env_var
-echo "export UE_USER_01_FULLNAME=\"@@ue_user_01_fullname@@\"" >> env_var
+echo -e "export UE_USER_01_FULLNAME='@@ue_user_01_fullname@@'" >> env_var
 echo "" >> env_var
 echo "export UE_ID_02=@@ue_id_02@@" >> env_var
-echo "export UE_USER_02_FULLNAME=\"@@ue_user_02_fullname@@\"" >> env_var
+echo -e "export UE_USER_02_FULLNAME='@@ue_user_02_fullname@@'" >> env_var
 
 cat env_var
 

@@ -12,7 +12,7 @@ from templates.four_g_lte_core_rcc import FourGLTECoreRCC
 from templates.four_g_vm_lte_core import FourGVMLTECore
 from templates.serviceprofiles import ServiceProfiles
 from templates.oai_5gcn_template import OAI5GCN
-from templates.oai_5gcn_dc_template import OAI5GCNDC
+from templates.oai_5gcn_dc.oai_5gcn_dc import OAI5GCNDC
 from templates.oai_5gcn_du_template import OAI5GCNAndDU
 
 LOG = logging.getLogger(__name__)
@@ -143,10 +143,11 @@ class InputRequest:
 
 
 def main():
-    input_request = InputRequest(name="Hanif testing orchestrator", service_profile="OAI_5GCN", bandwidth=150,
+    input_request = InputRequest(name="Hanif testing orchestrator", service_profile="OAI_5GCN_DC", bandwidth=150,
                                  max_link_delay=50)
     print(f"name: {input_request.get_service_chain_name()}, service_profile: {input_request.get_service_profile()}", )
     print(f'service template: {input_request.get_service_template()}')
+    exit()
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ from typing import Dict
 from templates.oai_5gcn_dc.ims.ims import IMS
 from templates.oai_5gcn_dc.mysql.mysql import MySQL
 from templates.oai_5gcn_dc.nrf.nrf import NRF
+from templates.oai_5gcn_dc.udr.udr import UDR
 from templates.service_profile_template import ServiceProfileTemplate
 from templates.user_data.oai_5gcn_constants import OAI5GConstants
 from templates.user_data.prepared_image_template import PreparedImageVMTemplate
@@ -24,15 +25,15 @@ class OAI5GCNDC(ServiceProfileTemplate):
     UPF = "oai-spgwu"
     TRF_GEN = "oai-trf-gen"
 
+    TimeZone = "Europe/Berlin"
+
     MySQL_Values = {"domain": "tu-chemnitz.de",
-                    "timezone": "Europe/Berlin",
                     "mysql_database": "oai_db",
                     "mysql_user": "oai_tuc",
                     "mysql_password": "oai_tuc",
                     "mysql_root_password": "oai_tuc"}
 
-    NRF_Values = {"timezone": "Europe/Berlin",
-                  "log_level": "debug"}
+    NRF_Values = {"log_level": "debug"}
 
     IMS_Values = {"web_port": "80",
                   "sms_port": "80",
@@ -42,20 +43,13 @@ class OAI5GCNDC(ServiceProfileTemplate):
                   "ue_id_02": "001010000000002",
                   "ue_user_02_fullname": "Syed Tasnimul Islam"}
 
-    CONFIG_Values = {
+    CONF_Values = {
         "MYSQL_SERVER": "mysql",
-        "MYSQL_IPV4_ADDRESS": "10.11.2.160",
         "MYSQL_USER": "oai_tuc",
         "MYSQL_PASS": "oai_tuc",
         "MYSQL_DB": "oai_db",
         "DB_CONNECTION_TIMEOUT": "300",
         "WAIT_MYSQL": "120",
-        "USE_FQDN_DNS": "yes",
-        "REGISTER_NRF": "yes",
-        "NRF_HOSTNAME": "oai-nrf",
-        "NRF_IPV4_ADDRESS": "10.11.1.41",
-        "NRF_FQDN": "oai-nrf",
-        "DOMAIN": "tu-chemnitz.de",
         # PLMN list 01
         "MCC_01": "208",
         "MNC_01": "95",
@@ -80,8 +74,6 @@ class OAI5GCNDC(ServiceProfileTemplate):
         # NSSAI Set 03
         "NSSAI_SST_03": "222",
         "NSSAI_SD_03": "123",
-        # IMS IPv4
-        "IMS_IPV4": "10.11.1.118",
         # DNN List
         # DNN 01
         "DNN_01_SST": "1",
@@ -102,9 +94,9 @@ class OAI5GCNDC(ServiceProfileTemplate):
         "DNN_DEF_SST": "222",
         "DNN_DEF_SD": "123",
         "DNN_DEF_DNN": "default",
-        "DNN_DEF_5QI": 9,
+        "DNN_DEF_5QI": "9",
         "DNN_DEF_SESSION_AMBR_UL": "50Mbps",
-        "DNN_DEF_SESSION_AMBR_Dl": "100Mbps",
+        "DNN_DEF_SESSION_AMBR_DL": "100Mbps",
         "DNN_DEF_PDU_SESSION_TYPE": "IPV4",
         "DNN_IMS": "ims",
         "DNN_IMS_PDU_SESSION_TYPE": "IPV4V6"
@@ -114,71 +106,11 @@ class OAI5GCNDC(ServiceProfileTemplate):
         "TZ": "Europe/Berlin",
         "UDR_NAME": "OAI_UDR",
         "UDR_INTERFACE_NAME_FOR_NUDR": "eth0",
-        "MYSQL_SERVER": "mysql",
-        "MYSQL_IPV4_ADDRESS": "10.11.2.160",
-        "MYSQL_USER": "oai_tuc",
-        "MYSQL_PASS": "oai_tuc",
-        "MYSQL_DB": "oai_db",
-        "DB_CONNECTION_TIMEOUT": "300",
         "WAIT_MYSQL": "120",
         "USE_FQDN_DNS": "yes",
         "REGISTER_NRF": "yes",
         "NRF_HOSTNAME": "oai-nrf",
-        "NRF_IPV4_ADDRESS": "10.11.1.41",
-        "NRF_FQDN": "oai-nrf",
-        "DOMAIN": "tu-chemnitz.de",
-        # PLMN list 01
-        "MCC_01": "208",
-        "MNC_01": "95",
-        "AMF_REGION_ID_01": "128",
-        "AMF_SET_ID_01": "1",
-        "AMF_POINTER_01": "1",
-        # PLMN list 02
-        "MCC_02": "460",
-        "MNC_02": "11",
-        "AMF_REGION_ID_02": "10",
-        "AMF_SET_ID_02": "1",
-        "AMF_POINTER_02": "1",
-        # PLMN Support List
-        "PLMN_SL_MCC": "208",
-        "PLMN_SL_MNC": "95",
-        "PLMN_SL_TAC": "0xa000",
-        # NSSAI Set 01
-        "NSSAI_SST_01": "1",
-        # NSSAI Set 02
-        "NSSAI_SST_02": "1",
-        "NSSAI_SD_02": "1",
-        # NSSAI Set 03
-        "NSSAI_SST_03": "222",
-        "NSSAI_SD_03": "123",
-        # IMS IPv4
-        "IMS_IPV4": "10.11.1.118",
-        # DNN List
-        # DNN 01
-        "DNN_01_SST": "1",
-        "DNN_01_DNN": "oai",
-        "DNN_01_5QI": "9",
-        "DNN_01_SESSION_AMBR_UL": "200Mbps",
-        "DNN_01_SESSION_AMBR_DL": "400Mbps",
-        "DNN_01_PDU_SESSION_TYPE": "IPV4",
-        # DNN 02
-        "DNN_02_SST": "1",
-        "DNN_02_SD": "1",
-        "DNN_02_DNN": "oai.ipv4",
-        "DNN_02_5QI": "9",
-        "DNN_02_SESSION_AMBR_UL": "100Mbps",
-        "DNN_02_SESSION_AMBR_DL": "200Mbps",
-        "DNN_02_PDU_SESSION_TYPE": "IPV4",
-        # Default DNN
-        "DNN_DEF_SST": "222",
-        "DNN_DEF_SD": "123",
-        "DNN_DEF_DNN": "default",
-        "DNN_DEF_5QI": 9,
-        "DNN_DEF_SESSION_AMBR_UL": "50Mbps",
-        "DNN_DEF_SESSION_AMBR_Dl": "100Mbps",
-        "DNN_DEF_PDU_SESSION_TYPE": "IPV4",
-        "DNN_IMS": "ims",
-        "DNN_IMS_PDU_SESSION_TYPE": "IPV4V6"
+        "NRF_FQDN": "oai-nrf"
     }
 
     def __init__(self, prefix: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
@@ -190,7 +122,7 @@ class OAI5GCNDC(ServiceProfileTemplate):
         self.network_functions.append(MySQL(prefix, self.MYSQL))
         self.network_functions.append(NRF(prefix, self.NRF))
         self.network_functions.append(IMS(prefix, self.IMS))
-        self.network_functions.append(PreparedImageVMTemplate(prefix, self.UDR))
+        self.network_functions.append(UDR(prefix, self.UDR))
         # self.network_functions.append(PreparedImageVMTemplate(prefix, self.UDM))
         # self.network_functions.append(PreparedImageVMTemplate(prefix, self.AUSF))
         # self.network_functions.append(PreparedImageVMTemplate(prefix, self.AMF))
@@ -275,7 +207,7 @@ class OAI5GCNDC(ServiceProfileTemplate):
 
     def update_mysql(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_MYSQL_DOCKER)
-        user_data = user_data.replace("@@tz@@", self.MySQL_Values.get("timezone"))
+        user_data = user_data.replace("@@tz@@", self.TimeZone)
         # MySQL database values
         user_data = user_data.replace("@@mysql_database@@", self.MySQL_Values.get("mysql_database"))
         user_data = user_data.replace("@@mysql_user@@", self.MySQL_Values.get("mysql_user"))
@@ -309,7 +241,7 @@ class OAI5GCNDC(ServiceProfileTemplate):
 
     def update_nrf(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_NRF_DOCKER)
-        user_data = user_data.replace("@@tz@@", self.NRF_Values.get("timezone"))
+        user_data = user_data.replace("@@tz@@", self.TimeZone)
         user_data = user_data.replace("@@log_level@@", self.NRF_Values.get("log_level"))
         return user_data
 
@@ -325,18 +257,89 @@ class OAI5GCNDC(ServiceProfileTemplate):
         return user_data
 
     def update_config(self, user_data: str) -> str:
-
+        user_data = user_data.replace("@@mysql_server@@", self.CONF_Values.get("MYSQL_SERVER"))
+        # user_data = user_data.replace("@@mysql_ipv4_address@@", self.CONF_Values.get("MYSQL_IPV4_ADDRESS"))
+        user_data = user_data.replace("@@mysql_user@@", self.CONF_Values.get("MYSQL_USER"))
+        user_data = user_data.replace("@@mysql_pass@@", self.CONF_Values.get("MYSQL_PASS"))
+        user_data = user_data.replace("@@mysql_db@@", self.CONF_Values.get("MYSQL_DB"))
+        user_data = user_data.replace("@@db_connection_timeout@@", self.CONF_Values.get("DB_CONNECTION_TIMEOUT"))
+        # PLMN list 01
+        user_data = user_data.replace("@@mcc_01@@", self.CONF_Values.get("MCC_01"))
+        user_data = user_data.replace("@@mnc_01@@", self.CONF_Values.get("MNC_01"))
+        user_data = user_data.replace("@@amf_region_id_01@@", self.CONF_Values.get("AMF_REGION_ID_01"))
+        user_data = user_data.replace("@@amf_set_id_01@@", self.CONF_Values.get("AMF_SET_ID_01"))
+        user_data = user_data.replace("@@amf_pointer_01@@", self.CONF_Values.get("AMF_POINTER_01"))
+        # PLMN list 02
+        user_data = user_data.replace("@@mcc_02@@", self.CONF_Values.get("MCC_02"))
+        user_data = user_data.replace("@@mnc_02@@", self.CONF_Values.get("MNC_02"))
+        user_data = user_data.replace("@@amf_region_id_02@@", self.CONF_Values.get("AMF_REGION_ID_02"))
+        user_data = user_data.replace("@@amf_set_id_02@@", self.CONF_Values.get("AMF_SET_ID_02"))
+        user_data = user_data.replace("@@amf_pointer_02@@", self.CONF_Values.get("AMF_POINTER_02"))
+        # PLMN Support List
+        user_data = user_data.replace("@@plmn_sl_mcc@@", self.CONF_Values.get("PLMN_SL_MCC"))
+        user_data = user_data.replace("@@plmn_sl_mnc@@", self.CONF_Values.get("PLMN_SL_MNC"))
+        user_data = user_data.replace("@@plmn_sl_tac@@", self.CONF_Values.get("PLMN_SL_TAC"))
+        # NSSAI Set 01
+        user_data = user_data.replace("@@nssai_sst_01@@", self.CONF_Values.get("NSSAI_SST_01"))
+        # NSSAI Set 02
+        user_data = user_data.replace("@@nssai_sst_02@@", self.CONF_Values.get("NSSAI_SST_02"))
+        user_data = user_data.replace("@@nssai_sd_02@@", self.CONF_Values.get("NSSAI_SD_02"))
+        # NSSAI Set 03
+        user_data = user_data.replace("@@nssai_sst_03@@", self.CONF_Values.get("NSSAI_SST_03"))
+        user_data = user_data.replace("@@nssai_sd_03@@", self.CONF_Values.get("NSSAI_SD_03"))
+        # # IMS IPv4
+        # user_data = user_data.replace("@@ims_ipv4@@", self.CONF_Values.get("IMS_IPV4"))
+        # DNN List
+        # DNN 01
+        user_data = user_data.replace("@@dnn_01_sst@@", self.CONF_Values.get("DNN_01_SST"))
+        user_data = user_data.replace("@@dnn_01_dnn@@", self.CONF_Values.get("DNN_01_DNN"))
+        user_data = user_data.replace("@@dnn_01_5qi@@", self.CONF_Values.get("DNN_01_5QI"))
+        user_data = user_data.replace("@@dnn_01_session_ambr_ul@@",
+                                      self.CONF_Values.get("DNN_01_SESSION_AMBR_UL"))
+        user_data = user_data.replace("@@dnn_01_session_ambr_dl@@",
+                                      self.CONF_Values.get("DNN_01_SESSION_AMBR_DL"))
+        user_data = user_data.replace("@@dnn_01_pdu_session_type@@",
+                                      self.CONF_Values.get("DNN_01_PDU_SESSION_TYPE"))
+        # DNN 02
+        user_data = user_data.replace("@@dnn_02_sst@@", self.CONF_Values.get("DNN_02_SST"))
+        user_data = user_data.replace("@@dnn_02_sd@@", self.CONF_Values.get("DNN_02_SD"))
+        user_data = user_data.replace("@@dnn_02_dnn@@", self.CONF_Values.get("DNN_02_DNN"))
+        user_data = user_data.replace("@@dnn_02_5qi@@", self.CONF_Values.get("DNN_02_5QI"))
+        user_data = user_data.replace("@@dnn_02_session_ambr_ul@@",
+                                      self.CONF_Values.get("DNN_02_SESSION_AMBR_UL"))
+        user_data = user_data.replace("@@dnn_02_session_ambr_dl@@",
+                                      self.CONF_Values.get("DNN_02_SESSION_AMBR_DL"))
+        user_data = user_data.replace("@@dnn_02_pdu_session_type@@",
+                                      self.CONF_Values.get("DNN_02_PDU_SESSION_TYPE"))
+        # Default DNN
+        user_data = user_data.replace("@@dnn_def_sst@@", self.CONF_Values.get("DNN_DEF_SST"))
+        user_data = user_data.replace("@@dnn_def_sd@@", self.CONF_Values.get("DNN_DEF_SD"))
+        user_data = user_data.replace("@@dnn_def_dnn@@", self.CONF_Values.get("DNN_DEF_DNN"))
+        user_data = user_data.replace("@@dnn_def_5qi@@", self.CONF_Values.get("DNN_DEF_5QI"))
+        user_data = user_data.replace("@@dnn_def_session_ambr_ul@@",
+                                      self.CONF_Values.get("DNN_DEF_SESSION_AMBR_UL"))
+        user_data = user_data.replace("@@dnn_def_session_ambr_dl@@",
+                                      self.CONF_Values.get("DNN_DEF_SESSION_AMBR_DL"))
+        user_data = user_data.replace("@@dnn_def_pdu_session_type@@",
+                                      self.CONF_Values.get("DNN_DEF_PDU_SESSION_TYPE"))
+        # IMS
+        user_data = user_data.replace("@@dnn_ims@@", self.CONF_Values.get("DNN_IMS"))
+        user_data = user_data.replace("@@dnn_ims_pdu_session_type@@",
+                                      self.CONF_Values.get("DNN_IMS_PDU_SESSION_TYPE"))
         return user_data
+
     def update_udr(self, user_data: str) -> str:
+        user_data = self.update_config(user_data)
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_UDR_DOCKER)
         user_data = user_data.replace("@@tz@@", self.UDR_Values.get("TZ"))
-        user_data = user_data.replace("@@web_port@@", "80")
-        user_data = user_data.replace("@@sms_port@@", "80")
-        user_data = user_data.replace("@@sys_log@@", "4")
-        user_data = user_data.replace("@@ue_id_01@@", "001010000000001")
-        user_data = user_data.replace("@@ue_user_01_fullname@@", "User01")
-        user_data = user_data.replace("@@ue_id_02@@", "001010000000002")
-        user_data = user_data.replace("@@ue_user_02_fullname@@", "User02")
+        user_data = user_data.replace("@@udr_name@@", self.UDR_Values.get("UDR_NAME"))
+        user_data = user_data.replace("@@udr_interface_name_for_nudr@@",
+                                      self.UDR_Values.get("UDR_INTERFACE_NAME_FOR_NUDR"))
+        user_data = user_data.replace("@@wait_mysql@@", self.UDR_Values.get("WAIT_MYSQL"))
+        user_data = user_data.replace("@@use_fqdn_dns@@", self.UDR_Values.get("USE_FQDN_DNS"))
+        user_data = user_data.replace("@@register_nrf@@", self.UDR_Values.get("REGISTER_NRF"))
+        user_data = user_data.replace("@@nrf_hostname@@", self.UDR_Values.get("NRF_HOSTNAME"))
+        user_data = user_data.replace("@@nrf_fqdn@@", self.UDR_Values.get("NRF_FQDN"))
         return user_data
 
     def update_udm(self, user_data: str) -> str:

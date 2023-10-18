@@ -1,13 +1,18 @@
 import logging
 from typing import Dict
 
+from templates.oai_5gcn_dc.amf.amf import AMF
+from templates.oai_5gcn_dc.ausf.ausf import AUSF
 from templates.oai_5gcn_dc.ims.ims import IMS
 from templates.oai_5gcn_dc.mysql.mysql import MySQL
 from templates.oai_5gcn_dc.nrf.nrf import NRF
+from templates.oai_5gcn_dc.smf.smf import SMF
+from templates.oai_5gcn_dc.trf.trf import TRF
+from templates.oai_5gcn_dc.udm.udm import UDM
 from templates.oai_5gcn_dc.udr.udr import UDR
+from templates.oai_5gcn_dc.upf.upf import UPF
 from templates.service_profile_template import ServiceProfileTemplate
 from templates.user_data.oai_5gcn_constants import OAI5GConstants
-from templates.user_data.prepared_image_template import PreparedImageVMTemplate
 from test_scripts.service_build_test import service_built
 
 LOG = logging.getLogger(__name__)
@@ -27,21 +32,27 @@ class OAI5GCNDC(ServiceProfileTemplate):
 
     TimeZone = "Europe/Berlin"
 
-    MySQL_Values = {"domain": "tu-chemnitz.de",
-                    "mysql_database": "oai_db",
-                    "mysql_user": "oai_tuc",
-                    "mysql_password": "oai_tuc",
-                    "mysql_root_password": "oai_tuc"}
+    MySQL_Values = {
+        "domain": "tu-chemnitz.de",
+        "mysql_database": "oai_db",
+        "mysql_user": "oai_tuc",
+        "mysql_password": "oai_tuc",
+        "mysql_root_password": "oai_tuc"
+    }
 
-    NRF_Values = {"log_level": "debug"}
+    NRF_Values = {
+        "log_level": "debug"
+    }
 
-    IMS_Values = {"web_port": "80",
-                  "sms_port": "80",
-                  "sys_log": "4",
-                  "ue_id_01": "001010000000001",
-                  "ue_user_01_fullname": "Ameya Joshi",
-                  "ue_id_02": "001010000000002",
-                  "ue_user_02_fullname": "Syed Tasnimul Islam"}
+    IMS_Values = {
+        "web_port": "80",
+        "sms_port": "80",
+        "sys_log": "4",
+        "ue_id_01": "001010000000001",
+        "ue_user_01_fullname": "Ameya Joshi",
+        "ue_id_02": "001010000000002",
+        "ue_user_02_fullname": "Syed Tasnimul Islam"
+    }
 
     CONF_Values = {
         "MYSQL_SERVER": "mysql",
@@ -108,9 +119,14 @@ class OAI5GCNDC(ServiceProfileTemplate):
         "UDR_INTERFACE_NAME_FOR_NUDR": "eth0",
         "WAIT_MYSQL": "120",
         "USE_FQDN_DNS": "yes",
-        "REGISTER_NRF": "yes",
-        "NRF_HOSTNAME": "oai-nrf",
-        "NRF_FQDN": "oai-nrf"
+        "REGISTER_NRF": "yes"
+    }
+
+    UDM_Values = {
+        "UDM_NAME": "OAI_UDM",
+        "SBI_IF_NAME": "eth0",
+        "USE_FQDN_DNS": "yes",
+        "REGISTER_NRF": "yes"
     }
 
     def __init__(self, prefix: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
@@ -123,38 +139,33 @@ class OAI5GCNDC(ServiceProfileTemplate):
         self.network_functions.append(NRF(prefix, self.NRF))
         self.network_functions.append(IMS(prefix, self.IMS))
         self.network_functions.append(UDR(prefix, self.UDR))
-        # self.network_functions.append(PreparedImageVMTemplate(prefix, self.UDM))
-        # self.network_functions.append(PreparedImageVMTemplate(prefix, self.AUSF))
-        # self.network_functions.append(PreparedImageVMTemplate(prefix, self.AMF))
-        # self.network_functions.append(PreparedImageVMTemplate(prefix, self.SMF))
-        # self.network_functions.append(PreparedImageVMTemplate(prefix, self.UPF))
-        # self.network_functions.append(PreparedImageVMTemplate(prefix, self.TRF_GEN))
+        self.network_functions.append(UDM(prefix, self.UDM))
+        self.network_functions.append(AUSF(prefix, self.AUSF))
+        self.network_functions.append(AMF(prefix, self.AMF))
+        self.network_functions.append(SMF(prefix, self.SMF))
+        self.network_functions.append(UPF(prefix, self.UPF))
+        self.network_functions.append(TRF(prefix, self.TRF_GEN))
 
     def add_nfv_vlinks_list(self, max_delay: float):
-        vlinks = [[self.MYSQL, self.NRF],
-                  [self.MYSQL, self.UDR],
-                  [self.MYSQL, self.IMS],
-                  # [self.MYSQL, self.UDM],
-                  # [self.MYSQL, self.AUSF],
-                  # [self.MYSQL, self.AMF],
-                  # [self.MYSQL, self.SMF],
-                  # [self.MYSQL, self.UPF],
-                  # [self.MYSQL, self.TRF_GEN],
-                  [self.NRF, self.UDR]
-                  # [self.NRF, self.UDM],
-                  # [self.NRF, self.AUSF],
-                  # [self.NRF, self.AMF],
-                  # [self.NRF, self.SMF],
-                  # [self.NRF, self.UPF],
-                  # [self.NRF, self.TRF_GEN],
-                  # [self.IMS, self.UPF],
-                  # [self.UDR, self.UDM],
-                  # [self.UDM, self.AUSF],
-                  # [self.AUSF, self.AMF],
-                  # [self.AMF, self.SMF],
-                  # [self.SMF, self.UPF],
-                  # [self.UPF, self.TRF_GEN]
-                  ]
+        vlinks = [
+            [self.MYSQL, self.NRF],
+            [self.MYSQL, self.IMS],
+            [self.MYSQL, self.UDR],
+            [self.NRF, self.UDR],
+            [self.NRF, self.UDM],
+            [self.NRF, self.AUSF],
+            [self.NRF, self.AMF],
+            [self.NRF, self.SMF],
+            [self.NRF, self.UPF],
+            [self.NRF, self.TRF_GEN],
+            [self.IMS, self.UPF],
+            [self.UDR, self.UDM],
+            [self.UDM, self.AUSF],
+            [self.AUSF, self.AMF],
+            [self.AMF, self.SMF],
+            [self.SMF, self.UPF],
+            [self.UPF, self.TRF_GEN]
+        ]
 
         for vlink in vlinks:
             self.nfv_v_links_list.append({"out": vlink[0], "in": vlink[1], "delay": max_delay})
@@ -331,20 +342,27 @@ class OAI5GCNDC(ServiceProfileTemplate):
     def update_udr(self, user_data: str) -> str:
         user_data = self.update_config(user_data)
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_UDR_DOCKER)
-        user_data = user_data.replace("@@tz@@", self.UDR_Values.get("TZ"))
+        user_data = user_data.replace("@@tz@@", self.TimeZone)
         user_data = user_data.replace("@@udr_name@@", self.UDR_Values.get("UDR_NAME"))
         user_data = user_data.replace("@@udr_interface_name_for_nudr@@",
                                       self.UDR_Values.get("UDR_INTERFACE_NAME_FOR_NUDR"))
         user_data = user_data.replace("@@wait_mysql@@", self.UDR_Values.get("WAIT_MYSQL"))
         user_data = user_data.replace("@@use_fqdn_dns@@", self.UDR_Values.get("USE_FQDN_DNS"))
         user_data = user_data.replace("@@register_nrf@@", self.UDR_Values.get("REGISTER_NRF"))
-        user_data = user_data.replace("@@nrf_hostname@@", self.UDR_Values.get("NRF_HOSTNAME"))
-        user_data = user_data.replace("@@nrf_fqdn@@", self.UDR_Values.get("NRF_FQDN"))
+        user_data = user_data.replace("@@nrf_hostname@@", self.NRF)
+        user_data = user_data.replace("@@nrf_fqdn@@", self.NRF)
         return user_data
 
     def update_udm(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_UDM_DOCKER)
         user_data = user_data.replace("@@domain@@", self.domain_name)
+        user_data = user_data.replace("@@tz@@", self.TimeZone)
+        user_data = user_data.replace("@@udm_name@@", self.UDM_Values.get("UDM_NAME"))
+        user_data = user_data.replace("@@sbi_if_name@@", self.UDM_Values.get("SBI_IF_NAME"))
+        user_data = user_data.replace("@@register_nrf@@", self.UDM_Values.get("REGISTER_NRF"))
+        user_data = user_data.replace("@@use_fqdn_dns@@", self.UDM_Values.get("USE_FQDN_DNS"))
+        user_data = user_data.replace("@@udr_fqdn@@", self.UDR)
+        user_data = user_data.replace("@@nrf_fqdn@@", self.NRF)
         return user_data
 
     def update_ausf(self, user_data: str) -> str:

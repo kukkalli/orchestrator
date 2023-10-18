@@ -11,7 +11,7 @@ git clone https://github.com/kukkalli/oai-docker-compose.git
 
 chown ubuntu:ubuntu -R oai-docker-compose
 
-cd oai-docker-compose/5g/oai-nrf/ || exit
+cd oai-docker-compose/5g/udm/ || exit
 
 rm -f env_var
 
@@ -26,7 +26,7 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 
-127.0.0.1	${HOSTNAME}
+127.0.0.1	oai-udm
 
 # OAI 5GCN VM IPs
 EOF
@@ -54,14 +54,8 @@ echo "export DOMAIN=${DOMAIN}" >> env_var
 export HOSTNAME="${HOSTNAME}"
 echo "export HOSTNAME=${HOSTNAME}" >> env_var
 
-export NRF_FQDN="${FQDN_HOSTNAME}"
-echo "export NRF_FQDN=${NRF_FQDN}" >> env_var
-
 export TZ="@@tz@@"
 echo "export TZ=@@tz@@" >> env_var
-
-export LOG_LEVEL=@@log_level@@
-echo "export LOG_LEVEL=@@log_level@@" >> env_var
 
 export NRF_INTERFACE_NAME_FOR_SBI=eth0
 echo "export NRF_INTERFACE_NAME_FOR_SBI=eth0" >> env_var
@@ -71,6 +65,17 @@ echo "export FABRIC_IP=${FABRIC_IP}" >> env_var
 
 # export MANAGEMENT_IP="${MANAGEMENT_IP}"
 # echo "export MANAGEMENT_IP=${MANAGEMENT_IP}" >> env_var
+
+echo -e "export IMAGE_NAME='@@image_name@@'" >> env_var
+echo -e "export TZ=@@tz@@" >> env_var
+echo -e "export UDM_NAME=@@udm_name@@" >> env_var
+echo -e "export SBI_IF_NAME=@@sbi_if_name@@" >> env_var
+echo -e "export REGISTER_NRF=@@register_nrf@@" >> env_var
+echo -e "export USE_FQDN_DNS=@@use_fqdn_dns@@" >> env_var
+echo -e "export UDR_IPV4_ADDRESS=@@udr_ip@@" >> env_var
+echo -e "export UDR_FQDN=@@udr_fqdn@@" >> env_var
+echo -e "export NRF_IPV4_ADDRESS=@@nrf_ip@@" >> env_var
+echo -e "export NRF_FQDN=@@nrf_fqdn@@" >> env_var
 
 cat env_var
 

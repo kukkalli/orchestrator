@@ -1,4 +1,4 @@
-class UDMUserData:
+class UPFUserData:
     USERDATA = """
 # Change user to ubuntu
 echo "Changing user to ubuntu"
@@ -11,7 +11,7 @@ git clone https://github.com/kukkalli/oai-docker-compose.git
 
 chown ubuntu:ubuntu -R oai-docker-compose
 
-cd oai-docker-compose/5g/oai-nrf/ || exit
+cd oai-docker-compose/5g/upf/ || exit
 
 rm -f env_var
 
@@ -26,7 +26,7 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 
-127.0.0.1	${HOSTNAME}
+127.0.0.1	oai-spgwu
 
 # OAI 5GCN VM IPs
 EOF

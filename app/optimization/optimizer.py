@@ -166,16 +166,20 @@ class Optimizer:
 
         z_output = self.problem_statement.getVarByName(f'z').X
         LOG.info("z_output: {}".format(z_output))
+        print("z_output: {}".format(z_output))
+        for v in self.problem_statement.getVars():
+            print('%s %g' % (v.VarName, v.X))
+        print('Obj: %g' % self.problem_statement.ObjVal)
 
         vm_mapping = np.zeros([len_vms, len_compute_servers], dtype=float)
         for n in range(len_compute_servers):
             for v in range(len_vms):
                 vm_mapping[v, n] = self.problem_statement.getVarByName(f'x_{v}_{n}').X
                 if self.problem_statement.getVarByName(f'x_{v}_{n}').X == 1:
-                    # print("Printing x_{}_{}:{}".format(v, n, vm_mapping[v, n]))
+                    print("Printing x_{}_{}:{}".format(v, n, vm_mapping[v, n]))
                     self.vm_requirements[v].hypervisor_hostname = self.compute_servers[n].hostname
-                    # print("VM Name: {}, Server Name: {}".format(self.vm_requirements[v].
-                    #                                             hostname, self.servers[n].name))
+                    print("VM Name: {}, Server Name: {}".format(self.vm_requirements[v].
+                                                                hostname, self.compute_servers[n].name))
 
         flow_mapping = np.zeros([len_v_links, len_links])
         dict_switches = self.topology.switches_dict
@@ -184,8 +188,9 @@ class Optimizer:
             for e in range(len_links):
                 flow_mapping = self.problem_statement.getVarByName(f'flow_{count}_{e}').X
                 if self.problem_statement.getVarByName(f'flow_{count}_{e}').X == 1:
-                    # print("Printing x_{}_{}:{}".format(count, e, vm_mapping[v, n]))
+                    print("Printing x_{}_{}:{}".format(count, e, vm_mapping[v, n]))
                     self.v_links[count].implemented_links.append(self.links[e])
+
                     """
                     src_id, dst_id = "", ""
                     if self.links[e].src_node_id < len_switches:
@@ -202,3 +207,4 @@ class Optimizer:
                     """
 
         mu_result = self.problem_statement.getVarByName(f'mu').X
+        print(f"mu result: {mu_result}")

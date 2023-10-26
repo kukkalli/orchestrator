@@ -106,7 +106,7 @@ echo -e "# PLMN Support List" >> env_var
 echo -e "export PLMN_SL_MCC=@@PLMN_SL_MCC@@" >> env_var
 echo -e "export PLMN_SL_MNC=@@PLMN_SL_MNC@@" >> env_var
 echo -e "export PLMN_SL_TAC=@@PLMN_SL_TAC@@" >> env_var
-echo -e "#export "PLMN_SL_TAC=0x0001" >> env_var
+echo -e "#export PLMN_SL_TAC=0x0001" >> env_var
 
 echo -e "# NSSAI Set 01" >> env_var
 echo -e "export NSSAI_SST_01=@@NSSAI_SST_01@@" >> env_var

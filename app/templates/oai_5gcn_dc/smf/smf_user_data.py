@@ -26,7 +26,7 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 
-127.0.0.1	${HOSTNAME}
+127.0.0.1	oai-smf
 
 # OAI 5GCN VM IPs
 EOF
@@ -57,7 +57,7 @@ echo -e "export HOSTNAME=${HOSTNAME}" >> env_var
 export TZ="@@tz@@"
 echo -e "export TZ=@@tz@@" >> env_var
 
-echo -e "# SMF Config
+echo -e "# SMF Config" >> env_var
 echo -e "export SMF_FQDN='@@SMF_FQDN@@'" >> env_var
 echo -e "export SMF_PORT_FOR_SBI=@@SMF_PORT_FOR_SBI@@" >> env_var
 echo -e "export SMF_HTTP2_PORT_FOR_SBI=@@SMF_HTTP2_PORT_FOR_SBI@@" >> env_var
@@ -65,7 +65,7 @@ echo -e "export SMF_API_VERSION_FOR_SBI=@@SMF_API_VERSION_FOR_SBI@@" >> env_var
 echo -e "export AMF_PORT=@@AMF_PORT@@" >> env_var
 echo -e "export AMF_API_VERSION=@@AMF_API_VERSION@@" >> env_var
 
-echo -e "# Session Management Subscription List 01
+echo -e "# Session Management Subscription List 01" >> env_var
 echo -e "export SM_01_NSSAI_SST=@@SM_01_NSSAI_SST@@" >> env_var
 echo -e "export SM_01_NSSAI_SD='@@SM_01_NSSAI_SD@@'" >> env_var
 echo -e "export SM_01_DNN='@@SM_01_DNN@@'" >> env_var
@@ -79,7 +79,7 @@ echo -e "export SM_01_QOS_PROFILE_ARP_PREEMPTVULN=@@SM_01_QOS_PROFILE_ARP_PREEMP
 echo -e "export SM_01_SESSION_AMBR_UL=@@SM_01_SESSION_AMBR_UL@@" >> env_var
 echo -e "export SM_01_SESSION_AMBR_DL=@@SM_01_SESSION_AMBR_DL@@" >> env_var
 
-echo -e "# Session Management Subscription List 02
+echo -e "# Session Management Subscription List 02" >> env_var
 echo -e "export SM_02_NSSAI_SST=@@SM_02_NSSAI_SST@@" >> env_var
 echo -e "export SM_02_NSSAI_SD=@@SM_02_NSSAI_SD@@" >> env_var
 echo -e "export SM_02_DNN=@@SM_02_DNN@@" >> env_var
@@ -93,7 +93,7 @@ echo -e "export SM_02_QOS_PROFILE_ARP_PREEMPTVULN=@@SM_02_QOS_PROFILE_ARP_PREEMP
 echo -e "export SM_02_SESSION_AMBR_UL=@@SM_02_SESSION_AMBR_UL@@" >> env_var
 echo -e "export SM_02_SESSION_AMBR_DL=@@SM_02_SESSION_AMBR_DL@@" >> env_var
 
-echo -e "# Session Management Subscription List 03
+echo -e "# Session Management Subscription List 03" >> env_var
 echo -e "export SM_03_NSSAI_SST=@@SM_03_NSSAI_SST@@" >> env_var
 echo -e "export SM_03_NSSAI_SD=@@SM_03_NSSAI_SD@@" >> env_var
 echo -e "export SM_03_DNN=@@SM_03_DNN@@" >> env_var
@@ -107,7 +107,7 @@ echo -e "export SM_03_QOS_PROFILE_ARP_PREEMPTVULN=@@SM_03_QOS_PROFILE_ARP_PREEMP
 echo -e "export SM_03_SESSION_AMBR_UL=@@SM_03_SESSION_AMBR_UL@@" >> env_var
 echo -e "export SM_03_SESSION_AMBR_DL=@@SM_03_SESSION_AMBR_DL@@" >> env_var
 
-echo -e "# Docker config variables
+echo -e "# Docker config variables" >> env_var
 echo -e "export SMF_INTERFACE_NAME_FOR_N4=@@SMF_INTERFACE_NAME_FOR_N4@@" >> env_var
 echo -e "export SMF_INTERFACE_NAME_FOR_SBI=@@SMF_INTERFACE_NAME_FOR_SBI@@" >> env_var
 echo -e "export DEFAULT_DNS_IPV4_ADDRESS='@@DEFAULT_DNS_IPV4_ADDRESS@@'" >> env_var
@@ -126,21 +126,21 @@ echo -e "export DISCOVER_UPF=@@DISCOVER_UPF@@" >> env_var
 echo -e "export USE_FQDN_DNS=@@USE_FQDN_DNS@@" >> env_var
 echo -e "export UE_MTU=@@UE_MTU@@" >> env_var
 
-echo -e "# Slice 0 (1, 0xFFFFFF)
+echo -e "# Slice 0 (1, 0xFFFFFF)" >> env_var
 echo -e "export DNN_NI0=@@DNN_NI0@@" >> env_var
 echo -e "export TYPE0=@@TYPE0@@" >> env_var
 echo -e "export DNN_RANGE0='@@DNN_RANGE0@@'" >> env_var
 echo -e "export NSSAI_SST0=@@NSSAI_SST0@@" >> env_var
 echo -e "export SESSION_AMBR_UL0=@@SESSION_AMBR_UL0@@" >> env_var
 echo -e "export SESSION_AMBR_DL0=@@SESSION_AMBR_DL0@@" >> env_var
-echo -e "# Slice 1 (1, 0xFFFFFF)
+echo -e "# Slice 1 (1, 0xFFFFFF)" >> env_var
 echo -e "export DNN_NI1=@@DNN_NI1@@" >> env_var
 echo -e "export TYPE1=@@TYPE1@@" >> env_var
 echo -e "export DNN_RANGE1='@@DNN_RANGE1@@'" >> env_var
 echo -e "export NSSAI_SST1=@@NSSAI_SST1@@" >> env_var
 echo -e "export SESSION_AMBR_UL1=@@SESSION_AMBR_UL1@@" >> env_var
 echo -e "export SESSION_AMBR_DL1=@@SESSION_AMBR_DL1@@" >> env_var
-echo -e "# Slice 2 for ims
+echo -e "# Slice 2 for ims" >> env_var
 echo -e "export DNN_NI2=@@DNN_NI2@@" >> env_var
 echo -e "export TYPE2=@@TYPE2@@" >> env_var
 echo -e "export DNN_RANGE2='@@DNN_RANGE2@@'" >> env_var
@@ -148,7 +148,7 @@ echo -e "export NSSAI_SST2=@@NSSAI_SST2@@" >> env_var
 echo -e "export SESSION_AMBR_UL2=@@SESSION_AMBR_UL2@@" >> env_var
 echo -e "export SESSION_AMBR_DL2=@@SESSION_AMBR_DL2@@" >> env_var
 
-echo -e "# IMS server
+echo -e "# IMS server" >> env_var
 echo -e "export DEFAULT_CSCF_IPV4_ADDRESS=@@ims_ip@@" >> env_var
 
 cat env_var

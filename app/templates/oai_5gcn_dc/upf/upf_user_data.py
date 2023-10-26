@@ -59,6 +59,7 @@ echo -e "export TZ=@@tz@@" >> env_var
 
 echo -e "export UPF_FQDN=@@UPF_FQDN@@" >> env_var
 echo -e "export UPF_FQDN_5G=@@UPF_FQDN@@" >> env_var
+echo -e "export SMF_IPV4_ADDRESS=@@smf_ip@@" >> env_var
 echo -e "export NRF_IPV4_ADDRESS=@@nrf_ip@@" >> env_var
 echo -e "export NRF_FQDN=@@NRF_FQDN@@" >> env_var
 

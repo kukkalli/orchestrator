@@ -626,7 +626,7 @@ class OAI5GCNDC(OAI5GCNDCBase):
         return user_data
 
     def update_upf(self, user_data: str) -> str:
-        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_SMF_DOCKER)
+        user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_UPF_DOCKER)
 
         user_data = user_data.replace("@@UPF_FQDN@@", self.UPF)
         user_data = user_data.replace("@@NRF_FQDN@@", self.NRF)

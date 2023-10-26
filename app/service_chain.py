@@ -150,7 +150,7 @@ class ServiceChain:
             LOG.debug("Creating VM: {} on hypervisor: {}".format(vm.hostname, vm.hypervisor_hostname))
             print("Creating VM: {} on hypervisor: {}".format(vm.hostname, vm.hypervisor_hostname))
             print(f"Networks:\n{vm.networks}")
-            print(f"userdata:\n{vm_user_data_dict[vm.name]}")
+            # print(f"userdata:\n{vm_user_data_dict[vm.name]}")
             server = virtual_machine.create_virtual_machine(vm.hostname, vm.image_id, flavor=vm.flavor,
                                                             security_groups=["default"],
                                                             userdata=vm_user_data_dict[vm.name],
@@ -172,7 +172,7 @@ class ServiceChain:
 
 
 def main():
-    input_request: InputRequest = InputRequest("OAI 5G 001 50ms", "OAI_5GCN_DC", max_link_delay=50)
+    input_request: InputRequest = InputRequest("OAI 5G 001 1ms", "OAI_5GCN_DC", max_link_delay=1)
     execute = ServiceChain(input_request)
     execute.create_service_chain()
     exit()

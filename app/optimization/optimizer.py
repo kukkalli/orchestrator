@@ -77,7 +77,7 @@ class Optimizer:
         for nth_element in range(len_switches):
             self.add_switch_flow_constraint(nth_element, len_v_links, flow)
 
-        vau = 1.0
+        vau = 0.75
         for e in range(len_links):  # capacity constraint on link
             self.problem_statement.addConstr(
                 quicksum(self.v_links[index].bandwidth * (flow[index, e]) for index in
@@ -167,9 +167,9 @@ class Optimizer:
         z_output = self.problem_statement.getVarByName(f'z').X
         LOG.info("z_output: {}".format(z_output))
         print("z_output: {}".format(z_output))
-        for v in self.problem_statement.getVars():
-            print('%s %g' % (v.VarName, v.X))
-        print('Obj: %g' % self.problem_statement.ObjVal)
+        # for v in self.problem_statement.getVars():
+        #     print('%s %g' % (v.VarName, v.X))
+        # print('Obj: %g' % self.problem_statement.ObjVal)
 
         vm_mapping = np.zeros([len_vms, len_compute_servers], dtype=float)
         for n in range(len_compute_servers):

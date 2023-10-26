@@ -22,19 +22,19 @@ class ServiceChain:
 
     def __init__(self, input_request: InputRequest):
         start_time = time.time()
-        LOG.info(f"Creating Topology Builder: Start Time: {start_time}")
+        print(f"Creating Topology Builder: Start Time: {start_time}")
         self.topology: Topology = TopologyBuilder(input_request.name).build_topology()
         end_time = time.time()
-        LOG.info(f"Created  Topology Builder: End Time: {end_time}")
-        LOG.info(f"Topology creation time: {(end_time - start_time)}s")
+        print(f"Created  Topology Builder: End Time: {end_time}")
+        print(f"Topology creation time: {(end_time - start_time)}s")
 
         start_time = time.time()
-        LOG.info(f"Creating ToscaInput: Start Time: {start_time}")
+        print(f"Creating ToscaInput: Start Time: {start_time}")
         self.tosca: TOSCAInput = TOSCAInput(input_request)
         self.tosca.build()
         end_time = time.time()
-        LOG.info(f"Created  ToscaInput: End Time: {end_time}")
-        LOG.info(f"ToscaInput creation time: {(end_time - start_time)}s")
+        print(f"Created  ToscaInput: End Time: {end_time}")
+        print(f"ToscaInput creation time: {(end_time - start_time)}s")
         self.network_ip_dict_list: Dict[str, list] = {}
         self.nf_ip_dict: Dict[str, str] = {}
         self.neutron = None
@@ -42,17 +42,17 @@ class ServiceChain:
     def create_service_chain(self) -> {}:
         provider_network_name = OpenStackConstants.PROVIDER_NETWORK_NAME
         start_time = time.time()
-        LOG.info(f"Creating Optimizer object: Start Time: {start_time}")
+        print(f"Creating Optimizer object: Start Time: {start_time}")
         optimizer = Optimizer(self.topology, self.tosca)
-        LOG.info(f"Created  Optimizer object")
-        LOG.info(f"Calling  Optimizer.optimize(): Start Time: {time.time()}")
+        print(f"Created  Optimizer object")
+        print(f"Calling  Optimizer.optimize(): Start Time: {time.time()}")
         optimizer.optimize()
         end_time = time.time()
-        LOG.info(f"Called   Optimizer.optimize(): End Time: {end_time}")
-        LOG.info(f"Optimizer solution response time: {(end_time - start_time)}s")
+        print(f"Called   Optimizer.optimize(): End Time: {end_time}")
+        print(f"Optimizer solution response time: {(end_time - start_time)}s")
 
         start_time = time.time()
-        LOG.info(f"Deploying Optimizer solution: Start Time: {start_time}")
+        print(f"Deploying Optimizer solution: Start Time: {start_time}")
         self.create_network_dict()
         self.bind_ip_to_vm(provider_network_name)
 
@@ -61,8 +61,8 @@ class ServiceChain:
         self.create_vms()
 
         end_time = time.time()
-        LOG.info(f"Deploying Optimizer solution: End Time: {end_time}")
-        LOG.info(f"Deploying Optimizer solution time: {(end_time - start_time)}s")
+        print(f"Deploying Optimizer solution: End Time: {end_time}")
+        print(f"Deploying Optimizer solution time: {(end_time - start_time)}s")
 
         return {"vm-creation": "success"}
 
@@ -70,7 +70,7 @@ class ServiceChain:
         self.network_ip_dict_list = {}
         self.neutron = Neutron(AuthenticateConnection().get_connection())
         for network_name in OpenStackConstants.NETWORKS_LIST:
-            LOG.info(f"Network ID: {self.neutron.networks_dict[network_name]}, Name: {network_name}")
+            print(f"Network ID: {self.neutron.networks_dict[network_name]}, Name: {network_name}")
             self.network_ip_dict_list[network_name] = self.neutron.get_available_ip_list(
                 network_name, len(self.tosca.vm_requirements))
         self.neutron.connection.close()
@@ -136,7 +136,7 @@ class ServiceChain:
         """
 
         virtual_machine = VirtualMachine()
-        LOG.info("-----------------------------------------------------------------")
+        print("-----------------------------------------------------------------")
         print("-----------------------------------------------------------------")
         for vm in self.tosca.vm_requirements:
             start_time = time.time()

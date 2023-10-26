@@ -276,7 +276,7 @@ class OAI5GCNDC(OAI5GCNDCBase):
         self.network_functions.append(AMF(prefix, self.AMF))
         self.network_functions.append(SMF(prefix, self.SMF))
         self.network_functions.append(UPF(prefix, self.UPF))
-        self.network_functions.append(TRF(prefix, self.TRF_GEN))
+        # self.network_functions.append(TRF(prefix, self.TRF_GEN))
 
     def populate_user_data(self, nf_ip_dict: Dict[str, str]) -> Dict[str, str]:
         LOG.debug(f"I am in OAI 5G CN Docker, {self.domain_name}")
@@ -304,8 +304,8 @@ class OAI5GCNDC(OAI5GCNDCBase):
                 vm_user_data_dict[self.SMF] = self.update_smf(user_data)
             elif network_function.name == self.UPF:
                 vm_user_data_dict[self.UPF] = self.update_upf(user_data)
-            elif network_function.name == self.TRF_GEN:
-                vm_user_data_dict[self.TRF_GEN] = self.update_trf(user_data)
+            # elif network_function.name == self.TRF_GEN:
+            #     vm_user_data_dict[self.TRF_GEN] = self.update_trf(user_data)
 
         return vm_user_data_dict
 

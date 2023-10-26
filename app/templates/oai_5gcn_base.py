@@ -16,7 +16,7 @@ class OAI5GCNDCBase(ServiceProfileTemplate):
     AMF = "oai-amf"
     SMF = "oai-smf"
     UPF = "oai-spgwu-tiny"
-    TRF_GEN = "oai-trf-gen"
+    # TRF_GEN = "oai-trf-gen"
 
     TimeZone = "Europe/Berlin"
 
@@ -47,14 +47,14 @@ class OAI5GCNDCBase(ServiceProfileTemplate):
             [self.NRF, self.AMF],
             [self.NRF, self.SMF],
             [self.NRF, self.UPF],
-            [self.NRF, self.TRF_GEN],
+            # [self.NRF, self.TRF_GEN],
             [self.IMS, self.UPF],
             [self.UDR, self.UDM],
             [self.UDM, self.AUSF],
             [self.AUSF, self.AMF],
             [self.AMF, self.SMF],
-            [self.SMF, self.UPF],
-            [self.UPF, self.TRF_GEN]
+            [self.SMF, self.UPF]
+            # [self.UPF, self.TRF_GEN]
         ]
 
         for vlink in vlinks:
@@ -72,6 +72,6 @@ class OAI5GCNDCBase(ServiceProfileTemplate):
         user_data = user_data.replace("@@amf_ip@@", nf_ip_dict[self.AMF])
         user_data = user_data.replace("@@smf_ip@@", nf_ip_dict[self.SMF])
         user_data = user_data.replace("@@upf_ip@@", nf_ip_dict[self.UPF])
-        user_data = user_data.replace("@@trf_ip@@", nf_ip_dict[self.TRF_GEN])
+        # user_data = user_data.replace("@@trf_ip@@", nf_ip_dict[self.TRF_GEN])
         return user_data
 

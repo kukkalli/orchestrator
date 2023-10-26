@@ -63,15 +63,15 @@ echo -e "export SMF_IPV4_ADDRESS=@@smf_ip@@" >> env_var
 echo -e "export NRF_IPV4_ADDRESS=@@nrf_ip@@" >> env_var
 echo -e "export NRF_FQDN=@@NRF_FQDN@@" >> env_var
 
-echo -e "# NSSAI Set 01@@" >> env_var
+echo -e "# NSSAI Set 01" >> env_var
 echo -e "export NSSAI_SST_01=@@NSSAI_SST_01@@" >> env_var
 echo -e "export NSSAI_SD_01='@@NSSAI_SD_01@@'" >> env_var
 echo -e "export DNN_01=@@DNN_01@@" >> env_var
-echo -e "# NSSAI Set 02@@" >> env_var
+echo -e "# NSSAI Set 02" >> env_var
 echo -e "export NSSAI_SST_02=@@NSSAI_SST_02@@" >> env_var
 echo -e "export NSSAI_SD_02='@@NSSAI_SD_02@@'" >> env_var
 echo -e "export DNN_02=@@DNN_02@@" >> env_var
-echo -e "# NSSAI Set 03@@" >> env_var
+echo -e "# NSSAI Set 03" >> env_var
 echo -e "export NSSAI_SST_03=@@NSSAI_SST_03@@" >> env_var
 echo -e "export NSSAI_SD_03='@@NSSAI_SD_03@@'" >> env_var
 echo -e "export DNN_03=@@DNN_03@@" >> env_var

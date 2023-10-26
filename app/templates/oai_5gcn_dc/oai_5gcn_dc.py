@@ -1,6 +1,7 @@
 import logging
 from typing import Dict
 
+from templates.oai_5gcn_base import OAI5GCNDCBase
 from templates.oai_5gcn_dc.amf.amf import AMF
 from templates.oai_5gcn_dc.ausf.ausf import AUSF
 from templates.oai_5gcn_dc.ims.ims import IMS
@@ -11,39 +12,13 @@ from templates.oai_5gcn_dc.trf.trf import TRF
 from templates.oai_5gcn_dc.udm.udm import UDM
 from templates.oai_5gcn_dc.udr.udr import UDR
 from templates.oai_5gcn_dc.upf.upf import UPF
-from templates.service_profile_template import ServiceProfileTemplate
 from templates.user_data.oai_5gcn_constants import OAI5GConstants
 from test_scripts.service_build_test import service_built
 
 LOG = logging.getLogger(__name__)
 
 
-class OAI5GCNDC(ServiceProfileTemplate):
-    MYSQL = "mysql"
-    NRF = "oai-nrf"
-    IMS = "asterisk-ims"
-    UDR = "oai-udr"
-    UDM = "oai-udm"
-    AUSF = "oai-ausf"
-    AMF = "oai-amf"
-    SMF = "oai-smf"
-    UPF = "oai-spgwu"
-    TRF_GEN = "oai-trf-gen"
-
-    TimeZone = "Europe/Berlin"
-
-    MySQL_Values = {
-        "domain": "tu-chemnitz.de",
-        "mysql_database": "oai_db",
-        "mysql_user": "oai_tuc",
-        "mysql_password": "oai_tuc",
-        "mysql_root_password": "oai_tuc"
-    }
-
-    NRF_Values = {
-        "log_level": "debug"
-    }
-
+class OAI5GCNDC(OAI5GCNDCBase):
     IMS_Values = {
         "web_port": "80",
         "sms_port": "80",
@@ -182,6 +157,95 @@ class OAI5GCNDC(ServiceProfileTemplate):
         "NSSAI_SST_01": "1"
     }
 
+    SMF_Values = {
+        # SMF Config
+        "SMF_FQDN": "oai-smf-svc",
+        "SMF_PORT_FOR_SBI": "80",
+        "SMF_HTTP2_PORT_FOR_SBI": "8080",
+        "SMF_API_VERSION_FOR_SBI": "v1",
+        "AMF_PORT": "80",
+        "AMF_API_VERSION": "v1",
+
+        # Session Management Subscription List 01
+        "SM_01_NSSAI_SST": "1",
+        "SM_01_NSSAI_SD": "0xFFFFFF",
+        "SM_01_DNN": "oai",
+        "SM_01_DEFAULT_SESSION_TYPE": "IPv4",
+        "SM_01_DEFAULT_SSC_MODE": "1",
+        "SM_01_QOS_PROFILE_5QI": "6",
+        "SM_01_QOS_PROFILE_PRIORITY_LEVEL": "1",
+        "SM_01_QOS_PROFILE_ARP_PRIORITY_LEVEL": "1",
+        "SM_01_QOS_PROFILE_ARP_PREEMPTCAP": "NOT_PREEMPT",
+        "SM_01_QOS_PROFILE_ARP_PREEMPTVULN": "NOT_PREEMPTABLE",
+        "SM_01_SESSION_AMBR_UL": "10Gbps",
+        "SM_01_SESSION_AMBR_DL": "10Gbps",
+
+        # Session Management Subscription List 02
+        "SM_02_NSSAI_SST": "1",
+        "SM_02_NSSAI_SD": "0xFFFFFF",
+        "SM_02_DNN": "openairinterface",
+        "SM_02_DEFAULT_SESSION_TYPE": "IPv4v6",
+        "SM_02_DEFAULT_SSC_MODE": "1",
+        "SM_02_QOS_PROFILE_5QI": "7",
+        "SM_02_QOS_PROFILE_PRIORITY_LEVEL": "1",
+        "SM_02_QOS_PROFILE_ARP_PRIORITY_LEVEL": "1",
+        "SM_02_QOS_PROFILE_ARP_PREEMPTCAP": "NOT_PREEMPT",
+        "SM_02_QOS_PROFILE_ARP_PREEMPTVULN": "NOT_PREEMPTABLE",
+        "SM_02_SESSION_AMBR_UL": "10Gbps",
+        "SM_02_SESSION_AMBR_DL": "10Gbps",
+
+        # Session Management Subscription List 02
+        "SM_03_NSSAI_SST": "1",
+        "SM_03_NSSAI_SD": "0xFFFFFF",
+        "SM_03_DNN": "ims",
+        "SM_03_DEFAULT_SESSION_TYPE": "IPv4v6",
+        "SM_03_DEFAULT_SSC_MODE": "1",
+        "SM_03_QOS_PROFILE_5QI": "8",
+        "SM_03_QOS_PROFILE_PRIORITY_LEVEL": "1",
+        "SM_03_QOS_PROFILE_ARP_PRIORITY_LEVEL": "1",
+        "SM_03_QOS_PROFILE_ARP_PREEMPTCAP": "NOT_PREEMPT",
+        "SM_03_QOS_PROFILE_ARP_PREEMPTVULN": "NOT_PREEMPTABLE",
+        "SM_03_SESSION_AMBR_UL": "10Gbps",
+        "SM_03_SESSION_AMBR_DL": "10Gbps",
+
+        # Docker config variables
+        "SMF_INTERFACE_NAME_FOR_N4": "eth0",
+        "SMF_INTERFACE_NAME_FOR_SBI": "eth0",
+        "DEFAULT_DNS_IPV4_ADDRESS": "8.8.8.8",
+        "DEFAULT_DNS_SEC_IPV4_ADDRESS": "4.4.4.4",
+        "AMF_FQDN": "oai-amf",
+        "UDM_FQDN": "oai-udm",
+        "UPF_FQDN_0": "oai-spgwu-tiny",
+        "NRF_FQDN": "oai-nrf",
+        "USE_LOCAL_SUBSCRIPTION_INFO": "yes",
+        "REGISTER_NRF": "yes",
+        "DISCOVER_UPF": "yes",
+        "USE_FQDN_DNS": "yes",
+        "UE_MTU": "1500",
+
+        # Slice 0 (1, 0xFFFFFF)
+        "DNN_NI0": "oai",
+        "TYPE0": "IPv4",
+        "DNN_RANGE0": "12.1.1.2 - 12.1.1.254",
+        "NSSAI_SST0": "1",
+        "SESSION_AMBR_UL0": "10Gbps",
+        "SESSION_AMBR_DL0": "10Gbps",
+        # Slice 1 (1, 0xFFFFFF)
+        "DNN_NI1": "openairinterface",
+        "TYPE1": "IPv4v6",
+        "DNN_RANGE1": "12.1.2.2 - 12.1.2.254",
+        "NSSAI_SST1": "1",
+        "SESSION_AMBR_UL1": "10Gbps",
+        "SESSION_AMBR_DL1": "10Gbps",
+        # Slice 2 for ims
+        "DNN_NI2": "ims",
+        "TYPE2": "IPv4v6",
+        "DNN_RANGE2": "12.1.9.2 - 12.1.9.254",
+        "NSSAI_SST2": "1",
+        "SESSION_AMBR_UL2": "10Gbps",
+        "SESSION_AMBR_DL2": "10Gbps"
+    }
+
     def __init__(self, prefix: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
         super().__init__(prefix, domain_name, bandwidth, max_delay)
         self.add_network_function_list(prefix)
@@ -199,52 +263,14 @@ class OAI5GCNDC(ServiceProfileTemplate):
         self.network_functions.append(UPF(prefix, self.UPF))
         self.network_functions.append(TRF(prefix, self.TRF_GEN))
 
-    def add_nfv_vlinks_list(self, max_delay: float):
-        vlinks = [
-            [self.MYSQL, self.NRF],
-            [self.MYSQL, self.IMS],
-            [self.MYSQL, self.UDR],
-            [self.NRF, self.UDR],
-            [self.NRF, self.UDM],
-            [self.NRF, self.AUSF],
-            [self.NRF, self.AMF],
-            [self.NRF, self.SMF],
-            [self.NRF, self.UPF],
-            [self.NRF, self.TRF_GEN],
-            [self.IMS, self.UPF],
-            [self.UDR, self.UDM],
-            [self.UDM, self.AUSF],
-            [self.AUSF, self.AMF],
-            [self.AMF, self.SMF],
-            [self.SMF, self.UPF],
-            [self.UPF, self.TRF_GEN]
-        ]
-
-        for vlink in vlinks:
-            self.nfv_v_links_list.append({"out": vlink[0], "in": vlink[1], "delay": max_delay})
-            self.nfv_v_links_list.append({"out": vlink[1], "in": vlink[0], "delay": max_delay})
-
-    def populate_vm_ip(self, user_data: str, nf_ip_dict: Dict[str, str]) -> str:
-        user_data = user_data.replace("@@domain@@", self.domain_name)
-        user_data = user_data.replace("@@mysql_ip@@", nf_ip_dict[self.MYSQL])
-        user_data = user_data.replace("@@nrf_ip@@", nf_ip_dict[self.NRF])
-        user_data = user_data.replace("@@ims_ip@@", nf_ip_dict[self.IMS])
-        user_data = user_data.replace("@@udr_ip@@", nf_ip_dict[self.UDR])
-        user_data = user_data.replace("@@udm_ip@@", nf_ip_dict[self.UDM])
-        user_data = user_data.replace("@@ausf_ip@@", nf_ip_dict[self.AUSF])
-        user_data = user_data.replace("@@amf_ip@@", nf_ip_dict[self.AMF])
-        user_data = user_data.replace("@@smf_ip@@", nf_ip_dict[self.SMF])
-        user_data = user_data.replace("@@upf_ip@@", nf_ip_dict[self.UPF])
-        user_data = user_data.replace("@@trf_ip@@", nf_ip_dict[self.TRF_GEN])
-        return user_data
-
     def populate_user_data(self, nf_ip_dict: Dict[str, str]) -> Dict[str, str]:
-        LOG.debug(f"I am in OAI 5G CN, {self.domain_name}")
+        LOG.debug(f"I am in OAI 5G CN Docker, {self.domain_name}")
         vm_user_data_dict: Dict[str, str] = {}
         for network_function in self.get_network_functions():
             user_data = network_function.get_user_data()
             user_data = self.populate_vm_ip(user_data, nf_ip_dict)
             user_data = user_data.replace("@@domain@@", self.domain_name)
+            user_data = user_data.replace("@@tz@@", self.TimeZone)
             if network_function.name == self.MYSQL:
                 vm_user_data_dict[self.MYSQL] = self.update_mysql(user_data)
             elif network_function.name == self.NRF:
@@ -270,7 +296,6 @@ class OAI5GCNDC(ServiceProfileTemplate):
 
     def update_mysql(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_MYSQL_DOCKER)
-        user_data = user_data.replace("@@tz@@", self.TimeZone)
         # MySQL database values
         user_data = user_data.replace("@@mysql_database@@", self.MySQL_Values.get("mysql_database"))
         user_data = user_data.replace("@@mysql_user@@", self.MySQL_Values.get("mysql_user"))
@@ -304,7 +329,6 @@ class OAI5GCNDC(ServiceProfileTemplate):
 
     def update_nrf(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_NRF_DOCKER)
-        user_data = user_data.replace("@@tz@@", self.TimeZone)
         user_data = user_data.replace("@@log_level@@", self.NRF_Values.get("log_level"))
         return user_data
 
@@ -394,7 +418,6 @@ class OAI5GCNDC(ServiceProfileTemplate):
     def update_udr(self, user_data: str) -> str:
         user_data = self.update_config(user_data)
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_UDR_DOCKER)
-        user_data = user_data.replace("@@tz@@", self.TimeZone)
         user_data = user_data.replace("@@udr_name@@", self.UDR_Values.get("UDR_NAME"))
         user_data = user_data.replace("@@udr_interface_name_for_nudr@@",
                                       self.UDR_Values.get("UDR_INTERFACE_NAME_FOR_NUDR"))
@@ -407,8 +430,6 @@ class OAI5GCNDC(ServiceProfileTemplate):
 
     def update_udm(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_UDM_DOCKER)
-        user_data = user_data.replace("@@domain@@", self.domain_name)
-        user_data = user_data.replace("@@tz@@", self.TimeZone)
         user_data = user_data.replace("@@udm_name@@", self.UDM_Values.get("UDM_NAME"))
         user_data = user_data.replace("@@sbi_if_name@@", self.UDM_Values.get("SBI_IF_NAME"))
         user_data = user_data.replace("@@register_nrf@@", self.UDM_Values.get("REGISTER_NRF"))
@@ -419,8 +440,6 @@ class OAI5GCNDC(ServiceProfileTemplate):
 
     def update_ausf(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_AUSF_DOCKER)
-        user_data = user_data.replace("@@domain@@", self.domain_name)
-        user_data = user_data.replace("@@tz@@", self.TimeZone)
         user_data = user_data.replace("@@ausf_name@@", self.AUSF_Values.get("AUSF_NAME"))
         user_data = user_data.replace("@@sbi_if_name@@", self.AUSF_Values.get("SBI_IF_NAME"))
         user_data = user_data.replace("@@register_nrf@@", self.AUSF_Values.get("REGISTER_NRF"))
@@ -431,8 +450,6 @@ class OAI5GCNDC(ServiceProfileTemplate):
 
     def update_amf(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_AMF_DOCKER)
-        user_data = user_data.replace("@@domain@@", self.domain_name)
-        user_data = user_data.replace("@@tz@@", self.TimeZone)
         user_data = user_data.replace("@@amf_name@@", self.AMF_Values.get("AMF_NAME"))
         user_data = user_data.replace("@@log_level@@", self.AMF_Values.get("LOG_LEVEL"))
         user_data = user_data.replace("@@AMF_INTERFACE_NAME_FOR_NGAP@@",
@@ -486,17 +503,101 @@ class OAI5GCNDC(ServiceProfileTemplate):
 
     def update_smf(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_SMF_DOCKER)
-        user_data = user_data.replace("@@domain@@", self.domain_name)
+        # SMF Config
+        user_data = user_data.replace("@@SMF_FQDN@@", self.SMF_Values.get("SMF_FQDN"))
+        user_data = user_data.replace("@@SMF_PORT_FOR_SBI@@", self.SMF_Values.get("SMF_PORT_FOR_SBI"))
+        user_data = user_data.replace("@@SMF_HTTP2_PORT_FOR_SBI@@", self.SMF_Values.get("SMF_HTTP2_PORT_FOR_SBI"))
+        user_data = user_data.replace("@@SMF_API_VERSION_FOR_SBI@@", self.SMF_Values.get("SMF_API_VERSION_FOR_SBI"))
+        user_data = user_data.replace("@@AMF_PORT@@", self.SMF_Values.get("AMF_PORT"))
+        user_data = user_data.replace("@@AMF_API_VERSION@@", self.SMF_Values.get("AMF_API_VERSION"))
+
+        # Session Management Subscription List 01
+        user_data = user_data.replace("@@SM_01_NSSAI_SST@@", self.SMF_Values.get("SM_01_NSSAI_SST"))
+        user_data = user_data.replace("@@SM_01_NSSAI_SD@@", self.SMF_Values.get("SM_01_NSSAI_SD"))
+        user_data = user_data.replace("@@SM_01_DNN@@", self.SMF_Values.get("SM_01_DNN"))
+        user_data = user_data.replace("@@SM_01_DEFAULT_SESSION_TYPE@@", self.SMF_Values.get("SM_01_DEFAULT_SESSION_TYPE"))
+        user_data = user_data.replace("@@SM_01_DEFAULT_SSC_MODE@@", self.SMF_Values.get("SM_01_DEFAULT_SSC_MODE"))
+        user_data = user_data.replace("@@SM_01_QOS_PROFILE_5QI@@", self.SMF_Values.get("SM_01_QOS_PROFILE_5QI"))
+        user_data = user_data.replace("@@SM_01_QOS_PROFILE_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_01_QOS_PROFILE_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_01_QOS_PROFILE_ARP_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_01_QOS_PROFILE_ARP_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_01_QOS_PROFILE_ARP_PREEMPTCAP@@", self.SMF_Values.get("SM_01_QOS_PROFILE_ARP_PREEMPTCAP"))
+        user_data = user_data.replace("@@SM_01_QOS_PROFILE_ARP_PREEMPTVULN@@", self.SMF_Values.get("SM_01_QOS_PROFILE_ARP_PREEMPTVULN"))
+        user_data = user_data.replace("@@SM_01_SESSION_AMBR_UL@@", self.SMF_Values.get("SM_01_SESSION_AMBR_UL"))
+        user_data = user_data.replace("@@SM_01_SESSION_AMBR_DL@@", self.SMF_Values.get("SM_01_SESSION_AMBR_DL"))
+
+        # Session Management Subscription List 02
+        user_data = user_data.replace("@@SM_02_NSSAI_SST@@", self.SMF_Values.get("SM_02_NSSAI_SST"))
+        user_data = user_data.replace("@@SM_02_NSSAI_SD@@", self.SMF_Values.get("SM_02_NSSAI_SD"))
+        user_data = user_data.replace("@@SM_02_DNN@@", self.SMF_Values.get("SM_02_DNN"))
+        user_data = user_data.replace("@@SM_02_DEFAULT_SESSION_TYPE@@", self.SMF_Values.get("SM_02_DEFAULT_SESSION_TYPE"))
+        user_data = user_data.replace("@@SM_02_DEFAULT_SSC_MODE@@", self.SMF_Values.get("SM_02_DEFAULT_SSC_MODE"))
+        user_data = user_data.replace("@@SM_02_QOS_PROFILE_5QI@@", self.SMF_Values.get("SM_02_QOS_PROFILE_5QI"))
+        user_data = user_data.replace("@@SM_02_QOS_PROFILE_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_02_QOS_PROFILE_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_02_QOS_PROFILE_ARP_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_02_QOS_PROFILE_ARP_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_02_QOS_PROFILE_ARP_PREEMPTCAP@@", self.SMF_Values.get("SM_02_QOS_PROFILE_ARP_PREEMPTCAP"))
+        user_data = user_data.replace("@@SM_02_QOS_PROFILE_ARP_PREEMPTVULN@@", self.SMF_Values.get("SM_02_QOS_PROFILE_ARP_PREEMPTVULN"))
+        user_data = user_data.replace("@@SM_02_SESSION_AMBR_UL@@", self.SMF_Values.get("SM_02_SESSION_AMBR_UL"))
+        user_data = user_data.replace("@@SM_02_SESSION_AMBR_DL@@", self.SMF_Values.get("SM_02_SESSION_AMBR_DL"))
+
+        # Session Management Subscription List 02
+        user_data = user_data.replace("@@SM_03_NSSAI_SST@@", self.SMF_Values.get("SM_03_NSSAI_SST"))
+        user_data = user_data.replace("@@SM_03_NSSAI_SD@@", self.SMF_Values.get("SM_03_NSSAI_SD"))
+        user_data = user_data.replace("@@SM_03_DNN@@", self.SMF_Values.get("SM_03_DNN"))
+        user_data = user_data.replace("@@SM_03_DEFAULT_SESSION_TYPE@@", self.SMF_Values.get("SM_03_DEFAULT_SESSION_TYPE"))
+        user_data = user_data.replace("@@SM_03_DEFAULT_SSC_MODE@@", self.SMF_Values.get("SM_03_DEFAULT_SSC_MODE"))
+        user_data = user_data.replace("@@SM_03_QOS_PROFILE_5QI@@", self.SMF_Values.get("SM_03_QOS_PROFILE_5QI"))
+        user_data = user_data.replace("@@SM_03_QOS_PROFILE_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_03_QOS_PROFILE_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_03_QOS_PROFILE_ARP_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_03_QOS_PROFILE_ARP_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_03_QOS_PROFILE_ARP_PREEMPTCAP@@", self.SMF_Values.get("SM_03_QOS_PROFILE_ARP_PREEMPTCAP"))
+        user_data = user_data.replace("@@SM_03_QOS_PROFILE_ARP_PREEMPTVULN@@", self.SMF_Values.get("SM_03_QOS_PROFILE_ARP_PREEMPTVULN"))
+        user_data = user_data.replace("@@SM_03_SESSION_AMBR_UL@@", self.SMF_Values.get("SM_03_SESSION_AMBR_UL"))
+        user_data = user_data.replace("@@SM_03_SESSION_AMBR_DL@@", self.SMF_Values.get("SM_03_SESSION_AMBR_DL"))
+
+        # Docker config variables
+        user_data = user_data.replace("@@SMF_INTERFACE_NAME_FOR_N4@@", self.SMF_Values.get("SMF_INTERFACE_NAME_FOR_N4"))
+        user_data = user_data.replace("@@SMF_INTERFACE_NAME_FOR_SBI@@", self.SMF_Values.get("SMF_INTERFACE_NAME_FOR_SBI"))
+        user_data = user_data.replace("@@DEFAULT_DNS_IPV4_ADDRESS@@", self.SMF_Values.get("DEFAULT_DNS_IPV4_ADDRESS"))
+        user_data = user_data.replace("@@DEFAULT_DNS_SEC_IPV4_ADDRESS@@", self.SMF_Values.get("DEFAULT_DNS_SEC_IPV4_ADDRESS"))
+        user_data = user_data.replace("@@AMF_FQDN@@", self.AMF)
+        user_data = user_data.replace("@@UDM_FQDN@@", self.UDM)
+        user_data = user_data.replace("@@UPF_FQDN_0@@", self.UPF)
+        user_data = user_data.replace("@@NRF_FQDN@@", self.NRF)
+        user_data = user_data.replace("@@USE_LOCAL_SUBSCRIPTION_INFO@@", self.SMF_Values.get("USE_LOCAL_SUBSCRIPTION_INFO"))
+        user_data = user_data.replace("@@REGISTER_NRF@@", self.SMF_Values.get("REGISTER_NRF"))
+        user_data = user_data.replace("@@DISCOVER_UPF@@", self.SMF_Values.get("DISCOVER_UPF"))
+        user_data = user_data.replace("@@USE_FQDN_DNS@@", self.SMF_Values.get("USE_FQDN_DNS"))
+        user_data = user_data.replace("@@UE_MTU@@", self.SMF_Values.get("UE_MTU"))
+
+        # Slice 0 (1, 0xFFFFFF)
+        user_data = user_data.replace("@@DNN_NI0@@", self.SMF_Values.get("DNN_NI0"))
+        user_data = user_data.replace("@@TYPE0@@", self.SMF_Values.get("TYPE0"))
+        user_data = user_data.replace("@@DNN_RANGE0@@", self.SMF_Values.get("DNN_RANGE0"))
+        user_data = user_data.replace("@@NSSAI_SST0@@", self.SMF_Values.get("NSSAI_SST0"))
+        user_data = user_data.replace("@@SESSION_AMBR_UL0@@", self.SMF_Values.get("SESSION_AMBR_UL0"))
+        user_data = user_data.replace("@@SESSION_AMBR_DL0@@", self.SMF_Values.get("SESSION_AMBR_DL0"))
+        # Slice 1 (1, 0xFFFFFF)
+        user_data = user_data.replace("@@DNN_NI1@@", self.SMF_Values.get("DNN_NI1"))
+        user_data = user_data.replace("@@TYPE1@@", self.SMF_Values.get("TYPE1"))
+        user_data = user_data.replace("@@DNN_RANGE1@@", self.SMF_Values.get("DNN_RANGE1"))
+        user_data = user_data.replace("@@NSSAI_SST1@@", self.SMF_Values.get("NSSAI_SST1"))
+        user_data = user_data.replace("@@SESSION_AMBR_UL1@@", self.SMF_Values.get("SESSION_AMBR_UL1"))
+        user_data = user_data.replace("@@SESSION_AMBR_DL1@@", self.SMF_Values.get("SESSION_AMBR_DL1"))
+        # Slice 2 for ims
+        user_data = user_data.replace("@@DNN_NI2@@", self.SMF_Values.get("DNN_NI2"))
+        user_data = user_data.replace("@@TYPE2@@", self.SMF_Values.get("TYPE2"))
+        user_data = user_data.replace("@@DNN_RANGE2@@", self.SMF_Values.get("DNN_RANGE2"))
+        user_data = user_data.replace("@@NSSAI_SST2@@", self.SMF_Values.get("NSSAI_SST2"))
+        user_data = user_data.replace("@@SESSION_AMBR_UL2@@", self.SMF_Values.get("SESSION_AMBR_UL2"))
+        user_data = user_data.replace("@@SESSION_AMBR_DL2@@", self.SMF_Values.get("SESSION_AMBR_DL2"))
+
         return user_data
 
     def update_upf(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_SMF_DOCKER)
-        user_data = user_data.replace("@@domain@@", self.domain_name)
         return user_data
 
     def update_trf(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_TRF_GEN_DOCKER)
-        user_data = user_data.replace("@@domain@@", self.domain_name)
         return user_data
 
 

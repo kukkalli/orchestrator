@@ -11,7 +11,7 @@ from templates.four_g_lte_core_cass_db import FourGLTECoreCassDB
 from templates.four_g_lte_core_rcc import FourGLTECoreRCC
 from templates.four_g_vm_lte_core import FourGVMLTECore
 from templates.serviceprofiles import ServiceProfiles
-from templates.oai_5gcn_template import OAI5GCN
+from templates.oai_5gcn.oai_5gcn import OAI5GCN
 from templates.oai_5gcn_dc.oai_5gcn_dc import OAI5GCNDC
 from templates.oai_5gcn_du_template import OAI5GCNAndDU
 

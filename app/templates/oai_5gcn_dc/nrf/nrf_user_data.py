@@ -39,7 +39,7 @@ echo "@@udm_ip@@\toai-udm" >> hosts
 echo "@@ausf_ip@@\toai-ausf" >> hosts
 echo "@@amf_ip@@\toai-amf" >> hosts
 echo "@@smf_ip@@\toai-smf" >> hosts
-echo "@@upf_ip@@\toai-spgwu" >> hosts
+echo "@@upf_ip@@\toai-spgwu-tiny" >> hosts
 echo "@@trf_ip@@\toai-trf-gen" >> hosts
 echo "" >> hosts
 

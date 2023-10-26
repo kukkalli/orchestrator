@@ -26,7 +26,7 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 
-127.0.0.1	${HOSTNAME}
+127.0.0.1	@@TRF_FQDN@@
 
 # OAI 5GCN VM IPs
 EOF
@@ -56,6 +56,8 @@ echo "export HOSTNAME=${HOSTNAME}" >> env_var
 
 export TZ="@@tz@@"
 echo "export TZ=@@tz@@" >> env_var
+
+echo -e "export UPF_IPV4_ADDRESS=@@upf_ip@@" >> env_var
 
 
 cat env_var

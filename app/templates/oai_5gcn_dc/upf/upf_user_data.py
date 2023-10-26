@@ -26,7 +26,7 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 
-127.0.0.1	oai-spgwu
+127.0.0.1	@@UPF_FQDN@@
 
 # OAI 5GCN VM IPs
 EOF
@@ -46,16 +46,34 @@ echo "" >> hosts
 sudo cp hosts /etc/hosts
 
 export IMAGE_NAME="@@image_name@@"
-echo "export IMAGE_NAME=\"@@image_name@@\"" >> env_var
+echo -e "export IMAGE_NAME=\"@@image_name@@\"" >> env_var
 
 export DOMAIN="${DOMAIN}"
-echo "export DOMAIN=${DOMAIN}" >> env_var
+echo -e "export DOMAIN=${DOMAIN}" >> env_var
 
 export HOSTNAME="${HOSTNAME}"
-echo "export HOSTNAME=${HOSTNAME}" >> env_var
+echo -e "export HOSTNAME=${HOSTNAME}" >> env_var
 
 export TZ="@@tz@@"
-echo "export TZ=@@tz@@" >> env_var
+echo -e "export TZ=@@tz@@" >> env_var
+
+echo -e "export UPF_FQDN=@@UPF_FQDN@@" >> env_var
+echo -e "export UPF_FQDN_5G=@@UPF_FQDN@@" >> env_var
+echo -e "export NRF_IPV4_ADDRESS=@@nrf_ip@@" >> env_var
+echo -e "export NRF_FQDN=@@NRF_FQDN@@" >> env_var
+
+echo -e "# NSSAI Set 01@@" >> env_var
+echo -e "export NSSAI_SST_01=@@NSSAI_SST_01@@" >> env_var
+echo -e "export NSSAI_SD_01='@@NSSAI_SD_01@@'" >> env_var
+echo -e "export DNN_01=@@DNN_01@@" >> env_var
+echo -e "# NSSAI Set 02@@" >> env_var
+echo -e "export NSSAI_SST_02=@@NSSAI_SST_02@@" >> env_var
+echo -e "export NSSAI_SD_02='@@NSSAI_SD_02@@'" >> env_var
+echo -e "export DNN_02=@@DNN_02@@" >> env_var
+echo -e "# NSSAI Set 03@@" >> env_var
+echo -e "export NSSAI_SST_03=@@NSSAI_SST_03@@" >> env_var
+echo -e "export NSSAI_SD_03='@@NSSAI_SD_03@@'" >> env_var
+echo -e "export DNN_03=@@DNN_03@@" >> env_var
 
 cat env_var
 

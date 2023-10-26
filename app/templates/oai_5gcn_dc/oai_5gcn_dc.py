@@ -246,6 +246,21 @@ class OAI5GCNDC(OAI5GCNDCBase):
         "SESSION_AMBR_DL2": "10Gbps"
     }
 
+    UPF_Values = {
+        # NSSAI Set 01
+        "NSSAI_SST_01": "1",
+        "NSSAI_SD_01": "0xFFFFFF",
+        "DNN_01": "oai",
+        # NSSAI Set 02
+        "NSSAI_SST_02": "1",
+        "NSSAI_SD_02": "0xFFFFFF",
+        "DNN_02": "openairinterface",
+        # NSSAI Set 03
+        "NSSAI_SST_03": "1",
+        "NSSAI_SD_03": "0xFFFFFF",
+        "DNN_03": "ims"
+    }
+
     def __init__(self, prefix: str, domain_name: str, bandwidth: int, max_delay: float = 1.0):
         super().__init__(prefix, domain_name, bandwidth, max_delay)
         self.add_network_function_list(prefix)
@@ -515,13 +530,18 @@ class OAI5GCNDC(OAI5GCNDCBase):
         user_data = user_data.replace("@@SM_01_NSSAI_SST@@", self.SMF_Values.get("SM_01_NSSAI_SST"))
         user_data = user_data.replace("@@SM_01_NSSAI_SD@@", self.SMF_Values.get("SM_01_NSSAI_SD"))
         user_data = user_data.replace("@@SM_01_DNN@@", self.SMF_Values.get("SM_01_DNN"))
-        user_data = user_data.replace("@@SM_01_DEFAULT_SESSION_TYPE@@", self.SMF_Values.get("SM_01_DEFAULT_SESSION_TYPE"))
+        user_data = user_data.replace("@@SM_01_DEFAULT_SESSION_TYPE@@",
+                                      self.SMF_Values.get("SM_01_DEFAULT_SESSION_TYPE"))
         user_data = user_data.replace("@@SM_01_DEFAULT_SSC_MODE@@", self.SMF_Values.get("SM_01_DEFAULT_SSC_MODE"))
         user_data = user_data.replace("@@SM_01_QOS_PROFILE_5QI@@", self.SMF_Values.get("SM_01_QOS_PROFILE_5QI"))
-        user_data = user_data.replace("@@SM_01_QOS_PROFILE_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_01_QOS_PROFILE_PRIORITY_LEVEL"))
-        user_data = user_data.replace("@@SM_01_QOS_PROFILE_ARP_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_01_QOS_PROFILE_ARP_PRIORITY_LEVEL"))
-        user_data = user_data.replace("@@SM_01_QOS_PROFILE_ARP_PREEMPTCAP@@", self.SMF_Values.get("SM_01_QOS_PROFILE_ARP_PREEMPTCAP"))
-        user_data = user_data.replace("@@SM_01_QOS_PROFILE_ARP_PREEMPTVULN@@", self.SMF_Values.get("SM_01_QOS_PROFILE_ARP_PREEMPTVULN"))
+        user_data = user_data.replace("@@SM_01_QOS_PROFILE_PRIORITY_LEVEL@@",
+                                      self.SMF_Values.get("SM_01_QOS_PROFILE_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_01_QOS_PROFILE_ARP_PRIORITY_LEVEL@@",
+                                      self.SMF_Values.get("SM_01_QOS_PROFILE_ARP_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_01_QOS_PROFILE_ARP_PREEMPTCAP@@",
+                                      self.SMF_Values.get("SM_01_QOS_PROFILE_ARP_PREEMPTCAP"))
+        user_data = user_data.replace("@@SM_01_QOS_PROFILE_ARP_PREEMPTVULN@@",
+                                      self.SMF_Values.get("SM_01_QOS_PROFILE_ARP_PREEMPTVULN"))
         user_data = user_data.replace("@@SM_01_SESSION_AMBR_UL@@", self.SMF_Values.get("SM_01_SESSION_AMBR_UL"))
         user_data = user_data.replace("@@SM_01_SESSION_AMBR_DL@@", self.SMF_Values.get("SM_01_SESSION_AMBR_DL"))
 
@@ -529,13 +549,18 @@ class OAI5GCNDC(OAI5GCNDCBase):
         user_data = user_data.replace("@@SM_02_NSSAI_SST@@", self.SMF_Values.get("SM_02_NSSAI_SST"))
         user_data = user_data.replace("@@SM_02_NSSAI_SD@@", self.SMF_Values.get("SM_02_NSSAI_SD"))
         user_data = user_data.replace("@@SM_02_DNN@@", self.SMF_Values.get("SM_02_DNN"))
-        user_data = user_data.replace("@@SM_02_DEFAULT_SESSION_TYPE@@", self.SMF_Values.get("SM_02_DEFAULT_SESSION_TYPE"))
+        user_data = user_data.replace("@@SM_02_DEFAULT_SESSION_TYPE@@",
+                                      self.SMF_Values.get("SM_02_DEFAULT_SESSION_TYPE"))
         user_data = user_data.replace("@@SM_02_DEFAULT_SSC_MODE@@", self.SMF_Values.get("SM_02_DEFAULT_SSC_MODE"))
         user_data = user_data.replace("@@SM_02_QOS_PROFILE_5QI@@", self.SMF_Values.get("SM_02_QOS_PROFILE_5QI"))
-        user_data = user_data.replace("@@SM_02_QOS_PROFILE_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_02_QOS_PROFILE_PRIORITY_LEVEL"))
-        user_data = user_data.replace("@@SM_02_QOS_PROFILE_ARP_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_02_QOS_PROFILE_ARP_PRIORITY_LEVEL"))
-        user_data = user_data.replace("@@SM_02_QOS_PROFILE_ARP_PREEMPTCAP@@", self.SMF_Values.get("SM_02_QOS_PROFILE_ARP_PREEMPTCAP"))
-        user_data = user_data.replace("@@SM_02_QOS_PROFILE_ARP_PREEMPTVULN@@", self.SMF_Values.get("SM_02_QOS_PROFILE_ARP_PREEMPTVULN"))
+        user_data = user_data.replace("@@SM_02_QOS_PROFILE_PRIORITY_LEVEL@@",
+                                      self.SMF_Values.get("SM_02_QOS_PROFILE_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_02_QOS_PROFILE_ARP_PRIORITY_LEVEL@@",
+                                      self.SMF_Values.get("SM_02_QOS_PROFILE_ARP_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_02_QOS_PROFILE_ARP_PREEMPTCAP@@",
+                                      self.SMF_Values.get("SM_02_QOS_PROFILE_ARP_PREEMPTCAP"))
+        user_data = user_data.replace("@@SM_02_QOS_PROFILE_ARP_PREEMPTVULN@@",
+                                      self.SMF_Values.get("SM_02_QOS_PROFILE_ARP_PREEMPTVULN"))
         user_data = user_data.replace("@@SM_02_SESSION_AMBR_UL@@", self.SMF_Values.get("SM_02_SESSION_AMBR_UL"))
         user_data = user_data.replace("@@SM_02_SESSION_AMBR_DL@@", self.SMF_Values.get("SM_02_SESSION_AMBR_DL"))
 
@@ -543,26 +568,34 @@ class OAI5GCNDC(OAI5GCNDCBase):
         user_data = user_data.replace("@@SM_03_NSSAI_SST@@", self.SMF_Values.get("SM_03_NSSAI_SST"))
         user_data = user_data.replace("@@SM_03_NSSAI_SD@@", self.SMF_Values.get("SM_03_NSSAI_SD"))
         user_data = user_data.replace("@@SM_03_DNN@@", self.SMF_Values.get("SM_03_DNN"))
-        user_data = user_data.replace("@@SM_03_DEFAULT_SESSION_TYPE@@", self.SMF_Values.get("SM_03_DEFAULT_SESSION_TYPE"))
+        user_data = user_data.replace("@@SM_03_DEFAULT_SESSION_TYPE@@",
+                                      self.SMF_Values.get("SM_03_DEFAULT_SESSION_TYPE"))
         user_data = user_data.replace("@@SM_03_DEFAULT_SSC_MODE@@", self.SMF_Values.get("SM_03_DEFAULT_SSC_MODE"))
         user_data = user_data.replace("@@SM_03_QOS_PROFILE_5QI@@", self.SMF_Values.get("SM_03_QOS_PROFILE_5QI"))
-        user_data = user_data.replace("@@SM_03_QOS_PROFILE_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_03_QOS_PROFILE_PRIORITY_LEVEL"))
-        user_data = user_data.replace("@@SM_03_QOS_PROFILE_ARP_PRIORITY_LEVEL@@", self.SMF_Values.get("SM_03_QOS_PROFILE_ARP_PRIORITY_LEVEL"))
-        user_data = user_data.replace("@@SM_03_QOS_PROFILE_ARP_PREEMPTCAP@@", self.SMF_Values.get("SM_03_QOS_PROFILE_ARP_PREEMPTCAP"))
-        user_data = user_data.replace("@@SM_03_QOS_PROFILE_ARP_PREEMPTVULN@@", self.SMF_Values.get("SM_03_QOS_PROFILE_ARP_PREEMPTVULN"))
+        user_data = user_data.replace("@@SM_03_QOS_PROFILE_PRIORITY_LEVEL@@",
+                                      self.SMF_Values.get("SM_03_QOS_PROFILE_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_03_QOS_PROFILE_ARP_PRIORITY_LEVEL@@",
+                                      self.SMF_Values.get("SM_03_QOS_PROFILE_ARP_PRIORITY_LEVEL"))
+        user_data = user_data.replace("@@SM_03_QOS_PROFILE_ARP_PREEMPTCAP@@",
+                                      self.SMF_Values.get("SM_03_QOS_PROFILE_ARP_PREEMPTCAP"))
+        user_data = user_data.replace("@@SM_03_QOS_PROFILE_ARP_PREEMPTVULN@@",
+                                      self.SMF_Values.get("SM_03_QOS_PROFILE_ARP_PREEMPTVULN"))
         user_data = user_data.replace("@@SM_03_SESSION_AMBR_UL@@", self.SMF_Values.get("SM_03_SESSION_AMBR_UL"))
         user_data = user_data.replace("@@SM_03_SESSION_AMBR_DL@@", self.SMF_Values.get("SM_03_SESSION_AMBR_DL"))
 
         # Docker config variables
         user_data = user_data.replace("@@SMF_INTERFACE_NAME_FOR_N4@@", self.SMF_Values.get("SMF_INTERFACE_NAME_FOR_N4"))
-        user_data = user_data.replace("@@SMF_INTERFACE_NAME_FOR_SBI@@", self.SMF_Values.get("SMF_INTERFACE_NAME_FOR_SBI"))
+        user_data = user_data.replace("@@SMF_INTERFACE_NAME_FOR_SBI@@",
+                                      self.SMF_Values.get("SMF_INTERFACE_NAME_FOR_SBI"))
         user_data = user_data.replace("@@DEFAULT_DNS_IPV4_ADDRESS@@", self.SMF_Values.get("DEFAULT_DNS_IPV4_ADDRESS"))
-        user_data = user_data.replace("@@DEFAULT_DNS_SEC_IPV4_ADDRESS@@", self.SMF_Values.get("DEFAULT_DNS_SEC_IPV4_ADDRESS"))
+        user_data = user_data.replace("@@DEFAULT_DNS_SEC_IPV4_ADDRESS@@",
+                                      self.SMF_Values.get("DEFAULT_DNS_SEC_IPV4_ADDRESS"))
         user_data = user_data.replace("@@AMF_FQDN@@", self.AMF)
         user_data = user_data.replace("@@UDM_FQDN@@", self.UDM)
         user_data = user_data.replace("@@UPF_FQDN_0@@", self.UPF)
         user_data = user_data.replace("@@NRF_FQDN@@", self.NRF)
-        user_data = user_data.replace("@@USE_LOCAL_SUBSCRIPTION_INFO@@", self.SMF_Values.get("USE_LOCAL_SUBSCRIPTION_INFO"))
+        user_data = user_data.replace("@@USE_LOCAL_SUBSCRIPTION_INFO@@",
+                                      self.SMF_Values.get("USE_LOCAL_SUBSCRIPTION_INFO"))
         user_data = user_data.replace("@@REGISTER_NRF@@", self.SMF_Values.get("REGISTER_NRF"))
         user_data = user_data.replace("@@DISCOVER_UPF@@", self.SMF_Values.get("DISCOVER_UPF"))
         user_data = user_data.replace("@@USE_FQDN_DNS@@", self.SMF_Values.get("USE_FQDN_DNS"))
@@ -594,10 +627,29 @@ class OAI5GCNDC(OAI5GCNDCBase):
 
     def update_upf(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_SMF_DOCKER)
+
+        user_data = user_data.replace("@@UPF_FQDN@@", self.UPF)
+        user_data = user_data.replace("@@NRF_FQDN@@", self.NRF)
+
+        # NSSAI Set 01
+        user_data = user_data.replace("@@NSSAI_SST_01@@", self.UPF_Values.get("NSSAI_SST_01"))
+        user_data = user_data.replace("@@NSSAI_SD_01@@", self.UPF_Values.get("NSSAI_SD_01"))
+        user_data = user_data.replace("@@DNN_01@@", self.UPF_Values.get("DNN_01"))
+        # NSSAI Set 02
+        user_data = user_data.replace("@@NSSAI_SST_02@@", self.UPF_Values.get("NSSAI_SST_02"))
+        user_data = user_data.replace("@@NSSAI_SD_02@@", self.UPF_Values.get("NSSAI_SD_02"))
+        user_data = user_data.replace("@@DNN_02@@", self.UPF_Values.get("DNN_02"))
+        # NSSAI Set 03
+        user_data = user_data.replace("@@NSSAI_SST_03@@", self.UPF_Values.get("NSSAI_SST_03"))
+        user_data = user_data.replace("@@NSSAI_SD_03@@", self.UPF_Values.get("NSSAI_SD_03"))
+        user_data = user_data.replace("@@DNN_03@@", self.UPF_Values.get("DNN_03"))
+
         return user_data
 
     def update_trf(self, user_data: str) -> str:
         user_data = user_data.replace("@@image_name@@", OAI5GConstants.OAI_5GCN_TRF_GEN_DOCKER)
+        user_data = user_data.replace("@@TRF_FQDN@@", self.TRF_GEN)
+
         return user_data
 
 

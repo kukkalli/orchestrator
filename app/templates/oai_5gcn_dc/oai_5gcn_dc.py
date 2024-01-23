@@ -8,7 +8,6 @@ from templates.oai_5gcn_dc.ims.ims import IMS
 from templates.oai_5gcn_dc.mysql.mysql import MySQL
 from templates.oai_5gcn_dc.nrf.nrf import NRF
 from templates.oai_5gcn_dc.smf.smf import SMF
-from templates.oai_5gcn_dc.trf.trf import TRF
 from templates.oai_5gcn_dc.udm.udm import UDM
 from templates.oai_5gcn_dc.udr.udr import UDR
 from templates.oai_5gcn_dc.upf.upf import UPF
